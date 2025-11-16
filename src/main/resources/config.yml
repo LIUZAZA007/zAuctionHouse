@@ -17,6 +17,12 @@
 # If you need support, make sure to activate this option and check your console logs.
 enable-debug: false
 
+#
+# - SQLITE
+# - MARIADB
+# - MYSQL
+storage-type: SQLITE
+
 # Database configuration.
 # It is strongly recommended to use a database to store all plugin data.
 database-configuration:

@@ -9,6 +9,8 @@ rootProject.extra.properties["sha"]?.let { sha ->
 tasks {
     shadowJar {
 
+        relocate("fr.maxlego08.sarah", "fr.maxlego08.zauctionhouse.libs.sarah")
+        relocate("com.tcoded.folialib", "fr.maxlego08.zauctionhouse.libs.folialib")
 
         destinationDirectory.set(rootProject.extra["apiFolder"] as File)
     }

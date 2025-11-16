@@ -1,0 +1,21 @@
+package fr.maxlego08.zauctionhouse.listeners;
+
+import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+public class PlayerListener implements Listener {
+
+    private final AuctionPlugin plugin;
+
+    public PlayerListener(AuctionPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onConnect(PlayerJoinEvent event) {
+        this.plugin.getStorageManager().upsertPlayer(event.getPlayer());
+    }
+
+}
