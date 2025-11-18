@@ -2,7 +2,9 @@ package fr.maxlego08.zauctionhouse;
 
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
+import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.InventoriesLoader;
 import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
 import fr.maxlego08.zauctionhouse.api.configuration.ConfigurationFile;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
@@ -10,7 +12,8 @@ import fr.maxlego08.zauctionhouse.command.CommandManager;
 import fr.maxlego08.zauctionhouse.command.commands.CommandAuction;
 import fr.maxlego08.zauctionhouse.configuration.MainConfiguration;
 import fr.maxlego08.zauctionhouse.listeners.PlayerListener;
-import fr.maxlego08.zauctionhouse.message.MessageLoader;
+import fr.maxlego08.zauctionhouse.loader.MessageLoader;
+import fr.maxlego08.zauctionhouse.loader.ZInventoriesLoader;
 import fr.maxlego08.zauctionhouse.storage.ZStorageManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,6 +38,8 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     private final Configuration configuration = new MainConfiguration(this);
     private final ConfigurationFile messageLoader = new MessageLoader(this);
     private final CommandManager commandManager = new CommandManager(this);
+    private final AuctionManager auctionManager = new ZAuctionManager(this);
+    private InventoriesLoader inventoriesLoader;
     private boolean isEnabled = false;
     private PlatformScheduler platformScheduler;
 
@@ -54,6 +59,9 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
         this.commandManager.registerCommand(this, "zauctionhouse", new CommandAuction(this), List.of("ah"));
 
+        this.inventoriesLoader = new ZInventoriesLoader(this);
+        this.inventoriesLoader.load();
+
         isEnabled = true;
         this.getLogger().info("zAuctionHouse has just been loaded successfully!");
     }
@@ -69,6 +77,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     @Override
     public void reload() {
         this.loadFiles();
+        this.inventoriesLoader.reload();
     }
 
     private void loadFiles() {
@@ -91,8 +100,18 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         return this.configuration;
     }
 
+    @Override
+    public AuctionManager getAuctionManager() {
+        return this.auctionManager;
+    }
+
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    @Override
+    public InventoriesLoader getInventoriesLoader() {
+        return this.inventoriesLoader;
     }
 
     private void addListener(Listener listener) {

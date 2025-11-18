@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.message;
+package fr.maxlego08.zauctionhouse.loader;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.configuration.ConfigurationFile;

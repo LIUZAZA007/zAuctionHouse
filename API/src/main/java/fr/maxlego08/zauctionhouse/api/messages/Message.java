@@ -12,14 +12,16 @@ public enum Message {
 
     PREFIX("<primary>zAuctionHouse <secondary>• "),
 
-    COMMAND_SYNTAX_ERROR("<error>You must execute the command like this&7: <success>%syntax%"),
+    COMMAND_SYNTAX_ERROR("<error>You must execute the command like this<gray>: <success>%syntax%"),
     COMMAND_NO_PERMISSION("<error>You do not have permission to run this command."),
     COMMAND_NO_CONSOLE("<error>Only one player can execute this command."),
     COMMAND_NO_ARG("<error>Impossible to find the command with its arguments."),
     COMMAND_RESTRICTED("<error>You cannot use this command here."),
-    COMMAND_SYNTAX_HELP("&f%syntax% &7» &7%description%"),
+    COMMAND_SYNTAX_HELP("<white>%syntax% <dark_gray>» <gray>%description%"),
 
-    ;
+    INVENTORY_NOT_FOUND("<error>Impossible to find the inventory <white>%inventory-name%<error>."),
+
+    COMMAND_DESCRIPTION_AUCTION("Open auction house");
 
     private AuctionPlugin plugin;
     private List<AuctionMessage> messages = new ArrayList<>();

@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.command;
 
 import fr.maxlego08.zauctionhouse.ZAuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.utils.Permission;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public abstract class VCommand extends Arguments {
 
     protected final ZAuctionPlugin plugin;
+    protected final AuctionManager auctionManager;
     private final List<String> subCommands = new ArrayList<>();
     private final List<String> requireArgs = new ArrayList<>();
     private final List<String> optionalArgs = new ArrayList<>();
@@ -44,6 +46,7 @@ public abstract class VCommand extends Arguments {
     public VCommand(AuctionPlugin plugin) {
         super();
         this.plugin = (ZAuctionPlugin) plugin;
+        this.auctionManager = plugin.getAuctionManager();
     }
 
     public Optional<CollectionBiConsumer> getCompletionAt(int index) {

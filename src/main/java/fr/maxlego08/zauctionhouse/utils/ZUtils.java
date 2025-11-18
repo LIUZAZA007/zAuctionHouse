@@ -2,14 +2,21 @@ package fr.maxlego08.zauctionhouse.utils;
 
 import org.bukkit.permissions.Permissible;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public abstract class ZUtils extends MessageUtils{
 
@@ -138,5 +145,13 @@ public abstract class ZUtils extends MessageUtils{
      */
     protected boolean hasPermission(Permissible permissible, String permission) {
         return permissible.hasPermission(permission);
+    }
+
+    protected void files(File folder, Consumer<File> consumer) {
+        try (Stream<Path> s = Files.walk(Paths.get(folder.getPath()))) {
+            s.skip(1).map(Path::toFile).filter(File::isFile).filter(e -> e.getName().endsWith(".yml")).forEach(consumer);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 }
