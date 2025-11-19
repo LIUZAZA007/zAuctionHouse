@@ -24,8 +24,4 @@ public class AuctionEvent extends Event {
         return handlers;
     }
 
-    public void call() {
-        Bukkit.getPluginManager().callEvent(this);
-    }
-
 }

@@ -2,12 +2,16 @@ package fr.maxlego08.zauctionhouse.command.commands;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.arguments.CommandSellArguments;
+import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
+import fr.maxlego08.zauctionhouse.api.event.events.AuctionPreSellEvent;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.utils.AuctionItemType;
 import fr.maxlego08.zauctionhouse.api.utils.Permission;
 import fr.maxlego08.zauctionhouse.command.VCommandArgument;
 import fr.maxlego08.zauctionhouse.utils.commands.CommandType;
 import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 public class CommandAuctionSell extends VCommandArgument<CommandSellArguments> {
 
@@ -42,7 +46,40 @@ public class CommandAuctionSell extends VCommandArgument<CommandSellArguments> {
         amount = amount > itemStack.getAmount() ? itemStack.getAmount() : amount <= 0 ? 1 : amount;
 
         var economyManager = plugin.getEconomyManager();
+        var configuration = plugin.getConfiguration();
+
         String economyName = argAsString(CommandSellArguments.ECONOMY, economyManager.getDefaultEconomy(AuctionItemType.SELL).getName());
+        Optional<AuctionEconomy> optional = economyManager.getEconomy(economyName);
+        if (optional.isEmpty()) {
+            message(plugin, this.sender, Message.SELL_ERROR_ECONOMY, "%name%", economyName);
+            return CommandType.DEFAULT;
+        }
+
+        AuctionEconomy auctionEconomy = optional.get();
+
+        String priceAsString = argAsString(CommandSellArguments.PRICE, "100");
+        var price = configuration.getNumberMultiplicationConfiguration().parseNumber(priceAsString);
+        if (price == null) return CommandType.SYNTAX_ERROR;
+
+        long expiration = configuration.getSellExpiration().getExpiration(player);
+        long expiredAt = expiration > 0 ? System.currentTimeMillis() + expiration : -1;
+
+        var event = new AuctionPreSellEvent(this.player, amount, expiredAt, itemStack, auctionEconomy, price);
+        if (!event.callEvent()) return CommandType.DEFAULT;
+
+        price = event.getPrice();
+        amount = event.getAmount();
+        expiredAt = event.getExpiredAt();
+        auctionEconomy = event.getAuctionEconomy();
+        itemStack = event.getItemStack();
+
+        // ToDo
+        System.out.println("Sell command executed");
+        System.out.println(price);
+        System.out.println(amount);
+        System.out.println(expiredAt);
+        System.out.println(auctionEconomy.getName());
+        System.out.println(itemStack);
 
         return CommandType.SUCCESS;
     }

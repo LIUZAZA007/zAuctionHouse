@@ -60,7 +60,7 @@ public class ZEconomyManager implements EconomyManager {
         }
 
         AuctionLoadEconomyEvent event = new AuctionLoadEconomyEvent(this.plugin, this);
-        event.call();
+        event.callEvent();
 
         FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         for (Map<?, ?> map : configuration.getMapList("economies")) {

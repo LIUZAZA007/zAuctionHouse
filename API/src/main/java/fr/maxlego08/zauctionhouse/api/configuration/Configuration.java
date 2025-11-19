@@ -24,5 +24,17 @@ public interface Configuration extends ConfigurationFile {
 
     List<MessageColor> getMessageColors();
 
+    NumberMultiplicationConfiguration getNumberMultiplicationConfiguration();
+
+    ExpirationConfiguration getSellExpiration();
+
+    ExpirationConfiguration getRentExpiration();
+
+    ExpirationConfiguration getBidExpiration();
+
+    ExpirationConfiguration getPurchaseExpiration();
+
+    ExpirationConfiguration getExpireExpiration();
+
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
 }

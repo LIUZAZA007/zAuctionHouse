@@ -3,6 +3,8 @@ package fr.maxlego08.zauctionhouse.configuration;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
+import fr.maxlego08.zauctionhouse.api.configuration.ExpirationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.NumberMultiplicationConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandArgumentConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
 import fr.maxlego08.zauctionhouse.api.messages.MessageColor;
@@ -18,6 +20,12 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     private final AuctionPlugin plugin;
     private final List<MessageColor> messageColors = new ArrayList<>();
     private boolean enableDebug;
+    private NumberMultiplicationConfiguration numberMultiplicationConfiguration;
+    private ExpirationConfiguration sellExpiration;
+    private ExpirationConfiguration rentExpiration;
+    private ExpirationConfiguration bidExpiration;
+    private ExpirationConfiguration purchaseExpiration;
+    private ExpirationConfiguration expireExpiration;
 
     public MainConfiguration(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -25,11 +33,15 @@ public class MainConfiguration extends YamlLoader implements Configuration {
 
     @Override
     public void load() {
+        var config = this.plugin.getConfig();
+        super.loadYamlConfirmation(this.plugin, config);
 
-        // ToDo, add the system to load a config.yml by language,
-        //  this allows to have the comments in the user’s language.
-
-        super.loadYamlConfirmation(this.plugin, this.plugin.getConfig());
+        this.numberMultiplicationConfiguration = NumberMultiplicationConfiguration.of(this.plugin, config);
+        this.sellExpiration = ExpirationConfiguration.of(plugin, config, "expiration.sell.");
+        this.rentExpiration = ExpirationConfiguration.of(plugin, config, "expiration.rent.");
+        this.bidExpiration = ExpirationConfiguration.of(plugin, config, "expiration.bid.");
+        this.purchaseExpiration = ExpirationConfiguration.of(plugin, config, "expiration.purchase.");
+        this.expireExpiration = ExpirationConfiguration.of(plugin, config, "expiration.expire.");
     }
 
     @Override
@@ -40,6 +52,36 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     @Override
     public List<MessageColor> getMessageColors() {
         return this.messageColors;
+    }
+
+    @Override
+    public NumberMultiplicationConfiguration getNumberMultiplicationConfiguration() {
+        return this.numberMultiplicationConfiguration;
+    }
+
+    @Override
+    public ExpirationConfiguration getSellExpiration() {
+        return this.sellExpiration;
+    }
+
+    @Override
+    public ExpirationConfiguration getRentExpiration() {
+        return this.rentExpiration;
+    }
+
+    @Override
+    public ExpirationConfiguration getBidExpiration() {
+        return this.bidExpiration;
+    }
+
+    @Override
+    public ExpirationConfiguration getPurchaseExpiration() {
+        return this.purchaseExpiration;
+    }
+
+    @Override
+    public ExpirationConfiguration getExpireExpiration() {
+        return this.expireExpiration;
     }
 
     @Override

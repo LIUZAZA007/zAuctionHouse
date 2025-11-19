@@ -95,3 +95,82 @@ commands:
         auto-completion:
           - "vault"
 
+number-sell-multiplication:
+  enable: true
+  formats:
+    - format: K
+      multiplication: 1000
+    - format: M
+      multiplication: 1000000
+    - format: B
+      multiplication: 1000000000
+    - format: T
+      multiplication: 1000000000000
+    - format: Q
+      multiplication: 1000000000000000
+    - format: QQ
+      multiplication: 1000000000000000000
+    - format: S
+      multiplication: 1000000000000000000000
+    - format: SS
+      multiplication: 1000000000000000000000000
+    - format: O
+      multiplication: 1000000000000000000000000000
+    - format: N
+      multiplication: 1000000000000000000000000000000
+    - format: D
+      multiplication: 1000000000000000000000000000000000
+    - format: UN
+      multiplication: 1000000000000000000000000000000000000
+    - format: DD
+      multiplication: 1000000000000000000000000000000000000000
+    - format: TR
+      multiplication: 1000000000000000000000000000000000000000000
+
+expiration:
+  sell:
+    # Le default permission doit être la valeur la plus petite
+    default-expiration: 172800
+    permission:
+      enable: false
+      permissions:
+        - permission: zauctionhouse.expiration.vip
+          expiration: 3600
+        - permission: zauctionhouse.expiration.elite
+          expiration: 7200
+        - permission: zauctionhouse.expiration.legend
+          expiration: 259200
+
+  bid:
+    default-expiration: 172800
+    permission:
+      enable: false
+      permissions:
+        - permission: zauctionhouse.expiration.vip
+          expiration: 3600
+        - permission: zauctionhouse.expiration.elite
+          expiration: 7200
+        - permission: zauctionhouse.expiration.legend
+          expiration: 259200
+
+  rent:
+    default-expiration: 172800
+    permission:
+      enable: false
+      permissions:
+        - permission: zauctionhouse.expiration.vip
+          expiration: 3600
+        - permission: zauctionhouse.expiration.elite
+          expiration: 7200
+        - permission: zauctionhouse.expiration.legend
+          expiration: 259200
+
+  expire:
+    default-expiration: 604800
+    permission:
+      enable: false
+
+  purchase:
+    default-expiration: 604800
+    permission:
+      enable: false
