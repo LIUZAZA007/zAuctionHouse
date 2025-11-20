@@ -4,7 +4,10 @@ import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.Tables;
+import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class PlayerRepository extends Repository {
 
@@ -17,5 +20,9 @@ public class PlayerRepository extends Repository {
             schema.uuid("unique_id", player.getUniqueId()).primary();
             schema.string("name", player.getName());
         });
+    }
+
+    public List<PlayerDTO> select() {
+        return selectAll(PlayerDTO.class);
     }
 }

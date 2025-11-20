@@ -12,6 +12,7 @@ import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
+import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateAuctionItemMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateLogsMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreatePlayerMigration;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class ZStorageManager implements StorageManager {
 
@@ -68,17 +70,28 @@ public class ZStorageManager implements StorageManager {
         return true;
     }
 
-    protected <T extends Repository> T with(Class<T> module) {
+    @Override
+    public void onDisable() {
+        this.databaseConnection.disconnect();
+    }
+
+    @Override
+    public void loadItems() {
+
+        var players = with(PlayerRepository.class).select().stream().collect(Collectors.toMap(PlayerDTO::unique_id, PlayerDTO::name));
+        this.plugin.getLogger().info("Loaded " + players.size() + " players successfully");
+
+        AuctionLoader auctionLoader = new AuctionLoader(this.plugin, this, players);
+        auctionLoader.loadItems();
+    }
+
+    @Override
+    public <T extends Repository> T with(Class<T> module) {
         return this.repositories.getTable(module);
     }
 
     protected void async(Runnable runnable) {
         this.plugin.getScheduler().runAsync(wrappedTask -> runnable.run());
-    }
-
-    @Override
-    public void onDisable() {
-        this.databaseConnection.disconnect();
     }
 
     private @NotNull DatabaseConfiguration getDatabaseConfiguration() {

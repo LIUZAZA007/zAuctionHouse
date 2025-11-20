@@ -1,5 +1,6 @@
 package fr.maxlego08.zauctionhouse.items;
 
+import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.Item;
 import org.bukkit.Bukkit;
@@ -11,15 +12,17 @@ import java.util.UUID;
 
 public abstract class ZItem implements Item {
 
-    private final int id;
-    private final UUID sellerUniqueId;
-    private final String sellerName;
-    private final BigDecimal price;
-    private final AuctionEconomy auctionEconomy;
-    private final Date createdAt;
-    private final Date expiredAt;
+    protected final AuctionPlugin plugin;
+    protected final int id;
+    protected final UUID sellerUniqueId;
+    protected final String sellerName;
+    protected final BigDecimal price;
+    protected final AuctionEconomy auctionEconomy;
+    protected final Date createdAt;
+    protected final Date expiredAt;
 
-    public ZItem(int id, UUID sellerUniqueId, String sellerName, BigDecimal price, AuctionEconomy auctionEconomy, Date createdAt, Date expiredAt) {
+    public ZItem(AuctionPlugin plugin, int id, UUID sellerUniqueId, String sellerName, BigDecimal price, AuctionEconomy auctionEconomy, Date createdAt, Date expiredAt) {
+        this.plugin = plugin;
         this.id = id;
         this.sellerUniqueId = sellerUniqueId;
         this.sellerName = sellerName;

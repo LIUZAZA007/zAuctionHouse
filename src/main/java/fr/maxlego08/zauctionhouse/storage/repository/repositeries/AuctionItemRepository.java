@@ -7,6 +7,7 @@ import fr.maxlego08.zauctionhouse.api.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.items.StorageType;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.Tables;
+import fr.maxlego08.zauctionhouse.api.storage.dto.AuctionItemDTO;
 import fr.maxlego08.zauctionhouse.api.utils.Base64ItemStack;
 import fr.maxlego08.zauctionhouse.items.ZAuctionItem;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class AuctionItemRepository extends Repository {
 
@@ -31,6 +33,10 @@ public class AuctionItemRepository extends Repository {
             schema.object("expired_at", expiredAtDate);
             schema.object("storage_type", StorageType.STORAGE);
         });
-        return new ZAuctionItem(auctionId, seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), expiredAtDate, clonedItemStack);
+        return new ZAuctionItem(this.plugin, auctionId, seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), expiredAtDate, clonedItemStack);
+    }
+
+    public List<AuctionItemDTO> select() {
+        return selectAll(AuctionItemDTO.class);
     }
 }

@@ -75,6 +75,8 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         this.inventoriesLoader = new ZInventoriesLoader(this);
         this.inventoriesLoader.load();
 
+        this.storageManager.loadItems();
+
         isEnabled = true;
         this.getLogger().info("zAuctionHouse has just been loaded successfully!");
     }

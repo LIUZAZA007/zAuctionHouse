@@ -41,5 +41,8 @@ public class SellService extends ZUtils implements AuctionSellService {
     private void postSell(Player player, AuctionItem auctionItem, int amount, BigDecimal price, ItemStack clonedItemStack, AuctionEconomy auctionEconomy) {
 
         this.auctionManager.addItem(StorageType.STORAGE, auctionItem);
+        this.plugin.getAuctionClusterBridge().notifyItemSold(auctionItem).thenAccept(v -> {
+            this.plugin.getLogger().info("Cluster notify item sold");
+        });
     }
 }
