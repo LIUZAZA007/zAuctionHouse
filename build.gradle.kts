@@ -34,6 +34,10 @@ allprojects {
             name = "tcoded-releases"
             url = uri("https://repo.tcoded.com/releases")
         }
+        maven {
+            name = "tcoded-releases"
+            url = uri("https://repo.extendedclip.com/releases/")
+        }
     }
 
     java {
