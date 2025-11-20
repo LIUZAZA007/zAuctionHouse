@@ -8,16 +8,23 @@ import fr.maxlego08.sarah.SqliteConnection;
 import fr.maxlego08.sarah.database.DatabaseType;
 import fr.maxlego08.sarah.logger.JULogger;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
+import fr.maxlego08.zauctionhouse.api.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateAuctionItemMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateLogsMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreatePlayerMigration;
 import fr.maxlego08.zauctionhouse.storage.repository.Repositories;
+import fr.maxlego08.zauctionhouse.storage.repository.repositeries.AuctionItemRepository;
 import fr.maxlego08.zauctionhouse.storage.repository.repositeries.PlayerRepository;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 public class ZStorageManager implements StorageManager {
 
@@ -53,7 +60,8 @@ public class ZStorageManager implements StorageManager {
         MigrationManager.registerMigration(new CreateAuctionItemMigration());
 
         this.repositories = new Repositories(plugin, this.databaseConnection);
-        this.repositories.register(PlayerRepository.class, new PlayerRepository(plugin, this.databaseConnection));
+        this.repositories.register(PlayerRepository.class);
+        this.repositories.register(AuctionItemRepository.class);
 
         MigrationManager.execute(this.databaseConnection, JULogger.from(this.plugin.getLogger()));
 
@@ -94,5 +102,11 @@ public class ZStorageManager implements StorageManager {
     @Override
     public void upsertPlayer(Player player) {
         async(() -> with(PlayerRepository.class).upsertPlayer(player));
+    }
+
+    @Override
+    public CompletableFuture<AuctionItem> createAuctionItem(Player seller, BigDecimal price, long expiredAt, ItemStack clonedItemStack, AuctionEconomy auctionEconomy) {
+        System.out.println("a");
+        return CompletableFuture.supplyAsync(() -> with(AuctionItemRepository.class).create(seller, price, expiredAt, clonedItemStack, auctionEconomy), this.plugin.getExecutorService());
     }
 }

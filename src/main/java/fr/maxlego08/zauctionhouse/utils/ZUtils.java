@@ -1,5 +1,8 @@
 package fr.maxlego08.zauctionhouse.utils;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
 
 import java.io.File;
@@ -18,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public abstract class ZUtils extends MessageUtils{
+public abstract class ZUtils extends MessageUtils {
 
     protected Object createInstanceFromMap(Logger logger, Constructor<?> constructor, Map<?, ?> map) {
         try {
@@ -153,5 +156,15 @@ public abstract class ZUtils extends MessageUtils{
         } catch (IOException exception) {
             exception.printStackTrace();
         }
+    }
+
+    protected void removeItemInHand(Player player, int how) {
+        var inventory = player.getInventory();
+        if (inventory.getItemInMainHand().getAmount() > how) {
+            inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - how);
+        } else {
+            inventory.setItemInMainHand(new ItemStack(Material.AIR));
+        }
+        player.updateInventory();
     }
 }

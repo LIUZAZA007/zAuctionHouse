@@ -3,7 +3,6 @@ package fr.maxlego08.zauctionhouse.storage.repository;
 import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.PlayerRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class Repositories {
         this.connection = connection;
     }
 
-    public void register(Class<? extends Repository> tableClass, PlayerRepository playerRepository) {
+    public void register(Class<? extends Repository> tableClass) {
         try {
             Repository repository = tableClass.getConstructor(AuctionPlugin.class, DatabaseConnection.class).newInstance(this.plugin, this.connection);
             this.tables.put(tableClass, repository);

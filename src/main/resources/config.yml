@@ -43,7 +43,7 @@ database-configuration:
   database: zauctionhouse
   # Enables SQL debugging.
   # Activates verbose SQL logs, useful for identifying database issues.
-  debug: false
+  debug: true
 
 # Vous permet de définir des clés qui seront remplacées par la couleur pour vos messages.
 # Cela permet de simplifier la configuration de vos messages

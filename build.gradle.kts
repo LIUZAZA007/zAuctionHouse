@@ -30,6 +30,10 @@ allprojects {
             name = "papermc"
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
+        maven {
+            name = "tcoded-releases"
+            url = uri("https://repo.tcoded.com/releases")
+        }
     }
 
     java {

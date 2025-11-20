@@ -72,14 +72,8 @@ public class CommandAuctionSell extends VCommandArgument<CommandSellArguments> {
         expiredAt = event.getExpiredAt();
         auctionEconomy = event.getAuctionEconomy();
         itemStack = event.getItemStack();
-
-        // ToDo
-        System.out.println("Sell command executed");
-        System.out.println(price);
-        System.out.println(amount);
-        System.out.println(expiredAt);
-        System.out.println(auctionEconomy.getName());
-        System.out.println(itemStack);
+        
+        auctionManager.getSellService().sellAuctionItem(player, price, amount, expiredAt, itemStack, auctionEconomy);
 
         return CommandType.SUCCESS;
     }

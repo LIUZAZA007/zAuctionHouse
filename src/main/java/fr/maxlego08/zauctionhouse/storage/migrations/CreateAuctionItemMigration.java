@@ -15,7 +15,7 @@ public class CreateAuctionItemMigration extends Migration {
             table.decimal("price", 65, 2);
             table.string("economy_name", 255);
             table.string("storage_type", 32);
-            table.timestamp("expire_at");
+            table.timestamp("expired_at");
             table.timestamps();
         });
     }

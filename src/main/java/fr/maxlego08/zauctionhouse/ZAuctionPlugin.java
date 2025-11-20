@@ -5,10 +5,12 @@ import com.tcoded.folialib.impl.PlatformScheduler;
 import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.InventoriesLoader;
+import fr.maxlego08.zauctionhouse.api.cluster.AuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
 import fr.maxlego08.zauctionhouse.api.configuration.ConfigurationFile;
 import fr.maxlego08.zauctionhouse.api.economy.EconomyManager;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
+import fr.maxlego08.zauctionhouse.cluster.LocalAuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.command.CommandManager;
 import fr.maxlego08.zauctionhouse.command.commands.CommandAuction;
 import fr.maxlego08.zauctionhouse.configuration.MainConfiguration;
@@ -30,9 +32,10 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
@@ -44,9 +47,11 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     private final CommandManager commandManager = new CommandManager(this);
     private final AuctionManager auctionManager = new ZAuctionManager(this);
     private final EconomyManager economyManager = new ZEconomyManager(this);
+    private final ExecutorService asyncExecutor = Executors.newFixedThreadPool(4);
     private InventoriesLoader inventoriesLoader;
     private boolean isEnabled = false;
     private PlatformScheduler platformScheduler;
+    private AuctionClusterBridge auctionClusterBridge = new LocalAuctionClusterBridge();
 
     @Override
     public void onEnable() {
@@ -128,13 +133,28 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         return this.economyManager;
     }
 
+    @Override
+    public ExecutorService getExecutorService() {
+        return this.asyncExecutor;
+    }
+
+    @Override
+    public AuctionClusterBridge getAuctionClusterBridge() {
+        return this.auctionClusterBridge;
+    }
+
+    @Override
+    public void setAuctionClusterBridge(AuctionClusterBridge auctionClusterBridge) {
+        this.auctionClusterBridge = auctionClusterBridge;
+    }
+
     private void addListener(Listener listener) {
         this.getServer().getPluginManager().registerEvents(listener, this);
     }
 
     @Override
     public boolean resourceExist(String resourcePath) {
-        if (resourcePath != null && !resourcePath.equals("")) {
+        if (resourcePath != null && !resourcePath.isEmpty()) {
             resourcePath = resourcePath.replace('\\', '/');
             InputStream in = this.getResource(resourcePath);
             return in != null;
@@ -144,7 +164,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
     @Override
     public void saveResource(String resourcePath, String toPath, boolean replace) {
-        if (resourcePath != null && !resourcePath.equals("")) {
+        if (resourcePath != null && !resourcePath.isEmpty()) {
             resourcePath = resourcePath.replace('\\', '/');
             InputStream in = this.getResource(resourcePath);
             if (in == null) {

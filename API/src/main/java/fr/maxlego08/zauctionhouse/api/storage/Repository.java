@@ -73,6 +73,15 @@ public abstract class Repository {
         }
     }
 
+    protected int insertSchema(Consumer<Schema> consumer) {
+        try {
+            return SchemaBuilder.insert(getTableName(), consumer).execute(this.connection, this.logger);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return -1;
+    }
+
     protected long select(Consumer<Schema> consumer) {
         Schema schema = SchemaBuilder.selectCount(getTableName());
         consumer.accept(schema);

@@ -1,10 +1,13 @@
 package fr.maxlego08.zauctionhouse.api;
 
 import com.tcoded.folialib.impl.PlatformScheduler;
+import fr.maxlego08.zauctionhouse.api.cluster.AuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
 import fr.maxlego08.zauctionhouse.api.economy.EconomyManager;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
 import org.bukkit.plugin.Plugin;
+
+import java.util.concurrent.ExecutorService;
 
 public interface AuctionPlugin extends Plugin {
 
@@ -21,6 +24,12 @@ public interface AuctionPlugin extends Plugin {
     InventoriesLoader getInventoriesLoader();
 
     EconomyManager getEconomyManager();
+
+    ExecutorService getExecutorService();
+
+    AuctionClusterBridge getAuctionClusterBridge();
+
+    void setAuctionClusterBridge(AuctionClusterBridge auctionClusterBridge);
 
     boolean resourceExist(String resourcePath);
 
