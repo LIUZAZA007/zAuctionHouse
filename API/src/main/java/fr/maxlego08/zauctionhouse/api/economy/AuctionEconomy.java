@@ -102,4 +102,11 @@ public interface AuctionEconomy {
      */
     @Nullable
     String getPermission();
+
+    /**
+     * Retrieves the price format associated with the economy.
+     *
+     * @return the price format associated with the economy.
+     */
+    PriceFormat getPriceFormat();
 }

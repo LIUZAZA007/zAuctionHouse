@@ -1,5 +1,6 @@
 package fr.maxlego08.zauctionhouse.api.items;
 
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -28,4 +29,14 @@ public interface Item {
     Date getCreatedAt();
 
     ItemStack buildItemStack(Player player);
+
+    Placeholders createPlaceholders(Player player);
+
+    String createStatus(Player player);
+
+    String getFormattedPrice();
+
+    String getFormattedExpireDate();
+
+    String getRemainingTime();
 }

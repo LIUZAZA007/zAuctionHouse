@@ -4,6 +4,8 @@ import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.economy.EconomyManager;
+import fr.maxlego08.zauctionhouse.api.economy.NumberFormatReduction;
+import fr.maxlego08.zauctionhouse.api.economy.PriceFormat;
 import fr.maxlego08.zauctionhouse.api.event.events.AuctionLoadEconomyEvent;
 import fr.maxlego08.zauctionhouse.api.utils.AuctionItemType;
 import fr.traqueur.currencies.Currencies;
@@ -12,10 +14,15 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +32,8 @@ public class ZEconomyManager implements EconomyManager {
     private final AuctionPlugin plugin;
     private final Set<AuctionEconomy> economies = new HashSet<>();
     private final Map<AuctionItemType, AuctionEconomy> defaultEconomies = new HashMap<>();
+    private final List<NumberFormatReduction> priceReductions = new ArrayList<>();
+    private DecimalFormat priceDecimalFormat;
 
     public ZEconomyManager(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -67,6 +76,43 @@ public class ZEconomyManager implements EconomyManager {
             loadEconomy(file, new TypedMapAccessor((Map<String, Object>) map));
         }
 
+        this.loadDefaultEconomies(configuration);
+        this.loadConfiguration(configuration);
+    }
+
+    private void loadConfiguration(FileConfiguration configuration) {
+
+        var decimalFormat = configuration.getString("price-decimal-format", "#,###.#");
+        if (decimalFormat.isEmpty()) {
+            this.plugin.getLogger().severe("Price decimal format is not set, skip it...");
+            return;
+        }
+
+        this.priceDecimalFormat = new DecimalFormat(decimalFormat);
+
+        this.priceReductions.clear();
+
+        for (Map<?, ?> map : configuration.getMapList("price-reductions")) {
+            TypedMapAccessor accessor = new TypedMapAccessor((Map<String, Object>) map);
+            var format = accessor.getString("format");
+            var maxAmount = accessor.getString("max-amount");
+            var display = accessor.getString("display");
+
+            if (format == null || format.isEmpty()) {
+                this.plugin.getLogger().severe("Price reduction format is not set, skip it...");
+                continue;
+            }
+
+            if (maxAmount == null || maxAmount.isEmpty()) {
+                this.plugin.getLogger().severe("Price reduction max amount is not set, skip it...");
+                continue;
+            }
+
+            this.priceReductions.add(new NumberFormatReduction(format, new BigDecimal(maxAmount), display));
+        }
+    }
+
+    private void loadDefaultEconomies(FileConfiguration configuration) {
         this.defaultEconomies.clear();
         for (AuctionItemType value : AuctionItemType.values()) {
             var economyName = configuration.getString("default-economy." + value.name().toLowerCase(), null);
@@ -86,6 +132,101 @@ public class ZEconomyManager implements EconomyManager {
     @Override
     public AuctionEconomy getDefaultEconomy(AuctionItemType auctionItemType) {
         return this.defaultEconomies.get(auctionItemType);
+    }
+
+    @Override
+    public DecimalFormat getPriceDecimalFormat() {
+        return this.priceDecimalFormat;
+    }
+
+    @Override
+    public List<NumberFormatReduction> getPriceReductions() {
+        return this.priceReductions;
+    }
+
+    @Override
+    public String format(PriceFormat priceFormat, Number number) {
+        return switch (priceFormat) {
+            case PRICE_WITH_REDUCTION -> getDisplayBalance(number);
+            case PRICE_WITH_DECIMAL_FORMAT -> this.priceDecimalFormat.format(number);
+            default -> number.toString();
+        };
+    }
+
+    protected String getDisplayBalance(Number number) {
+        if (number == null) {
+            throw new IllegalArgumentException("number cannot be null");
+        }
+
+        BigDecimal numValue = toBigDecimal(number);
+
+        for (NumberFormatReduction config : this.priceReductions) {
+            if (config == null || config.maxAmount() == null) {
+                continue;
+            }
+
+            BigDecimal maxAmount = config.maxAmount();
+
+            if (numValue.compareTo(maxAmount) >= 0) {
+                continue;
+            }
+
+            String displayText = config.display();
+            String format = config.format();
+
+            if (displayText == null || displayText.isEmpty()) {
+                this.plugin.getLogger().severe("Display text is null or empty for format '" + format + "' in economy module config.yml");
+                continue;
+            }
+
+            String formattedAmount = formatAmount(numValue, maxAmount, format);
+            return displayText.replace("%amount%", formattedAmount);
+        }
+
+        return numValue.toPlainString();
+    }
+
+    private BigDecimal toBigDecimal(Number number) {
+        if (number instanceof BigDecimal bd) {
+            return bd;
+        }
+        if (number instanceof Long || number instanceof Integer || number instanceof Short || number instanceof Byte) {
+            return BigDecimal.valueOf(number.longValue());
+        }
+        return BigDecimal.valueOf(number.doubleValue());
+    }
+
+    private String formatAmount(BigDecimal value, BigDecimal maxAmount, String format) {
+        if (format == null || format.isEmpty()) {
+            return value.toPlainString();
+        }
+
+        if (format.indexOf('#') >= 0) {
+            DecimalFormat decimalFormat = new DecimalFormat(format);
+            return decimalFormat.format(value);
+        }
+
+        BigDecimal thousand = BigDecimal.valueOf(1000);
+        BigDecimal divisor;
+
+        if (maxAmount.compareTo(thousand) == 0) {
+            divisor = thousand;
+        } else {
+            divisor = maxAmount.divide(thousand, 2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal reduced = value.divide(divisor, 2, RoundingMode.HALF_UP);
+        return String.format(format, reduced);
+    }
+
+
+    @Override
+    public String format(AuctionEconomy economy, Number number) {
+        var result = economy.format(format(economy.getPriceFormat(), number), number.longValue());
+        if (result.contains(":")) {
+            result = this.plugin.getInventoriesLoader().getInventoryManager().getFontImage().replace(result);
+        }
+        return result;
     }
 
     /**
@@ -140,6 +281,18 @@ public class ZEconomyManager implements EconomyManager {
             return;
         }
 
+        var priceFormatName = accessor.getString("price-format", PriceFormat.PRICE_RAW.name());
+        if (priceFormatName == null) {
+            this.plugin.getLogger().severe("Economy '" + name + "' is active but doesn’t have a price format, please correct that!");
+            return;
+        }
+
+        PriceFormat priceFormat = findPriceFormat(priceFormatName);
+        if (priceFormat == null) {
+            this.plugin.getLogger().severe("Economy '" + name + "' is active but doesn’t have a valid price format, please correct that!");
+            return;
+        }
+
         var type = accessor.getString("type", "VAULT");
         if (type == null) {
             this.plugin.getLogger().severe("Economy '" + name + "' is active but doesn’t have a type, please correct that!");
@@ -179,7 +332,7 @@ public class ZEconomyManager implements EconomyManager {
             return;
         }
 
-        var auctionEconomy = new ZAuctionEconomy(this.plugin, currencyProvider, name, displayName, format, symbol, permission, depositReason, withdrawReason);
+        var auctionEconomy = new ZAuctionEconomy(this.plugin, currencyProvider, name, displayName, format, symbol, permission, depositReason, withdrawReason, priceFormat);
         this.economies.add(auctionEconomy);
         this.plugin.getLogger().info("Economy '" + name + "' loaded successfully!");
     }
@@ -193,6 +346,20 @@ public class ZEconomyManager implements EconomyManager {
     private Currencies findCurrencies(String currencyName) {
         try {
             return Currencies.valueOf(currencyName.toUpperCase());
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
+    /**
+     * Attempts to find a {@link PriceFormat} enum value based on the given price format name.
+     *
+     * @param priceFormatName the name of the price format
+     * @return the corresponding {@link PriceFormat} enum value, or null if no match is found
+     */
+    private PriceFormat findPriceFormat(String priceFormatName) {
+        try {
+            return PriceFormat.valueOf(priceFormatName.toUpperCase());
         } catch (Exception exception) {
             return null;
         }

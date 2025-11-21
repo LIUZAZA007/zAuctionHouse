@@ -2,6 +2,7 @@ package fr.maxlego08.zauctionhouse.economy;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
+import fr.maxlego08.zauctionhouse.api.economy.PriceFormat;
 import fr.traqueur.currencies.CurrencyProvider;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +20,9 @@ public class ZAuctionEconomy implements AuctionEconomy {
     private final String permission;
     private final String depositReason;
     private final String withdrawReason;
+    private final PriceFormat priceFormat;
 
-    public ZAuctionEconomy(AuctionPlugin plugin, CurrencyProvider currencyProvider, String name, String displayName, String format, String symbol, String permission, String depositReason, String withdrawReason) {
+    public ZAuctionEconomy(AuctionPlugin plugin, CurrencyProvider currencyProvider, String name, String displayName, String format, String symbol, String permission, String depositReason, String withdrawReason, PriceFormat priceFormat) {
         this.plugin = plugin;
         this.currencyProvider = currencyProvider;
         this.name = name;
@@ -30,6 +32,7 @@ public class ZAuctionEconomy implements AuctionEconomy {
         this.permission = permission;
         this.depositReason = depositReason;
         this.withdrawReason = withdrawReason;
+        this.priceFormat = priceFormat;
     }
 
     public AuctionPlugin getPlugin() {
@@ -84,6 +87,11 @@ public class ZAuctionEconomy implements AuctionEconomy {
     @Nullable
     public String getPermission() {
         return this.permission;
+    }
+
+    @Override
+    public PriceFormat getPriceFormat() {
+        return this.priceFormat;
     }
 
     @Override

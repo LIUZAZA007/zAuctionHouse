@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.api.configuration;
+package fr.maxlego08.zauctionhouse.api.configuration.records;
 
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;

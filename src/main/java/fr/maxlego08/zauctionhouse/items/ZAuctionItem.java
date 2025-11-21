@@ -1,5 +1,7 @@
 package fr.maxlego08.zauctionhouse.items;
 
+import fr.maxlego08.menu.api.utils.LoreType;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.AuctionItem;
@@ -26,6 +28,24 @@ public class ZAuctionItem extends ZItem implements AuctionItem {
 
     @Override
     public ItemStack buildItemStack(Player player) {
-        return this.itemStack.clone();
+
+        var config = this.plugin.getConfiguration().getItemLore();
+        var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
+
+        var itemStack = this.itemStack.clone();
+        var itemMeta = itemStack.getItemMeta();
+
+        Placeholders placeholders = createPlaceholders(player);
+
+        meta.updateLore(itemMeta, config.auctionItemLore().stream().map(placeholders::parse).toList(), LoreType.APPEND);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+
+    }
+
+    @Override
+    public String createStatus(Player player) {
+        var config = this.plugin.getConfiguration().getItemLore();
+        return this.sellerUniqueId.equals(player.getUniqueId()) ? config.sellerStatus() : config.buyerStatus();
     }
 }

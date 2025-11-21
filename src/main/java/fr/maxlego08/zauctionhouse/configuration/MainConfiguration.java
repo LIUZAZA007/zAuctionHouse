@@ -3,10 +3,12 @@ package fr.maxlego08.zauctionhouse.configuration;
 import fr.maxlego08.menu.api.utils.TypedMapAccessor;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
-import fr.maxlego08.zauctionhouse.api.configuration.ExpirationConfiguration;
-import fr.maxlego08.zauctionhouse.api.configuration.NumberMultiplicationConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandArgumentConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.TimeConfiguration;
 import fr.maxlego08.zauctionhouse.api.messages.MessageColor;
 import fr.maxlego08.zauctionhouse.utils.YamlLoader;
 
@@ -26,6 +28,8 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     private ExpirationConfiguration bidExpiration;
     private ExpirationConfiguration purchaseExpiration;
     private ExpirationConfiguration expireExpiration;
+    private ItemLoreConfiguration itemLoreConfiguration;
+    private TimeConfiguration timeConfiguration;
 
     public MainConfiguration(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -42,6 +46,8 @@ public class MainConfiguration extends YamlLoader implements Configuration {
         this.bidExpiration = ExpirationConfiguration.of(plugin, config, "expiration.bid.");
         this.purchaseExpiration = ExpirationConfiguration.of(plugin, config, "expiration.purchase.");
         this.expireExpiration = ExpirationConfiguration.of(plugin, config, "expiration.expire.");
+        this.itemLoreConfiguration = ItemLoreConfiguration.of(plugin, config);
+        this.timeConfiguration = TimeConfiguration.of(plugin, config);
     }
 
     @Override
@@ -82,6 +88,16 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     @Override
     public ExpirationConfiguration getExpireExpiration() {
         return this.expireExpiration;
+    }
+
+    @Override
+    public ItemLoreConfiguration getItemLore() {
+        return this.itemLoreConfiguration;
+    }
+
+    @Override
+    public TimeConfiguration getTime() {
+        return this.timeConfiguration;
     }
 
     @Override

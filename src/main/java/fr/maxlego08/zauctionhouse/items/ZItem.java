@@ -1,10 +1,12 @@
 package fr.maxlego08.zauctionhouse.items;
 
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -68,7 +70,36 @@ public abstract class ZItem implements Item {
     }
 
     @Override
+    public Placeholders createPlaceholders(Player player) {
+        Placeholders placeholders = new Placeholders();
+        placeholders.register("economy-name", this.auctionEconomy.getName());
+        placeholders.register("economy-display-name", this.auctionEconomy.getDisplayName());
+        placeholders.register("seller", this.getSellerName());
+        placeholders.register("status", this.createStatus(player));
+        placeholders.register("price", getFormattedPrice());
+        placeholders.register("time-remaining", this.getRemainingTime());
+        placeholders.register("formatted-expire-date", this.getFormattedExpireDate());
+        return placeholders;
+    }
+
+    @Override
     public OfflinePlayer getSeller() {
         return Bukkit.getOfflinePlayer(this.sellerUniqueId);
+    }
+
+    @Override
+    public String getFormattedExpireDate() {
+        return "";
+    }
+
+    @Override
+    public String getFormattedPrice() {
+        return this.plugin.getEconomyManager().format(this.auctionEconomy, this.price);
+    }
+
+    @Override
+    public String getRemainingTime() {
+        var remainingMilliSeconds = this.expiredAt.getTime() - System.currentTimeMillis();
+        return this.plugin.getConfiguration().getTime().getStringTime(remainingMilliSeconds * 1000);
     }
 }

@@ -8,8 +8,27 @@ economies:
     # permission: "zauctionhouse.economy.vault"
     withdraw-reason: "Purchase of x%amount% %item% (zAuctionHouse)"
     deposit-reason: "Sale of x%amount% %item% (zAuctionHouse)"
+    price-format: PRICE_WITH_DECIMAL_FORMAT
 
 default-economy:
   sell: vault
   rent: vault
   bid: vault
+
+price-decimal-format: '#,###.#'
+
+price-reductions:
+  - format: "#.#"
+    max-amount: 1000
+  - format: "%.1fK"
+    max-amount: 1000000
+  - format: "%.1fM"
+    max-amount: 1000000000
+  - format: "%.1fB"
+    max-amount: 1000000000000
+  - format: "%.2fT"
+    max-amount: 1000000000000000
+    display: "<green>%amount%"
+  - format: "%.2fQ"
+    max-amount: 100000000000000000
+    display: "<red>%amount%"

@@ -1,6 +1,10 @@
 package fr.maxlego08.zauctionhouse.api.configuration;
 
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.TimeConfiguration;
 import fr.maxlego08.zauctionhouse.api.messages.MessageColor;
 
 import java.util.List;
@@ -35,6 +39,10 @@ public interface Configuration extends ConfigurationFile {
     ExpirationConfiguration getPurchaseExpiration();
 
     ExpirationConfiguration getExpireExpiration();
+
+    ItemLoreConfiguration getItemLore();
+
+    TimeConfiguration getTime();
 
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
 }

@@ -174,3 +174,50 @@ expiration:
     default-expiration: 604800
     permission:
       enable: false
+
+item-lore:
+  auction-item:
+    - ""
+    - "<white>⌂ <#e6fff3>sᴇʟʟᴇʀ<#8c8c8c>: <#92bed8>%seller%"
+    - "<white>☆ <#e6fff3>ᴘʀɪᴄᴇ<#8c8c8c>: <#ffacd5>%price%"
+    - "<white>⌚ <#e6fff3>ᴇxᴘɪʀᴇ<#8c8c8c>: <#969696>%time%"
+    - ""
+    - "<white>» <#cfcfcf>ʀɪɢʜᴛ ᴄʟɪᴄᴋ ᴛᴏ ʙᴜʏ"
+    - "<white>» <#cfcfcf>ʟᴇғᴛ ᴄʟɪᴄᴋ ᴛᴏ sᴇᴇ ᴛʜᴇ ᴄᴏɴᴛᴇɴᴛ"
+    - ""
+    - "%status%"
+  status:
+    seller: "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
+    buyer: "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"
+
+time:
+  # ---- Unités (singulier / pluriel) ----
+  second: "second"
+  seconds: "seconds"
+
+  minute: "minute"
+  minutes: "minutes"
+
+  hour: "hour"
+  hours: "hours"
+
+  day: "day"
+  days: "days"
+
+  # ---- Formats de temps ----
+  # %02d = valeur numérique (jours / heures / minutes / secondes)
+  # %second%, %minute%, %hour%, %day% = unité adaptée en fonction du quantificateur
+  # Exemple : "1 day", "2 days", "01ᴅ 02ʜ 30ᴍ", etc.
+
+  # Format utilisé pour les durées >= 1 jour
+  time-day: "%02dᴅ %02dʜ %02dᴍ"
+
+  # Format utilisé pour les durées >= 1 heure, mais < 1 jour
+  time-hour: "%02dʜ %02dᴍ %02ds"
+
+  # Format utilisé pour les durées >= 1 minute, mais < 1 heure
+  time-minute: "%02dᴍ %02ds"
+
+  # Format utilisé pour les durées < 1 minute
+  time-second: "%02ds"
+
