@@ -3,8 +3,6 @@ package fr.maxlego08.zauctionhouse.api.configuration.records;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.concurrent.TimeUnit;
-
 public record TimeConfiguration(
         String second,
         String seconds,
@@ -109,17 +107,17 @@ public record TimeConfiguration(
     }
 
     /**
-     * @param seconds temps en secondes
+     * @param milliSeconds temps en secondes
      */
-    public String getStringTime(long seconds) {
-        if (seconds < 60) {
-            return getFormatLongSecondes(TimeUnit.SECONDS.toMillis(seconds));
-        } else if (seconds < 3600) {
-            return getFormatLongMinutes(TimeUnit.SECONDS.toMillis(seconds));
-        } else if (seconds < 86400) {
-            return getFormatLongHours(TimeUnit.SECONDS.toMillis(seconds));
+    public String getStringTime(long milliSeconds) {
+        if (milliSeconds < 60 * 1000L) {
+            return getFormatLongSecondes(milliSeconds);
+        } else if (milliSeconds < 3600 * 1000L) {
+            return getFormatLongMinutes(milliSeconds);
+        } else if (milliSeconds < 86400 * 1000L) {
+            return getFormatLongHours(milliSeconds);
         } else {
-            return getFormatLongDays(TimeUnit.SECONDS.toMillis(seconds));
+            return getFormatLongDays(milliSeconds);
         }
     }
 

@@ -182,9 +182,6 @@ item-lore:
     - "<white>☆ <#e6fff3>ᴘʀɪᴄᴇ<#8c8c8c>: <#ffacd5>%price%"
     - "<white>⌚ <#e6fff3>ᴇxᴘɪʀᴇ<#8c8c8c>: <#969696>%time%"
     - ""
-    - "<white>» <#cfcfcf>ʀɪɢʜᴛ ᴄʟɪᴄᴋ ᴛᴏ ʙᴜʏ"
-    - "<white>» <#cfcfcf>ʟᴇғᴛ ᴄʟɪᴄᴋ ᴛᴏ sᴇᴇ ᴛʜᴇ ᴄᴏɴᴛᴇɴᴛ"
-    - ""
     - "%status%"
   status:
     seller: "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
@@ -220,4 +217,17 @@ time:
 
   # Format utilisé pour les durées < 1 minute
   time-second: "%02ds"
+
+action:
+
+  purchase:
+    # On donne l'item après l'avoir acheté
+    give-item: false
+
+  remove-from-listing:
+    # On donne l'item après avoir retiré l'item de la vente
+    give-item: false
+
+    # On ouvre l'inventaire après l'avoir retiré
+    open-inventory: true
 

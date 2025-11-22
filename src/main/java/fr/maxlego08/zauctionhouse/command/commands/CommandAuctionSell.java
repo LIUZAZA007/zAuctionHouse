@@ -62,7 +62,7 @@ public class CommandAuctionSell extends VCommandArgument<CommandSellArguments> {
         if (price == null) return CommandType.SYNTAX_ERROR;
 
         long expiration = configuration.getSellExpiration().getExpiration(player);
-        long expiredAt = expiration > 0 ? System.currentTimeMillis() + expiration : -1;
+        long expiredAt = expiration > 0 ? System.currentTimeMillis() + (expiration * 1000) : 0;
 
         var event = new AuctionPreSellEvent(this.player, amount, expiredAt, itemStack, auctionEconomy, price);
         if (!event.callEvent()) return CommandType.DEFAULT;
@@ -72,7 +72,7 @@ public class CommandAuctionSell extends VCommandArgument<CommandSellArguments> {
         expiredAt = event.getExpiredAt();
         auctionEconomy = event.getAuctionEconomy();
         itemStack = event.getItemStack();
-        
+
         auctionManager.getSellService().sellAuctionItem(player, price, amount, expiredAt, itemStack, auctionEconomy);
 
         return CommandType.SUCCESS;

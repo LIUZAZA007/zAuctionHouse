@@ -16,7 +16,7 @@ public class LocalAuctionClusterBridge implements AuctionClusterBridge {
 
     @Override
     public CompletableFuture<LockToken> lockItem(Item item, UUID buyerId) {
-        return CompletableFuture.completedFuture(LockToken.noop());
+        return CompletableFuture.completedFuture(LockToken.of(item));
     }
 
     @Override
@@ -31,6 +31,11 @@ public class LocalAuctionClusterBridge implements AuctionClusterBridge {
 
     @Override
     public CompletableFuture<Void> notifyItemSold(Item item) {
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    public CompletableFuture<Void> removeItem(Item item) {
         return CompletableFuture.completedFuture(null);
     }
 }

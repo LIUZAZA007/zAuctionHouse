@@ -25,9 +25,14 @@ public enum Message {
     COMMAND_DESCRIPTION_AUCTION_SELL("Add an item to the sale"),
     COMMAND_DESCRIPTION_AUCTION_RENT("Add an item for rent"),
     COMMAND_DESCRIPTION_AUCTION_BID("Add an item to the auction"),
+    COMMAND_DESCRIPTION_AUCTION_RELOAD("Reload configurations files"),
 
     SELL_ERROR_AIR("<error>Are you stupid ? You can’t sell air !"),
-    SELL_ERROR_ECONOMY("<error>Unable to find the economy <white>%name%<error>.");
+    SELL_ERROR_ECONOMY("<error>Unable to find the economy <white>%name%<error>."),
+
+    RELOAD_SUCCESS("<success>You just reloaded the plugin !"),
+
+    ITEM_REMOVE_SUCCESS("#e6fff3You just removed #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3from the sales.");
 
     private AuctionPlugin plugin;
     private List<AuctionMessage> messages = new ArrayList<>();

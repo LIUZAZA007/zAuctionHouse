@@ -4,6 +4,7 @@ import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.AuctionItem;
+import fr.maxlego08.zauctionhouse.api.items.Item;
 import fr.maxlego08.zauctionhouse.api.items.StorageType;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.Tables;
@@ -31,12 +32,22 @@ public class AuctionItemRepository extends Repository {
             schema.string("economy_name", auctionEconomy.getName());
             schema.decimal("price", price);
             schema.object("expired_at", expiredAtDate);
-            schema.object("storage_type", StorageType.STORAGE);
+            schema.object("storage_type", StorageType.LISTING);
         });
         return new ZAuctionItem(this.plugin, auctionId, seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), expiredAtDate, clonedItemStack);
     }
 
     public List<AuctionItemDTO> select() {
-        return selectAll(AuctionItemDTO.class);
+        return select(AuctionItemDTO.class, schema -> schema.where("storage_type", "!=", StorageType.DELETED.name()));
+    }
+
+    public void updateItem(Item item, StorageType storageType) {
+        this.update(schema -> {
+            schema.where("id", item.getId());
+            schema.string("storage_type", storageType.name());
+            if (storageType != StorageType.DELETED) {
+                schema.object("expired_at", item.getExpiredAt());
+            }
+        });
     }
 }

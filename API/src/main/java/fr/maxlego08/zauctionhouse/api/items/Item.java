@@ -26,6 +26,8 @@ public interface Item {
 
     Date getExpiredAt();
 
+    void setExpiredAt(Date expiredAt);
+
     Date getCreatedAt();
 
     ItemStack buildItemStack(Player player);
@@ -39,4 +41,16 @@ public interface Item {
     String getFormattedExpireDate();
 
     String getRemainingTime();
+
+    boolean isExpired();
+
+    ItemStatus getStatus();
+
+    void setStatus(ItemStatus status);
+
+    boolean canReceiveItem(Player player);
+
+    int getAmount();
+
+    String getTranslationKey();
 }

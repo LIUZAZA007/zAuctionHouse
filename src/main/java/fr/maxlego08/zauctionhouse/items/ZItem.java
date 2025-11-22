@@ -4,6 +4,7 @@ import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.Item;
+import fr.maxlego08.zauctionhouse.api.items.ItemStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -21,7 +22,8 @@ public abstract class ZItem implements Item {
     protected final BigDecimal price;
     protected final AuctionEconomy auctionEconomy;
     protected final Date createdAt;
-    protected final Date expiredAt;
+    protected Date expiredAt;
+    protected ItemStatus itemStatus = ItemStatus.AVAILABLE;
 
     public ZItem(AuctionPlugin plugin, int id, UUID sellerUniqueId, String sellerName, BigDecimal price, AuctionEconomy auctionEconomy, Date createdAt, Date expiredAt) {
         this.plugin = plugin;
@@ -36,37 +38,42 @@ public abstract class ZItem implements Item {
 
     @Override
     public int getId() {
-        return id;
+        return this.id;
     }
 
     @Override
     public UUID getSellerUniqueId() {
-        return sellerUniqueId;
+        return this.sellerUniqueId;
     }
 
     @Override
     public String getSellerName() {
-        return sellerName;
+        return this.sellerName;
     }
 
     @Override
     public BigDecimal getPrice() {
-        return price;
+        return this.price;
     }
 
     @Override
     public AuctionEconomy getAuctionEconomy() {
-        return auctionEconomy;
+        return this.auctionEconomy;
     }
 
     @Override
     public Date getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     @Override
     public Date getExpiredAt() {
-        return expiredAt;
+        return this.expiredAt;
+    }
+
+    @Override
+    public void setExpiredAt(Date expiredAt) {
+        this.expiredAt = expiredAt;
     }
 
     @Override
@@ -100,6 +107,26 @@ public abstract class ZItem implements Item {
     @Override
     public String getRemainingTime() {
         var remainingMilliSeconds = this.expiredAt.getTime() - System.currentTimeMillis();
-        return this.plugin.getConfiguration().getTime().getStringTime(remainingMilliSeconds * 1000);
+        return this.plugin.getConfiguration().getTime().getStringTime(remainingMilliSeconds);
+    }
+
+    @Override
+    public boolean isExpired() {
+        return System.currentTimeMillis() >= this.expiredAt.getTime() && this.expiredAt.getTime() != 0;
+    }
+
+    @Override
+    public boolean canReceiveItem(Player player) {
+        return player.getInventory().firstEmpty() != -1;
+    }
+
+    @Override
+    public ItemStatus getStatus() {
+        return this.itemStatus;
+    }
+
+    @Override
+    public void setStatus(ItemStatus status) {
+        this.itemStatus = status;
     }
 }

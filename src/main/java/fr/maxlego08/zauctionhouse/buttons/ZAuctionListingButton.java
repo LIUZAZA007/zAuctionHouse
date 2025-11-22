@@ -3,7 +3,9 @@ package fr.maxlego08.zauctionhouse.buttons;
 import fr.maxlego08.menu.api.button.PaginateButton;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.utils.Permission;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.plugin.Plugin;
 
 public class ZAuctionListingButton extends PaginateButton {
@@ -23,6 +25,22 @@ public class ZAuctionListingButton extends PaginateButton {
         paginate(items, inventoryEngine, (slot, item) -> {
             inventoryEngine.addItem(slot, item.buildItemStack(player)).setClick(event -> {
 
+                if ((event.getClick() == ClickType.DROP || event.getClick() == ClickType.MIDDLE) && player.hasPermission(Permission.ZAUCTIONHOUSE_ADMIN_REMOVE_INVENTORY.asPermission())) {
+
+                    // ToDo
+
+                    return;
+                }
+
+                if (item.getSellerUniqueId().equals(player.getUniqueId())) {
+
+                    // Remove item
+                    manager.getRemoveService().removeItemFromListing(player, item);
+                } else {
+
+                    // Purchase items
+                    manager.getPurchaseService().purchaseItem(player, item);
+                }
             });
         });
 

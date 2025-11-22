@@ -5,6 +5,7 @@ import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandArgumentConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.ActionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
@@ -21,7 +22,9 @@ public class MainConfiguration extends YamlLoader implements Configuration {
 
     private final AuctionPlugin plugin;
     private final List<MessageColor> messageColors = new ArrayList<>();
+
     private boolean enableDebug;
+
     private NumberMultiplicationConfiguration numberMultiplicationConfiguration;
     private ExpirationConfiguration sellExpiration;
     private ExpirationConfiguration rentExpiration;
@@ -30,6 +33,7 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     private ExpirationConfiguration expireExpiration;
     private ItemLoreConfiguration itemLoreConfiguration;
     private TimeConfiguration timeConfiguration;
+    private ActionConfiguration actionConfiguration;
 
     public MainConfiguration(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -48,6 +52,7 @@ public class MainConfiguration extends YamlLoader implements Configuration {
         this.expireExpiration = ExpirationConfiguration.of(plugin, config, "expiration.expire.");
         this.itemLoreConfiguration = ItemLoreConfiguration.of(plugin, config);
         this.timeConfiguration = TimeConfiguration.of(plugin, config);
+        this.actionConfiguration = ActionConfiguration.of(plugin, config);
     }
 
     @Override
@@ -98,6 +103,11 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     @Override
     public TimeConfiguration getTime() {
         return this.timeConfiguration;
+    }
+
+    @Override
+    public ActionConfiguration getActions() {
+        return this.actionConfiguration;
     }
 
     @Override

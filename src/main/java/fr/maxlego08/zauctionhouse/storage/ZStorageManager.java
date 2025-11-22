@@ -10,6 +10,8 @@ import fr.maxlego08.sarah.logger.JULogger;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.items.AuctionItem;
+import fr.maxlego08.zauctionhouse.api.items.Item;
+import fr.maxlego08.zauctionhouse.api.items.StorageType;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
 import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
@@ -119,7 +121,13 @@ public class ZStorageManager implements StorageManager {
 
     @Override
     public CompletableFuture<AuctionItem> createAuctionItem(Player seller, BigDecimal price, long expiredAt, ItemStack clonedItemStack, AuctionEconomy auctionEconomy) {
-        System.out.println("a");
         return CompletableFuture.supplyAsync(() -> with(AuctionItemRepository.class).create(seller, price, expiredAt, clonedItemStack, auctionEconomy), this.plugin.getExecutorService());
+    }
+
+    @Override
+    public void updateItem(Item item, StorageType storageType) {
+        if (item instanceof AuctionItem){
+            async(() -> with(AuctionItemRepository.class).updateItem(item, storageType));
+        } else this.plugin.getLogger().severe("Not implemented (updateItem)");
     }
 }

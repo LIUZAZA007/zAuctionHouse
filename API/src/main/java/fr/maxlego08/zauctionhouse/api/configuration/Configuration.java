@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.api.configuration;
 
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.ActionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
@@ -43,6 +44,8 @@ public interface Configuration extends ConfigurationFile {
     ItemLoreConfiguration getItemLore();
 
     TimeConfiguration getTime();
+
+    ActionConfiguration getActions();
 
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
 }

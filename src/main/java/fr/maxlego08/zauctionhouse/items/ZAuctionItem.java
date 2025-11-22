@@ -48,4 +48,14 @@ public class ZAuctionItem extends ZItem implements AuctionItem {
         var config = this.plugin.getConfiguration().getItemLore();
         return this.sellerUniqueId.equals(player.getUniqueId()) ? config.sellerStatus() : config.buyerStatus();
     }
+
+    @Override
+    public int getAmount() {
+        return this.itemStack.getAmount();
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return this.itemStack.getType().translationKey();
+    }
 }

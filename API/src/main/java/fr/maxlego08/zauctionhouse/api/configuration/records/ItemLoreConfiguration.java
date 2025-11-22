@@ -13,8 +13,8 @@ public record ItemLoreConfiguration(
     public static ItemLoreConfiguration of(AuctionPlugin plugin, FileConfiguration config) {
         return new ItemLoreConfiguration(
                 config.getStringList("item-lore.auction-item"),
-                config.getString("item-lore.seller-status"),
-                config.getString("item-lore.buyer-status")
+                config.getString("item-lore.seller.status", "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"),
+                config.getString("item-lore.buyer.status", "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ")
         );
     }
 }

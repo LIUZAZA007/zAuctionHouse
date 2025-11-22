@@ -31,4 +31,5 @@ public interface AuctionManager {
 
     List<Item> getSortItems(Player player);
 
+    void removeItemFromListing(Player player, Item item);
 }

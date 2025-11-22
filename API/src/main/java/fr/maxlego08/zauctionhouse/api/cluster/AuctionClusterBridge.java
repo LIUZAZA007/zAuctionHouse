@@ -17,4 +17,5 @@ public interface AuctionClusterBridge {
 
     CompletableFuture<Void> notifyItemSold(Item item);
 
+    CompletableFuture<Void> removeItem(Item item);
 }

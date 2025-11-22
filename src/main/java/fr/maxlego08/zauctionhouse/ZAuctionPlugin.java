@@ -91,6 +91,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
     @Override
     public void reload() {
+        this.reloadConfig();
         this.loadFiles();
         this.inventoriesLoader.reload();
     }
