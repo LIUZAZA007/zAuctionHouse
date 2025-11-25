@@ -13,12 +13,14 @@ import fr.maxlego08.zauctionhouse.api.hooks.permission.OfflinePermission;
 import fr.maxlego08.zauctionhouse.api.placeholders.Placeholder;
 import fr.maxlego08.zauctionhouse.api.placeholders.PlaceholderRegister;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
+import fr.maxlego08.zauctionhouse.api.utils.Plugins;
 import fr.maxlego08.zauctionhouse.cluster.LocalAuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.command.CommandManager;
 import fr.maxlego08.zauctionhouse.command.commands.CommandAuction;
 import fr.maxlego08.zauctionhouse.configuration.MainConfiguration;
 import fr.maxlego08.zauctionhouse.economy.ZEconomyManager;
 import fr.maxlego08.zauctionhouse.hooks.permissions.EmptyOfflinePermission;
+import fr.maxlego08.zauctionhouse.hooks.permissions.LuckPermsOfflinePermission;
 import fr.maxlego08.zauctionhouse.listeners.PlayerListener;
 import fr.maxlego08.zauctionhouse.loader.MessageLoader;
 import fr.maxlego08.zauctionhouse.loader.ZInventoriesLoader;
@@ -27,9 +29,11 @@ import fr.maxlego08.zauctionhouse.placeholder.LocalPlaceholder;
 import fr.maxlego08.zauctionhouse.placeholder.placeholders.GlobalPlaceholders;
 import fr.maxlego08.zauctionhouse.placeholder.placeholders.PlayerPlaceholders;
 import fr.maxlego08.zauctionhouse.storage.ZStorageManager;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -88,6 +92,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         this.storageManager.loadItems();
 
         this.registerPlaceholders();
+        this.registerHooks();
 
         isEnabled = true;
         this.getLogger().info("zAuctionHouse has just been loaded successfully!");
@@ -120,6 +125,14 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
         this.registerPlaceholder(PlayerPlaceholders.class);
         this.registerPlaceholder(GlobalPlaceholders.class);
+    }
+
+    private void registerHooks() {
+
+        if (isEnable(Plugins.LUCKPERMS)) {
+            this.offlinePermission = new LuckPermsOfflinePermission();
+            this.getLogger().info("LuckPerms has been enabled successfully!");
+        }
     }
 
     @Override
@@ -309,5 +322,19 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
             exception.printStackTrace();
         }
         return null;
+    }
+
+    public boolean isEnable(Plugins pluginName) {
+        Plugin plugin = getPlugin(pluginName);
+        return plugin != null && plugin.isEnabled();
+    }
+
+    public boolean isActive(Plugins pluginName) {
+        Plugin plugin = getPlugin(pluginName);
+        return plugin != null;
+    }
+
+    protected Plugin getPlugin(Plugins plugin) {
+        return Bukkit.getPluginManager().getPlugin(plugin.getName());
     }
 }

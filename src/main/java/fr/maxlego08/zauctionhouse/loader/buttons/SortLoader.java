@@ -37,7 +37,7 @@ public class SortLoader extends ButtonLoader {
             }
         }
 
-        var menuItemStack = this.inventoryManager.loadItemStack(configuration, path + "loading-item", defaultButtonValue.getFile());
+        var menuItemStack = this.inventoryManager.loadItemStack(configuration, path + "loading-item.", defaultButtonValue.getFile());
 
         return new SortButton(this.plugin, enableText, disableText, menuItemStack, sorts);
     }
