@@ -3,6 +3,7 @@ package fr.maxlego08.zauctionhouse.api;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.StorageType;
+import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionExpireService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
@@ -59,4 +60,6 @@ public interface AuctionManager {
     void removeListedItem(Player player, Item item);
 
     void removeExpiredItem(Player player, Item item);
+
+    void message(Player player, Message message, Object... args);
 }

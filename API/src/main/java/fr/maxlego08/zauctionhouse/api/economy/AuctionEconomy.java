@@ -4,6 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 public interface AuctionEconomy {
 
@@ -47,21 +48,21 @@ public interface AuctionEconomy {
     }
 
     /**
-     * Retrieves the amount of money associated with the specified player's economy account.
+     * Retrieves the current balance of the specified player asynchronously.
      *
-     * @param offlinePlayer The player to retrieve the money for.
-     * @return The amount of money associated with the player's economy account.
+     * @param offlinePlayer The player to retrieve the balance for.
+     * @return A CompletableFuture containing the player's current balance.
      */
-    BigDecimal get(OfflinePlayer offlinePlayer);
+    CompletableFuture<BigDecimal> get(OfflinePlayer offlinePlayer);
 
     /**
-     * Checks if the specified player has at least the specified amount of money.
+     * Retrieves a boolean indicating whether the player has the specified amount of money asynchronously.
      *
-     * @param offlinePlayer The player to check.
+     * @param offlinePlayer The player to check the balance for.
      * @param price         The amount of money to check for.
-     * @return True if the player has at least the specified amount of money, false otherwise.
+     * @return A CompletableFuture containing a boolean indicating whether the player has the specified amount of money.
      */
-    boolean has(OfflinePlayer offlinePlayer, BigDecimal price);
+    CompletableFuture<Boolean> has(OfflinePlayer offlinePlayer, BigDecimal price);
 
     /**
      * Deposits the specified amount of money into the player's economy account.

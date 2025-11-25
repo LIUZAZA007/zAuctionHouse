@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.services;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import org.bukkit.entity.Player;
@@ -17,5 +18,10 @@ public class PurchaseService implements AuctionPurchaseService {
     public void purchaseItem(Player player, Item item) {
         // ToDo
         this.plugin.getLogger().severe("ToDo");
+
+        var manager = this.plugin.getAuctionManager();
+        var cache = manager.getCache(player);
+
+        cache.remove(PlayerCacheKey.PURCHASE_ITEM);
     }
 }

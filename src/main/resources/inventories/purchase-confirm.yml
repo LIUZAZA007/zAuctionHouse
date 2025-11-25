@@ -1,0 +1,45 @@
+name: "#0c1719Do you really want to do that?"
+size: 27
+items:
+
+  remove:
+    type: ZAUCTIONHOUSE_CONFIRM_PURCHASE
+    item:
+      material: GREEN_STAINED_GLASS_PANE
+      name: "#2CCED2<bold>ᴘᴜʀᴄʜᴀsᴇ"
+      lore:
+        - "#92ffffPurchase this item."
+        - ""
+        - "#8c8c8c• #2CCED2Click #92ffffto purchase"
+    slots:
+      - 0-2
+      - 9-11
+      - 18-20
+
+  deny:
+    type: BACK
+    item:
+      material: RED_STAINED_GLASS_PANE
+      name: "#2CCED2<bold>ʙᴀᴄᴋ"
+      lore:
+        - "#92ffffGo back."
+        - ""
+        - "#8c8c8c• #2CCED2Click #92ffffto go back"
+    slots:
+      - 6-8
+      - 15-17
+      - 24-26
+
+  decoration:
+    item:
+      material: GRAY_STAINED_GLASS_PANE
+      name: "#2CCED2"
+    slots:
+      - 3-5
+      - 12
+      - 14
+      - 21-23
+
+  show:
+    type: ZAUCTIONHOUSE_SHOW
+    slot: 13

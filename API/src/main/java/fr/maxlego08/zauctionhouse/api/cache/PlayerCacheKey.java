@@ -17,7 +17,8 @@ public enum PlayerCacheKey {
     ITEM_SHOW(new TypeToken<Item>() {}, () -> null),
     CURRENT_PAGE(new TypeToken<Integer>() {}, () -> 1),
     ITEM_SORT(new TypeToken<SortItem>() {}, () -> SortItem.DECREASING_DATE),
-    ITEM_SORT_LOADING(new TypeToken<Boolean>() {}, () -> false);
+    ITEM_SORT_LOADING(new TypeToken<Boolean>() {}, () -> false),
+    PURCHASE_ITEM(new TypeToken<Boolean>() {}, () -> false);
 
     private final TypeToken<?> type;
     private final Supplier<?> fallback;

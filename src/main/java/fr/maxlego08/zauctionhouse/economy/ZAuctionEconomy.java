@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 public class ZAuctionEconomy implements AuctionEconomy {
 
@@ -59,13 +60,13 @@ public class ZAuctionEconomy implements AuctionEconomy {
     }
 
     @Override
-    public BigDecimal get(OfflinePlayer offlinePlayer) {
-        return this.currencyProvider.getBalance(offlinePlayer);
+    public CompletableFuture<BigDecimal> get(OfflinePlayer offlinePlayer) {
+        return CompletableFuture.completedFuture(this.currencyProvider.getBalance(offlinePlayer));
     }
 
     @Override
-    public boolean has(OfflinePlayer offlinePlayer, BigDecimal price) {
-        return get(offlinePlayer).compareTo(price) >= 0;
+    public CompletableFuture<Boolean> has(OfflinePlayer offlinePlayer, BigDecimal price) {
+        return get(offlinePlayer).thenApply(balance -> balance.compareTo(price) >= 0);
     }
 
     @Override

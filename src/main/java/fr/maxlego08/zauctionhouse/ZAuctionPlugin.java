@@ -80,13 +80,15 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
         if (!this.storageManager.onEnable()) return;
 
+        // On doit créer la class des inventaires avant de charger la configuration, cela permet d'utiliser les interfaces de zmenu partout
+        this.inventoriesLoader = new ZInventoriesLoader(this);
+
         this.loadFiles();
 
         this.addListener(new PlayerListener(this));
 
         this.commandManager.registerCommand(this, "zauctionhouse", new CommandAuction(this), getConfig().getStringList("commands.main-command.aliases"));
 
-        this.inventoriesLoader = new ZInventoriesLoader(this);
         this.inventoriesLoader.load();
 
         this.storageManager.loadItems();

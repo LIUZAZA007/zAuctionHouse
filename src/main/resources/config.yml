@@ -236,9 +236,6 @@ time: # ---- Unités (singulier / pluriel) ----
 
 action:
   
-  purchase: # On donne l'item après l'avoir acheté
-    give-item: false
-  
   remove-listed-item: # On donne l'item après avoir retiré l'item de la vente
     give-item: false
     
@@ -253,18 +250,34 @@ action:
     # On ouvre l'inventaire après l'avoir retiré
     open-inventory: true
   
-  remove-purchased-item:
-    
-    # On ouvre l'inventaire après l'avoir retiré
-    open-inventory: true
-  
-  remove-owned-item:
-    
-    # On ouvre l'inventaire après l'avoir retiré
+  purchased-item:
+
+    # On donne l'item après l'achat
+    give-item: false
+
+    # On ouvre l'inventaire après l'avoir retiré de l'inventaire des items acheté
     open-inventory: true
 
+    # On affiche un item d'erreur
+    money-item:
+      enable: true # Activé / désactivé
+      duration: 60 # Durée en ticks
+      item: # Item à afficher
+        material: BARRIER
+        name: "#ff3535✘ You don't have enough money to buy this!"
+
+    # Envoie un message si le joueur n'a pas assez d'argent
+    money-message: true
+
+  owned-item:
+
+    # On ouvre l'inventaire après l'avoir retiré de l'inventaire de mes items
+    open-inventory: true
+
+# Système de tri
 sort-items:
 
+  # Tri par défaut
   default-sort: DECREASING_DATE
 
   translations:

@@ -38,7 +38,7 @@ public enum Message {
     ITEM_REMOVE_OWNED("#e6fff3You just removed #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3from your items."),
 
 
-    ;
+    NOT_ENOUGH_MONEY("<error>You don’t have enough money to buy this.");
 
     private AuctionPlugin plugin;
     private List<AuctionMessage> messages = new ArrayList<>();

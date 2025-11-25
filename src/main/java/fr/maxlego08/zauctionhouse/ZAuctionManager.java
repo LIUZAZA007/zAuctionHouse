@@ -209,7 +209,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         clearPlayersCache(PlayerCacheKey.ITEMS_LISTED); // Suppression du cache global
         clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_EXPIRED); // Suppression du cache du joueur
 
-        if (configuration.getActions().giveItemAfterRemovingListedItem() && item.canReceiveItem(player)) {
+        if (configuration.getActions().listed().giveItem() && item.canReceiveItem(player)) {
 
             storageManager.updateItem(item, StorageType.DELETED);
             giveItem(player, item);
@@ -226,7 +226,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
         message(this.plugin, player, Message.ITEM_REMOVE_LISTED, "%amount%", item.getAmount(), "%item-translation-key%", item.getTranslationKey());
 
-        if (configuration.getActions().openInventoryAfterRemovingListedItem()) {
+        if (configuration.getActions().listed().openInventory()) {
             openMainAuction(player, getCache(player).get(PlayerCacheKey.CURRENT_PAGE, 1));
         } else {
             player.closeInventory();
@@ -252,7 +252,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
         message(this.plugin, player, Message.ITEM_REMOVE_EXPIRED, "%amount%", item.getAmount(), "%item-translation-key%", item.getTranslationKey());
 
-        if (configuration.getActions().openInventoryAfterRemovingExpiredItem()) {
+        if (configuration.getActions().expired().openInventory()) {
             this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
         } else {
             player.closeInventory();
@@ -262,6 +262,11 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         event.callEvent();
 
         // ToDo Logs
+    }
+
+    @Override
+    public void message(Player player, Message message, Object... args) {
+        this.message(this.plugin, player, message, args);
     }
 
     private void giveItem(Player player, Item item) {
