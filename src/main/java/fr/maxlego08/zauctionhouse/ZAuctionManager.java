@@ -265,6 +265,93 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     }
 
     @Override
+    public void purchaseItem(Player player, Item item) {
+        if (item instanceof AuctionItem auctionItem) {
+            purchaseAuctionItem(player, auctionItem);
+        }
+    }
+
+    private void purchaseAuctionItem(Player player, AuctionItem auctionItem) {
+
+        var auctionEconomy = auctionItem.getAuctionEconomy();
+        var price = auctionItem.getPrice();
+        var itemStack = auctionItem.getItemStack();
+        var seller = auctionItem.getSeller();
+        var storageManager = this.plugin.getStorageManager();
+        var configuration = this.plugin.getConfiguration();
+
+        // On retire l'argent
+        auctionEconomy.withdraw(player, price, args(auctionEconomy.getWithdrawReason(),
+                "%amount%", itemStack.getAmount(),
+                "%seller%", auctionItem.getSellerName(),
+                "%buyer%", player.getName(),
+                "%item%", itemStack.getType().name()
+        ));
+
+        // On donne l'argent
+        auctionEconomy.deposit(seller, price, args(auctionEconomy.getDepositReason(),
+                "%amount%", itemStack.getAmount(),
+                "%seller%", auctionItem.getSellerName(),
+                "%buyer%", player.getName(),
+                "%item%", itemStack.getType().name()
+        ));
+
+        if (seller.isOnline()) {
+            message(this.plugin, seller.getPlayer(), Message.ITEM_SOLD,
+                    "%amount%", itemStack.getAmount(),
+                    "%price%", auctionItem.getFormattedPrice(),
+                    "%item-translation-key%", auctionItem.getTranslationKey(),
+                    "%seller%", auctionItem.getSellerName(),
+                    "%buyer%", player.getName()
+            );
+        }
+
+        message(player, Message.ITEM_BOUGHT,
+                "%amount%", itemStack.getAmount(),
+                "%price%", auctionItem.getFormattedPrice(),
+                "%item-translation-key%", auctionItem.getTranslationKey(),
+                "%seller%", auctionItem.getSellerName(),
+                "%buyer%", player.getName()
+        );
+
+        auctionItem.setBuyer(player);
+        auctionItem.setStatus(ItemStatus.PURCHASED);
+
+        clearPlayersCache(PlayerCacheKey.ITEMS_LISTED);
+        clearPlayerCache(player, PlayerCacheKey.ITEMS_PURCHASED);
+        if (seller.isOnline()) {
+            clearPlayerCache(seller.getPlayer(), PlayerCacheKey.ITEMS_OWNED);
+        }
+
+        removeItem(StorageType.LISTED, auctionItem);
+
+        var purchasedConfiguration = configuration.getActions().purchased();
+
+        if (purchasedConfiguration.giveItem()) {
+
+            storageManager.updateItem(auctionItem, StorageType.DELETED);
+            giveItem(player, auctionItem);
+
+        } else {
+
+            var expiration = configuration.getPurchaseExpiration().getExpiration(player);
+            long expiredAt = expiration > 0 ? System.currentTimeMillis() + (expiration * 1000) : 0;
+            auctionItem.setExpiredAt(new Date(expiredAt));
+
+            addItem(StorageType.PURCHASED, auctionItem);
+            storageManager.updateItem(auctionItem, StorageType.PURCHASED);
+        }
+
+        if (purchasedConfiguration.openInventory()) {
+            openMainAuction(player, getCache(player).get(PlayerCacheKey.CURRENT_PAGE, 1));
+        } else {
+            player.closeInventory();
+        }
+
+        // ToDo Logs
+    }
+
+    @Override
     public void message(Player player, Message message, Object... args) {
         this.message(this.plugin, player, message, args);
     }

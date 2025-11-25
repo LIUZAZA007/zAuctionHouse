@@ -80,6 +80,10 @@ public abstract class MessageUtils extends PlaceholderUtils {
         return getString(String.join("\n", message.getMessageAsStringList()), args);
     }
 
+    protected String args(String message, Object... objects){
+        return getString(message, objects);
+    }
+
     protected String getCenteredMessage(String message) {
         if (message == null || message.equals("")) return "";
 

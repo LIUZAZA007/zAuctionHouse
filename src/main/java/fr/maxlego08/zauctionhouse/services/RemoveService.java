@@ -10,20 +10,12 @@ import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.CompletableFuture;
-
-public class RemoveService implements AuctionRemoveService {
+public class RemoveService extends AuctionService implements AuctionRemoveService {
 
     private final AuctionPlugin plugin;
 
     public RemoveService(AuctionPlugin plugin) {
         this.plugin = plugin;
-    }
-
-    private static <T> CompletableFuture<T> failedFuture(Throwable ex) {
-        CompletableFuture<T> future = new CompletableFuture<>();
-        future.completeExceptionally(ex);
-        return future;
     }
 
     @Override
@@ -41,13 +33,13 @@ public class RemoveService implements AuctionRemoveService {
         if (item.isExpired()) {
             logger.info("Item expired");
             auctionManager.getCache(player).remove(PlayerCacheKey.ITEMS_LISTED);
-            inventoryManager.updateInventory(player);
+            auctionManager.openMainAuction(player);
             return;
         }
 
         if (item.getStatus() != ItemStatus.AVAILABLE) {
             logger.info("Item not available");
-            inventoryManager.updateInventory(player);
+            auctionManager.openMainAuction(player);
             return;
         }
 

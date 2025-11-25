@@ -107,7 +107,11 @@ public class ListedItemsButton extends PaginateButton {
                 return;
             }
 
-            manager.getPurchaseService().purchaseItem(player, item);
+            cache.set(PlayerCacheKey.ITEM_SHOW, item);
+            cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
+            cache.set(PlayerCacheKey.PURCHASE_ITEM, false);
+
+            this.plugin.getInventoriesLoader().openInventory(player, Inventories.PURCHASE_CONFIRM);
         });
     }
 }

@@ -74,6 +74,10 @@ public class AuctionLoader {
                 case DELETED -> ItemStatus.DELETED;
             });
 
+            if (buyerName != null){
+                auctionItem.setBuyer(dto.buyer_unique_id(), buyerName);
+            }
+
             auctionManager.addItem(dto.storage_type(), auctionItem);
             amount++;
         }

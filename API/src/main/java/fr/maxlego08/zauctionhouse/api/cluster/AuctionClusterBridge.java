@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.api.cluster;
 
 import fr.maxlego08.zauctionhouse.api.item.Item;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -18,4 +19,6 @@ public interface AuctionClusterBridge {
     CompletableFuture<Void> notifyItemSold(Item item);
 
     CompletableFuture<Void> removeItem(Item item);
+
+    CompletableFuture<Void> purchaseItem(Player player, Item item);
 }

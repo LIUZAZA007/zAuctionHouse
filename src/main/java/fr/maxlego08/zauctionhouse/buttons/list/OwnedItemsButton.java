@@ -22,7 +22,9 @@ public class OwnedItemsButton extends PaginateButton {
 
 
         paginate(items, inventoryEngine, (slot, item) -> {
-            inventoryEngine.addItem(slot, item.buildItemStack(player)).setClick(event -> this.plugin.getAuctionManager().getRemoveService().removeListedItem(player, item));
+            inventoryEngine.addItem(slot, item.buildItemStack(player)).setClick(event -> {
+                // this.plugin.getAuctionManager().getRemoveService().removeListedItem(player, item);
+            });
         });
     }
 

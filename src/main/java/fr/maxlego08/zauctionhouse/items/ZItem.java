@@ -148,4 +148,10 @@ public abstract class ZItem implements Item {
         this.buyerUniqueId = player.getUniqueId();
         this.buyerName = player.getName();
     }
+
+    @Override
+    public void setBuyer(UUID buyerUniqueId, String buyerName) {
+        this.buyerUniqueId = buyerUniqueId;
+        this.buyerName = buyerName;
+    }
 }

@@ -61,5 +61,7 @@ public interface AuctionManager {
 
     void removeExpiredItem(Player player, Item item);
 
+    void purchaseItem(Player player, Item item);
+
     void message(Player player, Message message, Object... args);
 }
