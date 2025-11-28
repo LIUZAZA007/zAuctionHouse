@@ -1,8 +1,10 @@
 package fr.maxlego08.zauctionhouse.services;
 
+import fr.maxlego08.zauctionhouse.utils.ZUtils;
+
 import java.util.concurrent.CompletableFuture;
 
-public abstract class AuctionService {
+public abstract class AuctionService extends ZUtils {
 
     /**
      * Return a failed CompletableFuture with the given exception.

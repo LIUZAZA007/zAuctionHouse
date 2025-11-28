@@ -255,6 +255,9 @@ action:
     # On donne l'item après l'achat
     give-item: false
 
+    # Si l'option give item est active, alors cette option va vérifier le contenu de l'inventaire du joueur et vérifier s'il a assez de place pour recevoir le ou les objets.
+    player-inventory-must-have-free-space: true
+
     # On ouvre l'inventaire après l'avoir retiré de l'inventaire des items acheté
     open-inventory: true
 

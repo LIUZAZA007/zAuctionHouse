@@ -284,14 +284,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         auctionEconomy.withdraw(player, price, args(auctionEconomy.getWithdrawReason(),
                 "%amount%", itemStack.getAmount(),
                 "%seller%", auctionItem.getSellerName(),
-                "%buyer%", player.getName(),
                 "%item%", itemStack.getType().name()
         ));
 
         // On donne l'argent
         auctionEconomy.deposit(seller, price, args(auctionEconomy.getDepositReason(),
                 "%amount%", itemStack.getAmount(),
-                "%seller%", auctionItem.getSellerName(),
                 "%buyer%", player.getName(),
                 "%item%", itemStack.getType().name()
         ));
@@ -360,7 +358,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         if (item instanceof AuctionItem auctionItem) {
 
             var itemStack = auctionItem.getItemStack();
-            player.getInventory().addItem(itemStack);
+            player.getInventory().addItem(itemStack).forEach((slot, dropItemStack) -> player.getWorld().dropItem(player.getLocation(), dropItemStack));
 
         } else plugin.getLogger().severe("give item not implemented");
     }

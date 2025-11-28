@@ -6,6 +6,7 @@ import fr.maxlego08.zauctionhouse.api.cluster.LockToken;
 import fr.maxlego08.zauctionhouse.api.event.events.purchase.AuctionPrePurchaseItemEvent;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
+import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,12 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
         var clusterBridge = this.plugin.getAuctionClusterBridge();
         var logger = this.plugin.getLogger();
         var auctionEconomy = item.getAuctionEconomy();
+
+        var configuration = this.plugin.getConfiguration().getActions().purchased();
+        if (configuration.giveItem() && configuration.freeSpace() && !item.canReceiveItem(player)){
+            message(this.plugin, player, Message.NOT_ENOUGH_SPACE);
+            return;
+        }
 
         // 1. Vérifier si l'item est expiré
         if (item.isExpired()) {

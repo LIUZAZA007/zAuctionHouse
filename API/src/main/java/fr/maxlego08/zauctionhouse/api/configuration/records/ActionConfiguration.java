@@ -42,14 +42,16 @@ public record ActionConfiguration(
     public record PurchasedConfiguration(boolean giveItem,
                                          boolean openInventory,
                                          PurchaseNoMoneyConfiguration noMoney,
-                                         boolean sendNoMoneyMessage
-                                         ) {
+                                         boolean sendNoMoneyMessage,
+                                         boolean freeSpace
+    ) {
         public static PurchasedConfiguration of(AuctionPlugin plugin, FileConfiguration configuration) {
             return new PurchasedConfiguration(
                     configuration.getBoolean("action.purchased-item.give-item"),
                     configuration.getBoolean("action.purchased-item.open-inventory"),
                     PurchaseNoMoneyConfiguration.of(plugin, configuration),
-                    configuration.getBoolean("action.purchased-item.money-message")
+                    configuration.getBoolean("action.purchased-item.money-message"),
+                    configuration.getBoolean("action.purchased-item.player-inventory-must-have-free-space")
             );
         }
     }
