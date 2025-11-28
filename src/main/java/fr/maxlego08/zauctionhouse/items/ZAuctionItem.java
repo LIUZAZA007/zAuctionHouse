@@ -17,8 +17,8 @@ public class ZAuctionItem extends ZItem implements AuctionItem {
 
     private final ItemStack itemStack;
 
-    public ZAuctionItem(AuctionPlugin plugin, int id, UUID sellerUniqueId, String sellerName, BigDecimal price, AuctionEconomy auctionEconomy, Date createdAt, Date expiredAt, ItemStack itemStack) {
-        super(plugin, id, sellerUniqueId, sellerName, price, auctionEconomy, createdAt, expiredAt);
+    public ZAuctionItem(AuctionPlugin plugin, int id, String serverName, UUID sellerUniqueId, String sellerName, BigDecimal price, AuctionEconomy auctionEconomy, Date createdAt, Date expiredAt, ItemStack itemStack) {
+        super(plugin, id, serverName, sellerUniqueId, sellerName, price, auctionEconomy, createdAt, expiredAt);
         this.itemStack = itemStack;
     }
 

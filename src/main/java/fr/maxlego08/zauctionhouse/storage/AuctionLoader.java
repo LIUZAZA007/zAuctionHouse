@@ -66,7 +66,7 @@ public class AuctionLoader {
                 continue;
             }
 
-            var auctionItem = new ZAuctionItem(plugin, dto.id(), dto.seller_unique_id(), sellerName, dto.price(), economy.get(), dto.created_at(), dto.expired_at(), itemStack);
+            var auctionItem = new ZAuctionItem(plugin, dto.id(), dto.server_name(), dto.seller_unique_id(), sellerName, dto.price(), economy.get(), dto.created_at(), dto.expired_at(), itemStack);
             auctionItem.setStatus(switch (dto.storage_type()) {
                 case LISTED -> ItemStatus.AVAILABLE;
                 case PURCHASED -> ItemStatus.PURCHASED;
@@ -74,7 +74,7 @@ public class AuctionLoader {
                 case DELETED -> ItemStatus.DELETED;
             });
 
-            if (buyerName != null){
+            if (buyerName != null) {
                 auctionItem.setBuyer(dto.buyer_unique_id(), buyerName);
             }
 

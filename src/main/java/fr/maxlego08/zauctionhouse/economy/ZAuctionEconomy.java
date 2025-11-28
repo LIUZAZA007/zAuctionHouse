@@ -22,8 +22,9 @@ public class ZAuctionEconomy implements AuctionEconomy {
     private final String depositReason;
     private final String withdrawReason;
     private final PriceFormat priceFormat;
+    private final boolean autoClaim;
 
-    public ZAuctionEconomy(AuctionPlugin plugin, CurrencyProvider currencyProvider, String name, String displayName, String format, String symbol, String permission, String depositReason, String withdrawReason, PriceFormat priceFormat) {
+    public ZAuctionEconomy(AuctionPlugin plugin, CurrencyProvider currencyProvider, String name, String displayName, String format, String symbol, String permission, String depositReason, String withdrawReason, PriceFormat priceFormat, boolean autoClaim) {
         this.plugin = plugin;
         this.currencyProvider = currencyProvider;
         this.name = name;
@@ -34,6 +35,7 @@ public class ZAuctionEconomy implements AuctionEconomy {
         this.depositReason = depositReason;
         this.withdrawReason = withdrawReason;
         this.priceFormat = priceFormat;
+        this.autoClaim = autoClaim;
     }
 
     public AuctionPlugin getPlugin() {
@@ -103,5 +105,10 @@ public class ZAuctionEconomy implements AuctionEconomy {
     @Override
     public String getWithdrawReason() {
         return this.withdrawReason;
+    }
+
+    @Override
+    public boolean isAutoClaim() {
+        return this.autoClaim;
     }
 }

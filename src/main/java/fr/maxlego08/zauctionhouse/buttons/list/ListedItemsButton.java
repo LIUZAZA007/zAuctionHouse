@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class ListedItemsButton extends PaginateButton {
@@ -113,5 +114,41 @@ public class ListedItemsButton extends PaginateButton {
 
             this.plugin.getInventoriesLoader().openInventory(player, Inventories.PURCHASE_CONFIRM);
         });
+    }
+
+    public void updateListedItemsDisplay(Player player, InventoryEngine inventoryEngine, Item item, boolean added) {
+
+        var slots = new ArrayList<>(getSlots());
+        if (slots.isEmpty()) return;
+
+        var items = new ArrayList<>(this.plugin.getAuctionManager().getItemsListedForSale(player));
+        var itemIndex = items.indexOf(item);
+
+        if (itemIndex == -1) return;
+
+        int itemsPerPage = slots.size();
+        int page = inventoryEngine.getPage();
+        int startIndex = (page - 1) * itemsPerPage;
+        int endIndex = startIndex + itemsPerPage;
+
+        if (itemIndex >= endIndex) return;
+
+        if (!added) {
+            items.remove(itemIndex);
+        }
+
+        var spigotInventory = inventoryEngine.getSpigotInventory();
+
+        for (int i = 0; i < slots.size(); i++) {
+            int listIndex = startIndex + i;
+            int slot = slots.get(i);
+
+            if (listIndex < items.size()) {
+                spigotInventory.setItem(slot, items.get(listIndex).buildItemStack(player));
+                continue;
+            }
+
+            spigotInventory.setItem(slot, null);
+        }
     }
 }

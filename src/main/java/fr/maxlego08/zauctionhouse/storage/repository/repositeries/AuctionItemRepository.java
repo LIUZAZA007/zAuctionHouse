@@ -26,6 +26,7 @@ public class AuctionItemRepository extends Repository {
 
     public AuctionItem create(Player seller, BigDecimal price, long expiredAt, ItemStack clonedItemStack, AuctionEconomy auctionEconomy) {
         var expiredAtDate = new Date(expiredAt);
+        var serverName = this.plugin.getConfiguration().getServerName();
         var auctionId = insertSchema(schema -> {
             schema.uuid("seller_unique_id", seller.getUniqueId());
             schema.string("itemstack", Base64ItemStack.encode(clonedItemStack));
@@ -33,8 +34,9 @@ public class AuctionItemRepository extends Repository {
             schema.decimal("price", price);
             schema.object("expired_at", expiredAtDate);
             schema.object("storage_type", StorageType.LISTED);
+            schema.string("server_name", serverName);
         });
-        return new ZAuctionItem(this.plugin, auctionId, seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), expiredAtDate, clonedItemStack);
+        return new ZAuctionItem(this.plugin, auctionId, serverName, seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), expiredAtDate, clonedItemStack);
     }
 
     public List<AuctionItemDTO> select() {

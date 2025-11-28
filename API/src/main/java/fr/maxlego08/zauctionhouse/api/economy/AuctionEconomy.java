@@ -110,4 +110,11 @@ public interface AuctionEconomy {
      * @return the price format associated with the economy.
      */
     PriceFormat getPriceFormat();
+
+    /**
+     * Indicates whether rewards for this economy should be delivered automatically or held until claimed.
+     *
+     * @return {@code true} if the money is delivered automatically, {@code false} if it must be claimed manually.
+     */
+    boolean isAutoClaim();
 }

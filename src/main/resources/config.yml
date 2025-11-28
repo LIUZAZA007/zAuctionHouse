@@ -24,6 +24,9 @@ enable-debug: false
 # - MYSQL
 storage-type: SQLITE
 
+# Nom du serveur pour identifier l'origine des ventes dans le cadre d'une gestion multi-serveur.
+server-name: skyblock
+
 # Database configuration.
 # It is strongly recommended to use a database to store all plugin data.
 database-configuration: # Prefix applied to all tables created by the plugin.

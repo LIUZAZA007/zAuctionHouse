@@ -29,6 +29,8 @@ public interface Configuration extends ConfigurationFile {
      */
     boolean isEnableDebug();
 
+    String getServerName();
+
     List<MessageColor> getMessageColors();
 
     NumberMultiplicationConfiguration getNumberMultiplicationConfiguration();

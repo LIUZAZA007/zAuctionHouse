@@ -5,6 +5,8 @@ economies:
     display-name: "Vault"
     format: "%price%$"
     symbol: "v"
+    # If true, money is delivered immediately. When false, players must run a claim command for pending balances.
+    auto-claim: true
     # permission: "zauctionhouse.economy.vault"
     withdraw-reason: "Purchase of x%amount% %item% (zAuctionHouse)"
     deposit-reason: "Sale of x%amount% %item% (zAuctionHouse)"

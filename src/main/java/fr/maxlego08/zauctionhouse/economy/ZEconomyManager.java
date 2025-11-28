@@ -281,6 +281,8 @@ public class ZEconomyManager implements EconomyManager {
             return;
         }
 
+        boolean autoClaim = accessor.getBoolean("auto-claim", true);
+
         var priceFormatName = accessor.getString("price-format", PriceFormat.PRICE_RAW.name());
         if (priceFormatName == null) {
             this.plugin.getLogger().severe("Economy '" + name + "' is active but doesn’t have a price format, please correct that!");
@@ -332,7 +334,7 @@ public class ZEconomyManager implements EconomyManager {
             return;
         }
 
-        var auctionEconomy = new ZAuctionEconomy(this.plugin, currencyProvider, name, displayName, format, symbol, permission, depositReason, withdrawReason, priceFormat);
+        var auctionEconomy = new ZAuctionEconomy(this.plugin, currencyProvider, name, displayName, format, symbol, permission, depositReason, withdrawReason, priceFormat, autoClaim);
         this.economies.add(auctionEconomy);
         this.plugin.getLogger().info("Economy '" + name + "' loaded successfully!");
     }

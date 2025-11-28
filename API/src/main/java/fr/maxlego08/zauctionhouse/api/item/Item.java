@@ -15,6 +15,8 @@ public interface Item {
 
     int getId();
 
+    String getServerName();
+
     UUID getSellerUniqueId();
 
     String getSellerName();

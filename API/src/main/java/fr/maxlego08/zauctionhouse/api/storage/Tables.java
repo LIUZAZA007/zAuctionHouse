@@ -12,4 +12,6 @@ public interface Tables {
 
     String OPTIONS = "%prefix%options";
 
+    String TRANSACTIONS = "%prefix%transactions";
+
 }

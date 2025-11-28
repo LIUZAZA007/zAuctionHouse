@@ -26,6 +26,7 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     private final List<MessageColor> messageColors = new ArrayList<>();
 
     private boolean enableDebug;
+    private String serverName;
     private SimpleDateFormat dateFormat;
 
     private NumberMultiplicationConfiguration numberMultiplicationConfiguration;
@@ -64,6 +65,11 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     @Override
     public boolean isEnableDebug() {
         return this.enableDebug;
+    }
+
+    @Override
+    public String getServerName() {
+        return this.serverName;
     }
 
     @Override

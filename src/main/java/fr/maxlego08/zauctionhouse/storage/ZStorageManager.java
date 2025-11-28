@@ -18,6 +18,7 @@ import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateAuctionItemMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateLogsMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreatePlayerMigration;
+import fr.maxlego08.zauctionhouse.storage.migrations.CreateTransactionsMigration;
 import fr.maxlego08.zauctionhouse.storage.repository.Repositories;
 import fr.maxlego08.zauctionhouse.storage.repository.repositeries.AuctionItemRepository;
 import fr.maxlego08.zauctionhouse.storage.repository.repositeries.PlayerRepository;
@@ -60,6 +61,8 @@ public class ZStorageManager implements StorageManager {
         MigrationManager.setDatabaseConfiguration(databaseConfiguration);
 
         MigrationManager.registerMigration(new CreatePlayerMigration());
+        MigrationManager.registerMigration(new CreateTransactionsMigration());
+
         MigrationManager.registerMigration(new CreateLogsMigration());
         MigrationManager.registerMigration(new CreateAuctionItemMigration());
 
