@@ -68,4 +68,6 @@ public interface AuctionManager {
     void purchaseItem(Player player, Item item);
 
     void message(Player player, Message message, Object... args);
+
+    void updateListedItems(Item item, boolean added);
 }

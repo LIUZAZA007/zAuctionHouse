@@ -1,5 +1,6 @@
 package fr.maxlego08.zauctionhouse;
 
+import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCache;
@@ -17,6 +18,7 @@ import fr.maxlego08.zauctionhouse.api.services.AuctionExpireService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
+import fr.maxlego08.zauctionhouse.buttons.list.ListedItemsButton;
 import fr.maxlego08.zauctionhouse.services.ExpireService;
 import fr.maxlego08.zauctionhouse.services.PurchaseService;
 import fr.maxlego08.zauctionhouse.services.RemoveService;
@@ -225,6 +227,8 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         var event = new AuctionRemoveListedItemEvent(item, player);
         event.callEvent();
 
+        this.updateListedItems(item, false);
+
         // ToDo Logs
     }
 
@@ -253,6 +257,8 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
         var event = new AuctionRemoveListedItemEvent(item, player);
         event.callEvent();
+
+        this.updateListedItems(item, false);
 
         // ToDo Logs
 
@@ -373,6 +379,8 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             player.closeInventory();
         }
 
+        this.updateListedItems(auctionItem, false);
+
         // ToDo Logs
     }
 
@@ -388,5 +396,25 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             player.getInventory().addItem(itemStack).forEach((slot, dropItemStack) -> player.getWorld().dropItem(player.getLocation(), dropItemStack));
 
         } else plugin.getLogger().severe("give item not implemented");
+    }
+
+    @Override
+    public void updateListedItems(Item item, boolean added) {
+
+        if (!this.plugin.getConfiguration().getActions().updateInventoryOnAction()) return;
+
+        this.plugin.getScheduler().runAsync(w -> {
+            for (Player onlinePlayer : this.plugin.getServer().getOnlinePlayers()) {
+
+                var openInventory = onlinePlayer.getOpenInventory().getTopInventory().getHolder();
+                if (openInventory instanceof InventoryEngine inventoryEngine) {
+                    var buttons = inventoryEngine.getMenuInventory().getButtons(ListedItemsButton.class);
+                    if (buttons.isEmpty()) continue;
+
+                    var listedItemsButton = buttons.getFirst();
+                    listedItemsButton.updateInventory(onlinePlayer, inventoryEngine, item, added, this);
+                }
+            }
+        });
     }
 }

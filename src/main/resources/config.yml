@@ -238,7 +238,10 @@ time: # ---- Unités (singulier / pluriel) ----
   time-second: '%02ds'
 
 action:
-  
+
+  # Permet de mettre à jour l'inventaire des items en vente lorsqu'un item est ajouté ou retiré de la vente
+  update-inventory-on-action: true
+
   remove-listed-item: # On donne l'item après avoir retiré l'item de la vente
     give-item: false
     

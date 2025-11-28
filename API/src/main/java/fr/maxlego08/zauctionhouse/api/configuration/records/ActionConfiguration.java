@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public record ActionConfiguration(
+                boolean updateInventoryOnAction,
         // Listed
         ListedConfiguration listed,
         // Purchased
@@ -19,6 +20,7 @@ public record ActionConfiguration(
 
     public static ActionConfiguration of(AuctionPlugin plugin, FileConfiguration configuration) {
         return new ActionConfiguration(
+                configuration.getBoolean("action.update-inventory-on-action"),
                 // Listed
                 ListedConfiguration.of(plugin, configuration),
                 // Purchased
