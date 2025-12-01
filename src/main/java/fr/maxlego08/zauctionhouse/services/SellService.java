@@ -93,7 +93,7 @@ public class SellService extends ZUtils implements AuctionSellService {
 
         this.manager.updateListedItems(auctionItem, true, player);
 
-        message(this.plugin, player, Message.ITEM_SOLD, "%price%", auctionItem.getFormattedPrice(), "%amount%", clonedItemStack.getAmount(), "%item-translation-key%", auctionItem.getTranslationKey());
+        message(this.plugin, player, Message.ITEM_SOLD, "%price%", auctionItem.getFormattedPrice(), "%amount%", amount, "%item-translation-key%", auctionItem.getTranslationKey());
 
         this.plugin.getStorageManager().log(LogType.SALE, LogContentType.ITEM, auctionItem.getId(), player, null, clonedItemStack, price, auctionEconomy.getName(), "added_auction_item_to_listed");
 
