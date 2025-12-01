@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 /**
  * Interface for handling various types of component-based messages and interactions within the server.
  */
@@ -53,5 +55,7 @@ public interface ComponentMessage {
      * @return the name of the ItemStack
      */
     String getItemStackName(ItemStack itemStack);
+
+    List<String> getItemStackLore(ItemStack itemStack);
 }
 

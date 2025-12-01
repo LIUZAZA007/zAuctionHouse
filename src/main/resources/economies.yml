@@ -11,6 +11,11 @@ economies:
     withdraw-reason: "Purchase of x%amount% %item% (zAuctionHouse)"
     deposit-reason: "Sale of x%amount% %item% (zAuctionHouse)"
     price-format: PRICE_WITH_DECIMAL_FORMAT
+    min-prices:
+      sell: 10
+      rent: 500
+      bid: 500
+    max-prices: 10000000000
 
 default-economy:
   sell: vault

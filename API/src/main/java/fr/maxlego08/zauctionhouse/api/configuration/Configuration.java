@@ -5,8 +5,10 @@ import fr.maxlego08.zauctionhouse.api.configuration.records.ActionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.PermissionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.SortConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.TimeConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.WorldConfiguration;
 import fr.maxlego08.zauctionhouse.api.messages.MessageColor;
 
 import java.text.SimpleDateFormat;
@@ -54,6 +56,10 @@ public interface Configuration extends ConfigurationFile {
     SimpleDateFormat getDateFormat();
 
     SortConfiguration getSort();
+
+    PermissionConfiguration getPermission();
+
+    WorldConfiguration getWorld();
 
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
 }

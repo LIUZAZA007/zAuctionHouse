@@ -37,14 +37,21 @@ public enum Message {
     ITEM_REMOVE_PURCHASED("#e6fff3You just removed #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3from the purchased items."),
     ITEM_REMOVE_OWNED("#e6fff3You just removed #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3from your items."),
 
+    ITEM_SOLD("#e6fff3You just sold #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3for #92bed8%price%#e6fff3."),
 
     NOT_ENOUGH_MONEY("<error>You don’t have enough money to buy this."),
     NOT_ENOUGH_SPACE("<error>You don't have enough space in your inventory to buy this item."),
 
-    ITEM_SOLD("#ffacd5%buyer% #e6fff3just bought #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3for #92bed8%price%#e6fff3."),
-    ITEM_BOUGHT("#e6fff3You have just bought #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3for #92bed8%price%#e6fff3."),
+    ITEM_BOUGHT_SELLER("#ffacd5%buyer% #e6fff3just bought #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3for #92bed8%price%#e6fff3."),
+    ITEM_BOUGHT_BUYER("#e6fff3You have just bought #8ee6e3x%amount% &7<lang:%item-translation-key%> #e6fff3for #92bed8%price%#e6fff3."),
 
-    ;
+    PRICE_TOO_HIGH("<error>You cannot sell for more than <white>%max-price%<error>."),
+    PRICE_TOO_LOW("<error>You cannot sell for less than <white>%min-price%<error>."),
+    LISTED_ITEMS_LIMIT("<error>You cannot sell more than <white>%max-items%<error> items<error>. &8(&7Did you set the zauctionhouse.<number in config.yml> ?&8)"),
+    WORLD_BANNED("<error>You cannot sell items in this world."),
+
+    ITEM_BLACKLISTED("<error>You cannot sell blacklisted items."),
+    ITEM_WHITELISTED("<error>You cannot sell an item that is not whitelist.");
 
     private AuctionPlugin plugin;
     private List<AuctionMessage> messages = new ArrayList<>();

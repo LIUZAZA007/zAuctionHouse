@@ -336,10 +336,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         auctionEconomy.deposit(seller, price, args(auctionEconomy.getDepositReason(), "%amount%", itemStack.getAmount(), "%buyer%", player.getName(), "%item%", itemStack.getType().name()));
 
         if (seller.isOnline()) {
-            message(this.plugin, seller.getPlayer(), Message.ITEM_SOLD, "%amount%", itemStack.getAmount(), "%price%", auctionItem.getFormattedPrice(), "%item-translation-key%", auctionItem.getTranslationKey(), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
+            message(this.plugin, seller.getPlayer(), Message.ITEM_BOUGHT_SELLER, "%amount%", itemStack.getAmount(), "%price%", auctionItem.getFormattedPrice(), "%item-translation-key%", auctionItem.getTranslationKey(), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
         }
 
-        message(player, Message.ITEM_BOUGHT, "%amount%", itemStack.getAmount(), "%price%", auctionItem.getFormattedPrice(), "%item-translation-key%", auctionItem.getTranslationKey(), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
+        message(player, Message.ITEM_BOUGHT_BUYER, "%amount%", itemStack.getAmount(), "%price%", auctionItem.getFormattedPrice(), "%item-translation-key%", auctionItem.getTranslationKey(), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
 
         auctionItem.setBuyer(player);
         auctionItem.setStatus(ItemStatus.PURCHASED);

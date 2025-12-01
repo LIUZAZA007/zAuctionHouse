@@ -9,8 +9,10 @@ import fr.maxlego08.zauctionhouse.api.configuration.records.ActionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.PermissionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.SortConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.TimeConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.WorldConfiguration;
 import fr.maxlego08.zauctionhouse.api.messages.MessageColor;
 import fr.maxlego08.zauctionhouse.utils.YamlLoader;
 
@@ -39,6 +41,8 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     private TimeConfiguration timeConfiguration;
     private ActionConfiguration actionConfiguration;
     private SortConfiguration sortConfiguration;
+    private PermissionConfiguration permissionConfiguration;
+    private WorldConfiguration worldConfiguration;
 
     public MainConfiguration(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -59,6 +63,8 @@ public class MainConfiguration extends YamlLoader implements Configuration {
         this.timeConfiguration = TimeConfiguration.of(plugin, config);
         this.actionConfiguration = ActionConfiguration.of(plugin, config);
         this.sortConfiguration = SortConfiguration.of(plugin, config);
+        this.permissionConfiguration = PermissionConfiguration.of(plugin, config);
+        this.worldConfiguration = WorldConfiguration.of(plugin, config);
         this.dateFormat = new SimpleDateFormat(config.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
     }
 
@@ -130,6 +136,16 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     @Override
     public SortConfiguration getSort() {
         return this.sortConfiguration;
+    }
+
+    @Override
+    public PermissionConfiguration getPermission() {
+        return this.permissionConfiguration;
+    }
+
+    @Override
+    public WorldConfiguration getWorld() {
+        return this.worldConfiguration;
     }
 
     @Override

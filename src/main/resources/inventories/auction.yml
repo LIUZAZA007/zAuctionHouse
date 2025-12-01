@@ -115,8 +115,8 @@ items:
         - "#92ffffUsage#8c8c8c:"
         - "#2CCED2/ah sell #92ffff<price> [<amount>]"
         - ""
-        - "#92ffffNumber of items#8c8c8c: #2CCED2%zauctionhouse_counts%"
-        - "#92ffffSort type#8c8c8c: #2CCED2%zauctionhouse_sorting%"
+        - "#92ffffNumber of items#8c8c8c: #2CCED2%zauctionhouse_listed_items%"
+        - "#92ffffSort type#8c8c8c: #2CCED2%zauctionhouse_sorting_name%"
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto refresh the items"
 

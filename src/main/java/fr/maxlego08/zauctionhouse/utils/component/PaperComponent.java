@@ -13,6 +13,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +21,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,6 +125,23 @@ public class PaperComponent implements ComponentMessage {
 
     @Override
     public String getItemStackName(ItemStack itemStack) {
-        return "";
+
+        if (!itemStack.hasItemMeta()) return "";
+
+        var meta = itemStack.getItemMeta();
+        if (!meta.hasDisplayName()) return "";
+
+        return PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(meta.displayName()));
+    }
+
+    @Override
+    public List<String> getItemStackLore(ItemStack itemStack) {
+
+        if (!itemStack.hasItemMeta()) return List.of();
+
+        var meta = itemStack.getItemMeta();
+        if (!meta.hasLore()) return List.of();
+
+        return Objects.requireNonNull(meta.lore()).stream().map(PlainTextComponentSerializer.plainText()::serialize).toList();
     }
 }

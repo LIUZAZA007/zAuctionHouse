@@ -6,6 +6,7 @@ import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
 import fr.maxlego08.zauctionhouse.api.economy.EconomyManager;
 import fr.maxlego08.zauctionhouse.api.hooks.permission.OfflinePermission;
 import fr.maxlego08.zauctionhouse.api.placeholders.Placeholder;
+import fr.maxlego08.zauctionhouse.api.rules.ItemRuleManager;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
 import org.bukkit.plugin.Plugin;
 
@@ -32,6 +33,8 @@ public interface AuctionPlugin extends Plugin {
     Placeholder getPlaceholder();
 
     AuctionClusterBridge getAuctionClusterBridge();
+
+    ItemRuleManager getItemRuleManager();
 
     void setAuctionClusterBridge(AuctionClusterBridge auctionClusterBridge);
 

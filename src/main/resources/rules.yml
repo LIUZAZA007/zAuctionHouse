@@ -1,0 +1,17 @@
+blacklist:
+  enabled: true
+  rules:
+    - materials:
+        - BEDROCK
+    - lore-contains:
+        - "Untradeable"
+      model-data:
+        - 1001
+
+whitelist:
+  enabled: false
+  rules:
+    - materials:
+        - NETHER_STAR
+      name-contains:
+        - "Voucher"

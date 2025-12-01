@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -334,7 +335,16 @@ public class ZEconomyManager implements EconomyManager {
             return;
         }
 
-        var auctionEconomy = new ZAuctionEconomy(this.plugin, currencyProvider, name, displayName, format, symbol, permission, depositReason, withdrawReason, priceFormat, autoClaim);
+        EnumMap<AuctionItemType, BigDecimal> maxPrices = new EnumMap<>(AuctionItemType.class);
+        if (accessor.contains("max-prices")) {
+            maxPrices = loadPrices(accessor.getObject("max-prices"), "max-prices for economy '" + name + "'");
+        }
+        EnumMap<AuctionItemType, BigDecimal> minPrices = new EnumMap<>(AuctionItemType.class);
+        if (accessor.contains("min-prices")) {
+            minPrices = loadPrices(accessor.getObject("min-prices"), "min-prices for economy '" + name + "'");
+        }
+
+        var auctionEconomy = new ZAuctionEconomy(this.plugin, currencyProvider, name, displayName, format, symbol, permission, depositReason, withdrawReason, priceFormat, minPrices, maxPrices, autoClaim);
         this.economies.add(auctionEconomy);
         this.plugin.getLogger().info("Economy '" + name + "' loaded successfully!");
     }
@@ -365,5 +375,29 @@ public class ZEconomyManager implements EconomyManager {
         } catch (Exception exception) {
             return null;
         }
+    }
+
+    private EnumMap<AuctionItemType, BigDecimal> loadPrices(Object object, String name) {
+
+        EnumMap<AuctionItemType, BigDecimal> values = new EnumMap<>(AuctionItemType.class);
+
+        if (object instanceof Number number) {
+            for (AuctionItemType value : AuctionItemType.values()) {
+                values.put(value, toBigDecimal(number));
+            }
+        } else if (object instanceof Map<?, ?> map) {
+            map.forEach((key, value) -> {
+                if (key instanceof String string && value instanceof Number number) {
+                    AuctionItemType auctionItemType = AuctionItemType.valueOf(string.toUpperCase());
+                    values.put(auctionItemType, toBigDecimal(number));
+                } else {
+                    this.plugin.getLogger().severe("Impossible to find the price format for " + name + " (map)");
+                }
+            });
+        } else {
+            this.plugin.getLogger().severe("Impossible to find the price format for " + name + " (type)");
+        }
+
+        return values;
     }
 }

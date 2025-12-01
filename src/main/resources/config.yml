@@ -175,6 +175,39 @@ expiration:
     permission:
       enable: false
 
+# Permission pour le nombre maximum d'item qu'un joueur peut vendre
+permissions:
+  sell:
+    - permission: zauctionhouse.max.5
+      limit: 5
+    - permission: zauctionhouse.max.10
+      limit: 10
+    - permission: zauctionhouse.max.15
+      limit: 15
+  rent:
+    - permission: zauctionhouse.max.5
+      limit: 5
+    - permission: zauctionhouse.max.10
+      limit: 10
+    - permission: zauctionhouse.max.15
+      limit: 15
+  bid:
+    - permission: zauctionhouse.max.5
+      limit: 5
+    - permission: zauctionhouse.max.10
+      limit: 10
+    - permission: zauctionhouse.max.15
+      limit: 15
+
+# Liste des mondes bannis
+banned-worlds:
+  sell:
+    - "world_the_end"
+  rent:
+    - "world_the_end"
+  bid:
+    - "world_the_end"
+
 item-lore:
   listed-auction-item:
     - ""

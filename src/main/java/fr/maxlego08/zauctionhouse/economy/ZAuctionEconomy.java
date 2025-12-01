@@ -3,11 +3,13 @@ package fr.maxlego08.zauctionhouse.economy;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.economy.PriceFormat;
+import fr.maxlego08.zauctionhouse.api.utils.AuctionItemType;
 import fr.traqueur.currencies.CurrencyProvider;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
+import java.util.EnumMap;
 import java.util.concurrent.CompletableFuture;
 
 public class ZAuctionEconomy implements AuctionEconomy {
@@ -22,9 +24,11 @@ public class ZAuctionEconomy implements AuctionEconomy {
     private final String depositReason;
     private final String withdrawReason;
     private final PriceFormat priceFormat;
+    private final EnumMap<AuctionItemType, BigDecimal> minPrices;
+    private final EnumMap<AuctionItemType, BigDecimal> maxPrices;
     private final boolean autoClaim;
 
-    public ZAuctionEconomy(AuctionPlugin plugin, CurrencyProvider currencyProvider, String name, String displayName, String format, String symbol, String permission, String depositReason, String withdrawReason, PriceFormat priceFormat, boolean autoClaim) {
+    public ZAuctionEconomy(AuctionPlugin plugin, CurrencyProvider currencyProvider, String name, String displayName, String format, String symbol, String permission, String depositReason, String withdrawReason, PriceFormat priceFormat, EnumMap<AuctionItemType, BigDecimal> minPrices, EnumMap<AuctionItemType, BigDecimal> maxPrices, boolean autoClaim) {
         this.plugin = plugin;
         this.currencyProvider = currencyProvider;
         this.name = name;
@@ -35,6 +39,8 @@ public class ZAuctionEconomy implements AuctionEconomy {
         this.depositReason = depositReason;
         this.withdrawReason = withdrawReason;
         this.priceFormat = priceFormat;
+        this.minPrices = minPrices;
+        this.maxPrices = maxPrices;
         this.autoClaim = autoClaim;
     }
 
@@ -110,5 +116,15 @@ public class ZAuctionEconomy implements AuctionEconomy {
     @Override
     public boolean isAutoClaim() {
         return this.autoClaim;
+    }
+
+    @Override
+    public BigDecimal getMaxPrice(AuctionItemType auctionItemType) {
+        return this.maxPrices.get(auctionItemType);
+    }
+
+    @Override
+    public BigDecimal getMinPrice(AuctionItemType auctionItemType) {
+        return this.minPrices.get(auctionItemType);
     }
 }
