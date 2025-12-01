@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.command.commands;
+package fr.maxlego08.zauctionhouse.command.commands.admin;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;

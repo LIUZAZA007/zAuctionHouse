@@ -32,7 +32,7 @@ public class AdminOwnedItemsButton extends PaginateButton {
         var items = manager.getPlayerOwnedItems(target.get());
         paginate(items, inventoryEngine, (slot, item) -> inventoryEngine.addItem(slot, item.buildItemStack(player)).setClick(event -> {
             manager.adminRemoveItem(player, target.get(), item, StorageType.LISTED);
-            inventoryEngine.getInventoryManager().updateInventory(player);
+            this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
         }));
     }
 

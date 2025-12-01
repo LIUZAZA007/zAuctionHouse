@@ -34,7 +34,7 @@ public class AdminExpiredItemsButton extends PaginateButton {
         paginate(items, inventoryEngine, (slot, item) -> {
             inventoryEngine.addItem(slot, item.buildItemStack(player)).setClick(event -> {
                 manager.adminRemoveItem(player, target.get(), item, StorageType.EXPIRED);
-                inventoryEngine.getInventoryManager().updateInventory(player);
+                this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
             });
         });
     }

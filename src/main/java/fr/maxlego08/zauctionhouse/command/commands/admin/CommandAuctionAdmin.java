@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.command.commands;
+package fr.maxlego08.zauctionhouse.command.commands.admin;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
@@ -15,6 +15,7 @@ public class CommandAuctionAdmin extends VCommand {
         this.setDescription(Message.COMMAND_DESCRIPTION_AUCTION_ADMIN);
         this.setConsoleCanUse(false);
 
+        this.addSubCommand("admin");
         this.addSubCommand(new CommandAuctionAdminOpen(plugin));
         this.addSubCommand(new CommandAuctionAdminAdd(plugin));
     }
