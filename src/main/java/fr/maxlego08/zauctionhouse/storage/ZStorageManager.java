@@ -39,13 +39,12 @@ import java.util.concurrent.CompletableFuture;
 public class ZStorageManager implements StorageManager {
 
     private final AuctionPlugin plugin;
-    private final AuctionLoader auctionLoader;
+    private AuctionLoader auctionLoader;
     private Repositories repositories;
     private DatabaseConnection databaseConnection;
 
     public ZStorageManager(AuctionPlugin plugin) {
         this.plugin = plugin;
-        auctionLoader = new AuctionLoader(plugin, this);
     }
 
     @Override
@@ -93,6 +92,7 @@ public class ZStorageManager implements StorageManager {
 
     @Override
     public void loadItems() {
+        this.auctionLoader = new AuctionLoader(plugin, this);
         this.auctionLoader.loadItems();
     }
 

@@ -8,6 +8,7 @@ import fr.maxlego08.zauctionhouse.api.event.events.remove.AuctionPreRemoveListed
 import fr.maxlego08.zauctionhouse.api.event.events.remove.AuctionPreRemovePurchasedItemEvent;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
+import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
 import org.bukkit.entity.Player;
 
@@ -46,7 +47,7 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         item.setStatus(ItemStatus.IS_BEING_REMOVED);
 
         // 2. Vérifier si l'item est lock
-        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> auctionManager.removeListedItem(player, item));
+        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> auctionManager.removeListedItem(player, item), StorageType.LISTED);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         item.setStatus(ItemStatus.IS_BEING_REMOVED);
 
         // 2. Vérifier si l'item est lock
-        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> auctionManager.removeOwnedItem(player, item));
+        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> auctionManager.removeOwnedItem(player, item), StorageType.LISTED);
 
     }
 
@@ -108,7 +109,7 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         item.setStatus(ItemStatus.DELETED);
 
         // 2. Vérifier si l'item est lock
-        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> this.plugin.getAuctionManager().removeExpiredItem(player, item));
+        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> this.plugin.getAuctionManager().removeExpiredItem(player, item), StorageType.EXPIRED);
     }
 
     @Override
@@ -138,11 +139,11 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         item.setStatus(ItemStatus.DELETED);
 
         var manager = this.plugin.getAuctionManager();
-        executeRemoval(player, item, () -> manager.updateInventory(player), () -> manager.removePurchasedItem(player, item));
+        executeRemoval(player, item, () -> manager.updateInventory(player), () -> manager.removePurchasedItem(player, item), StorageType.PURCHASED);
 
     }
 
-    private void executeRemoval(Player player, Item item, Runnable onUnavailable, Runnable onLocalRemoval) {
+    private void executeRemoval(Player player, Item item, Runnable onUnavailable, Runnable onLocalRemoval, StorageType storageType) {
 
         var clusterBridge = this.plugin.getAuctionClusterBridge();
         var logger = this.plugin.getLogger();
@@ -162,7 +163,7 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
             // 3. On va supprimer l'item coté REDIS
 
             logger.info("Token: " + token);
-            return clusterBridge.removeItem(item);
+            return clusterBridge.removeItem(item, storageType);
 
         }).thenCompose(v -> {
 

@@ -357,7 +357,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
             return clusterBridge.lockItem(item, admin.getUniqueId());
 
-        }).thenCompose(lockToken -> clusterBridge.removeItem(item).thenApply(v -> lockToken)).thenAccept(lockToken -> {
+        }).thenCompose(lockToken -> clusterBridge.removeItem(item, storageType).thenApply(v -> lockToken)).thenAccept(lockToken -> {
 
             removeItem(storageType, item);
 
