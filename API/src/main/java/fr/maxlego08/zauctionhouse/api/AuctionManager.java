@@ -21,6 +21,8 @@ public interface AuctionManager {
 
     void openMainAuction(Player player, int page);
 
+    void updateInventory(Player player);
+
     AuctionPurchaseService getPurchaseService();
 
     AuctionSellService getSellService();

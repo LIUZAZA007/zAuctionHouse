@@ -137,8 +137,8 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
 
         item.setStatus(ItemStatus.DELETED);
 
-        // 2. Vérifier si l'item est lock
-        executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> this.plugin.getAuctionManager().removePurchasedItem(player, item));
+        var manager = this.plugin.getAuctionManager();
+        executeRemoval(player, item, () -> manager.updateInventory(player), () -> manager.removePurchasedItem(player, item));
 
     }
 

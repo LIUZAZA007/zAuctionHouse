@@ -5,7 +5,7 @@ import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCache;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
-import fr.maxlego08.zauctionhouse.api.cluster.LockToken;
+import fr.maxlego08.zauctionhouse.api.event.AuctionEvent;
 import fr.maxlego08.zauctionhouse.api.event.events.remove.AuctionRemoveExpiredItemEvent;
 import fr.maxlego08.zauctionhouse.api.event.events.remove.AuctionRemoveListedItemEvent;
 import fr.maxlego08.zauctionhouse.api.event.events.remove.AuctionRemovePurchasedItemEvent;
@@ -37,8 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 public class ZAuctionManager extends ZUtils implements AuctionManager {
 
@@ -71,7 +71,20 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     @Override
     public void openMainAuction(Player player, int page) {
         var inventoriesLoader = this.plugin.getInventoriesLoader();
-        inventoriesLoader.openInventory(player, Inventories.AUCTION, page);
+        if (this.plugin.getServer().isPrimaryThread()) {
+            inventoriesLoader.openInventory(player, Inventories.AUCTION, page);
+        } else {
+            this.plugin.getScheduler().runNextTick(w -> inventoriesLoader.openInventory(player, Inventories.AUCTION, page));
+        }
+    }
+
+    @Override
+    public void updateInventory(Player player) {
+        if (this.plugin.getServer().isPrimaryThread()) {
+            this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+        } else {
+            this.plugin.getScheduler().runNextTick(w -> this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player));
+        }
     }
 
     public AuctionPlugin getPlugin() {
@@ -244,8 +257,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             player.closeInventory();
         }
 
-        var event = new AuctionRemoveListedItemEvent(item, player);
-        event.callEvent();
+        callEvent(new AuctionRemoveListedItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_LISTED, item, player, null, "removed_from_listed");
     }
@@ -268,13 +280,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         message(this.plugin, player, Message.ITEM_REMOVE_LISTED, "%amount%", item.getAmount(), "%item-translation-key%", item.getTranslationKey());
 
         if (configuration.getActions().listed().openInventory()) {
-            this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+            this.updateInventory(player);
         } else {
             player.closeInventory();
         }
 
-        var event = new AuctionRemoveListedItemEvent(item, player);
-        event.callEvent();
+        callEvent(new AuctionRemoveListedItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_OWNED, item, player, null, "removed_owned_item");
     }
@@ -294,13 +305,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         message(this.plugin, player, Message.ITEM_REMOVE_EXPIRED, "%amount%", item.getAmount(), "%item-translation-key%", item.getTranslationKey());
 
         if (configuration.getActions().expired().openInventory()) {
-            this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+            this.updateInventory(player);
         } else {
             player.closeInventory();
         }
 
-        var event = new AuctionRemoveExpiredItemEvent(item, player);
-        event.callEvent();
+        callEvent(new AuctionRemoveExpiredItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_EXPIRED, item, player, null, "removed_expired_item");
     }
@@ -320,13 +330,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         message(this.plugin, player, Message.ITEM_REMOVE_PURCHASED, "%amount%", item.getAmount(), "%item-translation-key%", item.getTranslationKey());
 
         if (configuration.getActions().purchased().openInventory()) {
-            this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+            this.updateInventory(player);
         } else {
             player.closeInventory();
         }
 
-        var event = new AuctionRemovePurchasedItemEvent(item, player);
-        event.callEvent();
+        callEvent(new AuctionRemovePurchasedItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_PURCHASED, item, player, item.getSellerUniqueId(), "removed_purchased_item");
 
@@ -503,5 +512,13 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         var economyName = economy == null ? null : economy.getName();
 
         storageManager.log(logType, LogContentType.ITEM, item.getId(), player, targetUniqueId, itemStack, item.getPrice(), economyName, additionalData);
+    }
+
+    private void callEvent(AuctionEvent auctionEvent) {
+        if (this.plugin.getServer().isPrimaryThread()) {
+            auctionEvent.callEvent();
+        } else {
+            this.plugin.getScheduler().runNextTick(w -> auctionEvent.callEvent());
+        }
     }
 }
