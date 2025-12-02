@@ -16,7 +16,6 @@ import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.log.LogType;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
-import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateAuctionItemMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateItemMigration;
 import fr.maxlego08.zauctionhouse.storage.migrations.CreateLogsMigration;
@@ -36,16 +35,17 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class ZStorageManager implements StorageManager {
 
     private final AuctionPlugin plugin;
+    private final AuctionLoader auctionLoader;
     private Repositories repositories;
     private DatabaseConnection databaseConnection;
 
     public ZStorageManager(AuctionPlugin plugin) {
         this.plugin = plugin;
+        auctionLoader = new AuctionLoader(plugin, this);
     }
 
     @Override
@@ -93,12 +93,7 @@ public class ZStorageManager implements StorageManager {
 
     @Override
     public void loadItems() {
-
-        var players = with(PlayerRepository.class).select().stream().collect(Collectors.toMap(PlayerDTO::unique_id, PlayerDTO::name));
-        this.plugin.getLogger().info("Loaded " + players.size() + " players successfully");
-
-        AuctionLoader auctionLoader = new AuctionLoader(this.plugin, this, players);
-        auctionLoader.loadItems();
+        this.auctionLoader.loadItems();
     }
 
     @Override
@@ -150,4 +145,44 @@ public class ZStorageManager implements StorageManager {
     public void log(LogType logType, int itemId, Player player, UUID targetUniqueId, BigDecimal price, String economyName, String additionalData) {
         async(() -> with(LogRepository.class).createLog(logType, itemId, player.getUniqueId(), targetUniqueId, price, economyName, additionalData));
     }
+
+    @Override
+    public CompletableFuture<Item> selectItem(int id) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            var optional = with(ItemRepository.class).select(id);
+            if (optional.isEmpty()) return null;
+
+            var dto = optional.get();
+
+            var sellerName = with(PlayerRepository.class).select(dto.seller_unique_id());
+
+            var optionalAuctionEconomy = this.plugin.getEconomyManager().getEconomy(dto.economy_name());
+            if (optionalAuctionEconomy.isEmpty()) {
+                this.plugin.getLogger().severe("Impossible to find the economy " + dto.economy_name() + " for auction item id " + dto.id() + ", skip it...");
+                return null;
+            }
+
+            switch (dto.item_type()) {
+                case AUCTION -> {
+
+                    var auctionItems = with(AuctionItemRepository.class).select(List.of(String.valueOf(dto.id())));
+                    var auctionItem = this.auctionLoader.createAuctionItem(dto, sellerName, auctionItems, optionalAuctionEconomy.get());
+
+                    if (dto.buyer_unique_id() != null) {
+                        auctionItem.setBuyer(dto.buyer_unique_id(), with(PlayerRepository.class).select(dto.seller_unique_id()));
+                    }
+
+                    return auctionItem;
+                }
+                case BID -> {
+                }
+                case RENT -> {
+                }
+            }
+            return null;
+        });
+    }
+
+
 }

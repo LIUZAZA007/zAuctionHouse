@@ -8,6 +8,7 @@ import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerRepository extends Repository {
 
@@ -24,5 +25,9 @@ public class PlayerRepository extends Repository {
 
     public List<PlayerDTO> select() {
         return selectAll(PlayerDTO.class);
+    }
+
+    public String select(UUID uniqueId) {
+        return select(PlayerDTO.class, schema -> schema.where("unique_id", uniqueId.toString())).stream().findFirst().map(PlayerDTO::name).orElse(null);
     }
 }

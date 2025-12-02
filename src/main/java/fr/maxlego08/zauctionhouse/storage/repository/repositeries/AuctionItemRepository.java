@@ -32,7 +32,7 @@ public class AuctionItemRepository extends Repository {
         return new ZAuctionItem(this.plugin, itemId, this.plugin.getConfiguration().getServerName(), seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), new Date(expiredAt), itemStacks);
     }
 
-    public List<AuctionItemDTO> select() {
-        return selectAll(AuctionItemDTO.class);
+    public List<AuctionItemDTO> select(List<String> ids) {
+        return ids.isEmpty() ? List.of() : select(AuctionItemDTO.class, schema -> schema.whereIn("item_id", ids));
     }
 }

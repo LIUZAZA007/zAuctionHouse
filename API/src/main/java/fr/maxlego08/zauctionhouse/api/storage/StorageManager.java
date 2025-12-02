@@ -30,4 +30,6 @@ public interface StorageManager {
     void updateItem(Item item, StorageType storageType);
 
     void log(LogType logType, int itemId, Player player, UUID targetUniqueId, BigDecimal price, String economyName, String additionalData);
+
+    CompletableFuture<Item> selectItem(int id);
 }

@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemRepository extends Repository {
 
@@ -50,5 +51,9 @@ public class ItemRepository extends Repository {
                 schema.uuid("buyer_unique_id", item.getBuyerUniqueId());
             }
         });
+    }
+
+    public Optional<ItemDTO> select(int id) {
+        return select(ItemDTO.class, schema -> schema.where("id", id)).stream().findFirst();
     }
 }
