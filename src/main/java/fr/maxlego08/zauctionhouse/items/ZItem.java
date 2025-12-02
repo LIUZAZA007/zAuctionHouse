@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class ZItem implements Item {
@@ -160,5 +161,16 @@ public abstract class ZItem implements Item {
     public void setBuyer(UUID buyerUniqueId, String buyerName) {
         this.buyerUniqueId = buyerUniqueId;
         this.buyerName = buyerName;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        return object instanceof Item item && id == item.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
