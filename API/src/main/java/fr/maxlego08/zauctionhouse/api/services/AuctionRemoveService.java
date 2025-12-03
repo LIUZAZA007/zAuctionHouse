@@ -5,12 +5,12 @@ import org.bukkit.entity.Player;
 
 public interface AuctionRemoveService {
 
-    void removeListedItem(Player player, Item item);
+    java.util.concurrent.CompletableFuture<Void> removeListedItem(Player player, Item item);
 
-    void removeOwnedItem(Player player, Item item);
+    java.util.concurrent.CompletableFuture<Void> removeOwnedItem(Player player, Item item);
 
-    void removeExpiredItem(Player player, Item item);
+    java.util.concurrent.CompletableFuture<Void> removeExpiredItem(Player player, Item item);
 
-    void removePurchasedItem(Player player, Item item);
+    java.util.concurrent.CompletableFuture<Void> removePurchasedItem(Player player, Item item);
 
 }

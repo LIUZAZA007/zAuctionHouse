@@ -223,7 +223,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     }
 
     @Override
-    public void removeListedItem(Player player, Item item) {
+    public CompletableFuture<Void> removeListedItem(Player player, Item item) {
 
         var configuration = this.plugin.getConfiguration();
         var storageManager = this.plugin.getStorageManager();
@@ -234,9 +234,11 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         this.updateListedItems(item, false, player);
         clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_EXPIRED); // Suppression du cache du joueur
 
+        CompletableFuture<Void> updateFuture;
+
         if (configuration.getActions().listed().giveItem() && item.canReceiveItem(player)) {
 
-            storageManager.updateItem(item, StorageType.DELETED);
+            updateFuture = storageManager.updateItem(item, StorageType.DELETED);
             giveItem(player, item);
 
         } else {
@@ -246,7 +248,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             item.setExpiredAt(new Date(expiredAt));
 
             addItem(StorageType.EXPIRED, item);
-            storageManager.updateItem(item, StorageType.EXPIRED);
+            updateFuture = storageManager.updateItem(item, StorageType.EXPIRED);
         }
 
         message(this.plugin, player, Message.ITEM_REMOVE_LISTED, "%items%", item.getItemDisplay());
@@ -260,10 +262,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         callEvent(new AuctionRemoveListedItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_LISTED, item, player, null, "removed_from_listed");
+
+        return updateFuture;
     }
 
     @Override
-    public void removeOwnedItem(Player player, Item item) {
+    public CompletableFuture<Void> removeOwnedItem(Player player, Item item) {
 
         var configuration = this.plugin.getConfiguration();
         var storageManager = this.plugin.getStorageManager();
@@ -274,7 +278,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         this.updateListedItems(item, false, player);
         clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_EXPIRED); // Suppression du cache du joueur
 
-        storageManager.updateItem(item, StorageType.DELETED);
+        var updateFuture = storageManager.updateItem(item, StorageType.DELETED);
         giveItem(player, item);
 
         message(this.plugin, player, Message.ITEM_REMOVE_OWNED, "%items%", item.getItemDisplay());
@@ -288,10 +292,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         callEvent(new AuctionRemoveListedItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_OWNED, item, player, null, "removed_owned_item");
+
+        return updateFuture;
     }
 
     @Override
-    public void removeExpiredItem(Player player, Item item) {
+    public CompletableFuture<Void> removeExpiredItem(Player player, Item item) {
 
         var configuration = this.plugin.getConfiguration();
         var storageManager = this.plugin.getStorageManager();
@@ -299,7 +305,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         removeItem(StorageType.EXPIRED, item);
         clearPlayerCache(player, PlayerCacheKey.ITEMS_EXPIRED);
 
-        storageManager.updateItem(item, StorageType.DELETED);
+        var updateFuture = storageManager.updateItem(item, StorageType.DELETED);
         giveItem(player, item);
 
         message(this.plugin, player, Message.ITEM_REMOVE_EXPIRED, "%items%", item.getItemDisplay());
@@ -313,10 +319,12 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         callEvent(new AuctionRemoveExpiredItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_EXPIRED, item, player, null, "removed_expired_item");
+
+        return updateFuture;
     }
 
     @Override
-    public void removePurchasedItem(Player player, Item item) {
+    public CompletableFuture<Void> removePurchasedItem(Player player, Item item) {
 
         var configuration = this.plugin.getConfiguration();
         var storageManager = this.plugin.getStorageManager();
@@ -324,7 +332,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         removeItem(StorageType.PURCHASED, item);
         clearPlayerCache(player, PlayerCacheKey.ITEMS_PURCHASED);
 
-        storageManager.updateItem(item, StorageType.DELETED);
+        var updateFuture = storageManager.updateItem(item, StorageType.DELETED);
         giveItem(player, item);
 
         message(this.plugin, player, Message.ITEM_REMOVE_PURCHASED, "%items%", item.getItemDisplay());
@@ -338,6 +346,8 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         callEvent(new AuctionRemovePurchasedItemEvent(item, player));
 
         logItemAction(LogType.REMOVE_PURCHASED, item, player, item.getSellerUniqueId(), "removed_purchased_item");
+
+        return updateFuture;
 
     }
 
