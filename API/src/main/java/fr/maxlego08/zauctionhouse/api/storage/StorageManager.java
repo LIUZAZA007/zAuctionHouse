@@ -27,7 +27,7 @@ public interface StorageManager {
 
     <T extends Repository> T with(Class<T> module);
 
-    void updateItem(Item item, StorageType storageType);
+    java.util.concurrent.CompletableFuture<Void> updateItem(Item item, StorageType storageType);
 
     void log(LogType logType, int itemId, Player player, UUID targetUniqueId, BigDecimal price, String economyName, String additionalData);
 

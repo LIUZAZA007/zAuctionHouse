@@ -137,8 +137,8 @@ public class ZStorageManager implements StorageManager {
     }
 
     @Override
-    public void updateItem(Item item, StorageType storageType) {
-        async(() -> with(ItemRepository.class).updateItem(item, storageType));
+    public CompletableFuture<Void> updateItem(Item item, StorageType storageType) {
+        return CompletableFuture.runAsync(() -> with(ItemRepository.class).updateItem(item, storageType), this.plugin.getExecutorService());
     }
 
     @Override
