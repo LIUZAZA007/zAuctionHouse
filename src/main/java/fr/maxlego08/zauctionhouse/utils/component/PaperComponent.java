@@ -65,7 +65,7 @@ public class PaperComponent implements ComponentMessage {
     private String colorMiniMessage(String message) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        Pattern pattern = Pattern.compile("(?<!<)(?<!:)#([a-fA-F0-9]{6})");
+        Pattern pattern = Pattern.compile("(?<!<)(?<!:)(?<!</)#([a-fA-F0-9]{6})");
         Matcher matcher = pattern.matcher(message);
 
         while (matcher.find()) {

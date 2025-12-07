@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 public interface AuctionManager {
@@ -65,13 +66,13 @@ public interface AuctionManager {
 
     void removeCache(Player player);
 
-    java.util.concurrent.CompletableFuture<Void> removeListedItem(Player player, Item item);
+    CompletableFuture<Void> removeListedItem(Player player, Item item);
 
-    java.util.concurrent.CompletableFuture<Void> removeOwnedItem(Player player, Item item);
+    CompletableFuture<Void> removeOwnedItem(Player player, Item item);
 
-    java.util.concurrent.CompletableFuture<Void> removeExpiredItem(Player player, Item item);
+    CompletableFuture<Void> removeExpiredItem(Player player, Item item);
 
-    java.util.concurrent.CompletableFuture<Void> removePurchasedItem(Player player, Item item);
+    CompletableFuture<Void> removePurchasedItem(Player player, Item item);
 
     void adminRemoveItem(Player admin, java.util.UUID targetUniqueId, Item item, StorageType storageType);
 
