@@ -365,7 +365,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
                 return failedFuture(new IllegalStateException("Item introuvable"));
             }
 
-            return clusterBridge.lockItem(item, admin.getUniqueId());
+            return clusterBridge.lockItem(item, admin.getUniqueId(), storageType);
 
         }).thenCompose(lockToken -> clusterBridge.removeItem(item, storageType).thenApply(v -> lockToken)).thenAccept(lockToken -> {
 
@@ -381,7 +381,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
             inventoryManager.updateInventory(admin);
 
-            clusterBridge.unlockItem(item, lockToken);
+            clusterBridge.unlockItem(item, lockToken, storageType);
 
         }).exceptionally(e -> {
             e.printStackTrace();

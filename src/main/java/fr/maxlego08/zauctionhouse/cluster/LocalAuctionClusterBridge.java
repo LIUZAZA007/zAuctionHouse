@@ -17,12 +17,12 @@ public class LocalAuctionClusterBridge implements AuctionClusterBridge {
     }
 
     @Override
-    public CompletableFuture<LockToken> lockItem(Item item, UUID buyerId) {
+    public CompletableFuture<LockToken> lockItem(Item item, UUID buyerId, StorageType storageType) {
         return CompletableFuture.completedFuture(LockToken.of(item));
     }
 
     @Override
-    public CompletableFuture<Void> unlockItem(Item item, LockToken lockToken) {
+    public CompletableFuture<Void> unlockItem(Item item, LockToken lockToken, StorageType storageType) {
         return CompletableFuture.completedFuture(null);
     }
 

@@ -158,11 +158,11 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
                 return failedFuture(new IllegalStateException("Item introuvable"));
             }
 
-            return clusterBridge.lockItem(item, player.getUniqueId());
+            return clusterBridge.lockItem(item, player.getUniqueId(), storageType);
 
         }).thenCompose(token -> onLocalRemoval.get()
                 .thenCompose(v -> clusterBridge.removeItem(item, storageType)
-                        .thenCompose(vv -> clusterBridge.unlockItem(item, token))))
+                        .thenCompose(vv -> clusterBridge.unlockItem(item, token, storageType))))
                 .exceptionally(e -> {
                     e.printStackTrace();
                     return null;

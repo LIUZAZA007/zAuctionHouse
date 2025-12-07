@@ -2,10 +2,10 @@ package fr.maxlego08.zauctionhouse.services;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
-import fr.maxlego08.zauctionhouse.api.cluster.LockToken;
 import fr.maxlego08.zauctionhouse.api.event.events.purchase.AuctionPrePurchaseItemEvent;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
+import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
         var auctionEconomy = item.getAuctionEconomy();
 
         var configuration = this.plugin.getConfiguration().getActions().purchased();
-        if (configuration.giveItem() && configuration.freeSpace() && !item.canReceiveItem(player)){
+        if (configuration.giveItem() && configuration.freeSpace() && !item.canReceiveItem(player)) {
             message(this.plugin, player, Message.NOT_ENOUGH_SPACE);
             return CompletableFuture.completedFuture(null);
         }
@@ -64,24 +64,20 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
                 return failedFuture(new IllegalStateException("Item introuvable"));
             }
 
-            return clusterBridge.lockItem(item, player.getUniqueId());
+            return clusterBridge.lockItem(item, player.getUniqueId(), StorageType.LISTED);
 
-        }).thenCompose(token -> auctionEconomy.has(player, item.getPrice())
-                .thenApply(hasMoney -> new AbstractMap.SimpleEntry<>(token, hasMoney)))
-                .thenCompose(entry -> {
+        }).thenCompose(token -> auctionEconomy.has(player, item.getPrice()).thenApply(hasMoney -> new AbstractMap.SimpleEntry<>(token, hasMoney))).thenCompose(entry -> {
 
-                    var token = entry.getKey();
+            var token = entry.getKey();
 
-                    if (entry.getValue()) {
-                        return auctionManager.purchaseItem(player, item)
-                                .thenCompose(v -> clusterBridge.notifyItemBought(player, item))
-                                .thenCompose(v -> clusterBridge.unlockItem(item, token));
-                    }
+            if (entry.getValue()) {
+                return auctionManager.purchaseItem(player, item).thenCompose(v -> clusterBridge.notifyItemBought(player, item)).thenCompose(v -> clusterBridge.unlockItem(item, token, StorageType.LISTED));
+            }
 
-                    return clusterBridge.unlockItem(item, token);
-                }).exceptionally(e -> {
-                    e.printStackTrace();
-                    return null;
-                });
+            return clusterBridge.unlockItem(item, token, StorageType.LISTED);
+        }).exceptionally(e -> {
+            e.printStackTrace();
+            return null;
+        });
     }
 }

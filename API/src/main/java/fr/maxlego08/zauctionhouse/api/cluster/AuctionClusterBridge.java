@@ -11,9 +11,9 @@ public interface AuctionClusterBridge {
 
     CompletableFuture<Boolean> checkAvailability(Item item);
 
-    CompletableFuture<LockToken> lockItem(Item item, UUID buyerId);
+    CompletableFuture<LockToken> lockItem(Item item, UUID buyerId, StorageType storageType);
 
-    CompletableFuture<Void> unlockItem(Item item, LockToken lockToken);
+    CompletableFuture<Void> unlockItem(Item item, LockToken lockToken, StorageType storageType);
 
     CompletableFuture<Void> notifyItemBought(Player player, Item item);
 
