@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.api.cluster;
 
 import fr.maxlego08.zauctionhouse.api.item.Item;
+import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
 import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import org.bukkit.entity.Player;
 
@@ -18,6 +19,8 @@ public interface AuctionClusterBridge {
     CompletableFuture<Void> notifyItemBought(Player player, Item item);
 
     CompletableFuture<Void> notifyItemListed(Item item);
+
+    CompletableFuture<Void> notifyItemStatusChange(Item item, ItemStatus oldStatus, ItemStatus newStatus);
 
     CompletableFuture<Void> removeItem(Item item, StorageType storageType);
 }

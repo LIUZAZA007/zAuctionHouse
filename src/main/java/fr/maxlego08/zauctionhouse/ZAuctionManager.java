@@ -168,8 +168,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     public List<Item> getItemsListedForSale(Player player) {
         var cache = getCache(player);
         var sort = cache.get(PlayerCacheKey.ITEM_SORT, this.plugin.getConfiguration().getSort().defaultSort());
-        return cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> getItems(StorageType.LISTED, item -> true, // ToDo
-                sort.getComparator()));
+        return cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> getItems(StorageType.LISTED, item -> item.getStatus() == ItemStatus.AVAILABLE, sort.getComparator()));
     }
 
     @Override
@@ -405,6 +404,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         var seller = auctionItem.getSeller();
         var storageManager = this.plugin.getStorageManager();
         var configuration = this.plugin.getConfiguration();
+        var cache = this.getCache(player);
 
         String items = auctionItem.getItemsAsString();
         var itemsDisplay = auctionItem.getItemDisplay();
@@ -451,8 +451,9 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             updateFuture = storageManager.updateItem(auctionItem, StorageType.PURCHASED);
         }
 
+        cache.remove(PlayerCacheKey.ITEM_SHOW);
         if (purchasedConfiguration.openInventory()) {
-            openMainAuction(player, getCache(player).get(PlayerCacheKey.CURRENT_PAGE, 1));
+            openMainAuction(player, cache.get(PlayerCacheKey.CURRENT_PAGE, 1));
         } else {
             player.closeInventory();
         }

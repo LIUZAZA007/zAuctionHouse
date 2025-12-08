@@ -4,6 +4,9 @@ public enum ItemStatus {
 
     AVAILABLE, // L'item est disponible à la vente ou pour être retiré
 
+    IS_REMOVE_CONFIRM,
+    IS_PURCHASE_CONFIRM,
+
     IS_BEING_REMOVED, // L'item est en train d'être retiré
     IS_BEING_PURCHASED, // L'item est en train d'être retiré
 

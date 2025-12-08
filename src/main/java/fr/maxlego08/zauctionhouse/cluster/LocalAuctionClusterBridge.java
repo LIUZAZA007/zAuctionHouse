@@ -3,6 +3,7 @@ package fr.maxlego08.zauctionhouse.cluster;
 import fr.maxlego08.zauctionhouse.api.cluster.AuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.api.cluster.LockToken;
 import fr.maxlego08.zauctionhouse.api.item.Item;
+import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
 import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import org.bukkit.entity.Player;
 
@@ -33,6 +34,11 @@ public class LocalAuctionClusterBridge implements AuctionClusterBridge {
 
     @Override
     public CompletableFuture<Void> notifyItemListed(Item item) {
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    public CompletableFuture<Void> notifyItemStatusChange(Item item, ItemStatus oldStatus, ItemStatus newStatus) {
         return CompletableFuture.completedFuture(null);
     }
 

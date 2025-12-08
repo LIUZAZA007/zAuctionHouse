@@ -7,6 +7,7 @@ import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import fr.maxlego08.zauctionhouse.api.item.Item;
+import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.utils.Permission;
 import org.bukkit.entity.Player;
@@ -50,6 +51,12 @@ public class ListedItemsButton extends PaginateButton {
 
         return event -> {
 
+            if (item.getStatus() != ItemStatus.AVAILABLE) {
+                manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_LISTED);
+                manager.updateInventory(player);
+                return;
+            }
+
             if ((event.getClick() == ClickType.DROP || event.getClick() == ClickType.MIDDLE) && player.hasPermission(Permission.ZAUCTIONHOUSE_ADMIN_REMOVE_INVENTORY.asPermission())) {
 
                 // ToDo
@@ -58,12 +65,17 @@ public class ListedItemsButton extends PaginateButton {
             }
 
             if (item.getSellerUniqueId().equals(player.getUniqueId())) {
-
+                
                 // Remove item
                 if (this.plugin.getConfiguration().getActions().listed().openConfirmInventory()) {
+
                     var cache = manager.getCache(player);
                     cache.set(PlayerCacheKey.ITEM_SHOW, item);
                     cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
+
+                    item.setStatus(ItemStatus.IS_REMOVE_CONFIRM);
+                    this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_REMOVE_CONFIRM);
+                    manager.updateListedItems(item, false, null);
 
                     this.plugin.getInventoriesLoader().openInventory(player, Inventories.REMOVE_CONFIRM);
                 } else {
@@ -121,6 +133,10 @@ public class ListedItemsButton extends PaginateButton {
             cache.set(PlayerCacheKey.ITEM_SHOW, item);
             cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
             cache.set(PlayerCacheKey.PURCHASE_ITEM, false);
+
+            item.setStatus(ItemStatus.IS_PURCHASE_CONFIRM);
+            this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_PURCHASE_CONFIRM);
+            manager.updateListedItems(item, false, player);
 
             this.plugin.getInventoriesLoader().openInventory(player, Inventories.PURCHASE_CONFIRM);
         });

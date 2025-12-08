@@ -28,60 +28,50 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         var event = new AuctionPreRemoveListedItemEvent(item, player);
         if (!event.callEvent()) return CompletableFuture.completedFuture(null);
 
-        var auctionManager = this.plugin.getAuctionManager();
-        var inventoryManager = this.plugin.getInventoriesLoader().getInventoryManager();
+        var manager = this.plugin.getAuctionManager();
         var logger = this.plugin.getLogger();
 
-        // 1. Vérifier si l'item est expiré
         if (item.isExpired()) {
-            logger.info("Item expired");
-            auctionManager.getCache(player).remove(PlayerCacheKey.ITEMS_LISTED);
-            auctionManager.openMainAuction(player);
+            logger.info("Item expired (Remove Listed)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_LISTED);
+            manager.openMainAuction(player);
             return CompletableFuture.completedFuture(null);
         }
 
-        if (item.getStatus() != ItemStatus.AVAILABLE) {
-            logger.info("Item not available");
-            auctionManager.openMainAuction(player);
+        if (item.getStatus() != ItemStatus.AVAILABLE && item.getStatus() != ItemStatus.IS_REMOVE_CONFIRM) {
+            logger.info("Item not available (Remove Listed)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_LISTED);
+            manager.openMainAuction(player);
             return CompletableFuture.completedFuture(null);
         }
 
-        item.setStatus(ItemStatus.IS_BEING_REMOVED);
-
-        // 2. Vérifier si l'item est lock
-        return executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> auctionManager.removeListedItem(player, item), StorageType.LISTED);
+        return executeRemoval(ItemStatus.IS_BEING_REMOVED, player, item, () -> manager.updateInventory(player), () -> manager.removeListedItem(player, item), StorageType.LISTED);
     }
 
     @Override
     public CompletableFuture<Void> removeOwnedItem(Player player, Item item) {
 
-
         var event = new AuctionPreRemoveListedItemEvent(item, player);
         if (!event.callEvent()) return CompletableFuture.completedFuture(null);
 
-        var auctionManager = this.plugin.getAuctionManager();
-        var inventoryManager = this.plugin.getInventoriesLoader().getInventoryManager();
+        var manager = this.plugin.getAuctionManager();
         var logger = this.plugin.getLogger();
 
-        // 1. Vérifier si l'item est expiré
         if (item.isExpired()) {
-            logger.info("Item expired");
-            auctionManager.getCache(player).remove(PlayerCacheKey.ITEMS_LISTED);
-            auctionManager.openMainAuction(player);
+            logger.info("Item expired (Remove Owned)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_LISTED);
+            manager.updateInventory(player);
             return CompletableFuture.completedFuture(null);
         }
 
         if (item.getStatus() != ItemStatus.AVAILABLE) {
-            logger.info("Item not available");
-            auctionManager.openMainAuction(player);
+            logger.info("Item not available (Remove Owned)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_OWNED, PlayerCacheKey.ITEMS_LISTED);
+            manager.updateInventory(player);
             return CompletableFuture.completedFuture(null);
         }
 
-        item.setStatus(ItemStatus.IS_BEING_REMOVED);
-
-        // 2. Vérifier si l'item est lock
-        return executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> auctionManager.removeOwnedItem(player, item), StorageType.LISTED);
-
+        return executeRemoval(ItemStatus.IS_BEING_REMOVED, player, item, () -> manager.updateInventory(player), () -> manager.removeOwnedItem(player, item), StorageType.LISTED);
     }
 
     @Override
@@ -90,28 +80,24 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         var event = new AuctionPreRemoveExpiredItemEvent(item, player);
         if (!event.callEvent()) return CompletableFuture.completedFuture(null);
 
-        var auctionManager = this.plugin.getAuctionManager();
-        var inventoryManager = this.plugin.getInventoriesLoader().getInventoryManager();
+        var manager = this.plugin.getAuctionManager();
         var logger = this.plugin.getLogger();
 
-        // 1. Vérifier si l'item est expiré
         if (item.isExpired()) {
-            logger.info("Item expired");
-            auctionManager.getCache(player).remove(PlayerCacheKey.ITEMS_EXPIRED);
-            inventoryManager.updateInventory(player);
+            logger.info("Item expired (Remove Expired)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_EXPIRED);
+            manager.updateInventory(player);
             return CompletableFuture.completedFuture(null);
         }
 
         if (item.getStatus() != ItemStatus.REMOVED) {
-            logger.info("Item not available");
-            inventoryManager.updateInventory(player);
+            logger.info("Item not available (Remove Expired)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_EXPIRED);
+            manager.updateInventory(player);
             return CompletableFuture.completedFuture(null);
         }
 
-        item.setStatus(ItemStatus.DELETED);
-
-        // 2. Vérifier si l'item est lock
-        return executeRemoval(player, item, () -> inventoryManager.updateInventory(player), () -> this.plugin.getAuctionManager().removeExpiredItem(player, item), StorageType.EXPIRED);
+        return executeRemoval(ItemStatus.DELETED, player, item, () -> manager.updateInventory(player), () -> this.plugin.getAuctionManager().removeExpiredItem(player, item), StorageType.EXPIRED);
     }
 
     @Override
@@ -120,37 +106,35 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         var event = new AuctionPreRemovePurchasedItemEvent(item, player);
         if (!event.callEvent()) return CompletableFuture.completedFuture(null);
 
-        var auctionManager = this.plugin.getAuctionManager();
-        var inventoryManager = this.plugin.getInventoriesLoader().getInventoryManager();
+        var manager = this.plugin.getAuctionManager();
         var logger = this.plugin.getLogger();
 
-        // 1. Vérifier si l'item est expiré
         if (item.isExpired()) {
-            logger.info("Item expired");
-            auctionManager.getCache(player).remove(PlayerCacheKey.ITEMS_EXPIRED);
-            inventoryManager.updateInventory(player);
+            logger.info("Item expired (Remove Purchased)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_EXPIRED);
+            manager.updateInventory(player);
             return CompletableFuture.completedFuture(null);
         }
 
         if (item.getStatus() != ItemStatus.PURCHASED) {
-            logger.info("Item not available");
-            inventoryManager.updateInventory(player);
+            logger.info("Item not available (Remove Purchased)");
+            manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_EXPIRED);
+            manager.updateInventory(player);
             return CompletableFuture.completedFuture(null);
         }
 
-        item.setStatus(ItemStatus.DELETED);
-
-        var manager = this.plugin.getAuctionManager();
-        return executeRemoval(player, item, () -> manager.updateInventory(player), () -> manager.removePurchasedItem(player, item), StorageType.PURCHASED);
-
+        return executeRemoval(ItemStatus.DELETED, player, item, () -> manager.updateInventory(player), () -> manager.removePurchasedItem(player, item), StorageType.PURCHASED);
     }
 
-    private CompletableFuture<Void> executeRemoval(Player player, Item item, Runnable onUnavailable, Supplier<CompletableFuture<Void>> onLocalRemoval, StorageType storageType) {
+    private CompletableFuture<Void> executeRemoval(ItemStatus itemStatus, Player player, Item item, Runnable onUnavailable, Supplier<CompletableFuture<Void>> onLocalRemoval, StorageType storageType) {
 
         var clusterBridge = this.plugin.getAuctionClusterBridge();
         var logger = this.plugin.getLogger();
 
-        return clusterBridge.checkAvailability(item).thenCompose(available -> {
+        var oldStatus = item.getStatus();
+        item.setStatus(itemStatus);
+
+        return clusterBridge.notifyItemStatusChange(item, oldStatus, itemStatus).thenCompose(v1 -> clusterBridge.checkAvailability(item).thenCompose(available -> {
 
             if (!available) {
                 logger.info("Item is not available");
@@ -159,13 +143,11 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
             }
 
             return clusterBridge.lockItem(item, player.getUniqueId(), storageType);
-
-        }).thenCompose(token -> onLocalRemoval.get()
-                .thenCompose(v -> clusterBridge.removeItem(item, storageType)
-                        .thenCompose(vv -> clusterBridge.unlockItem(item, token, storageType))))
-                .exceptionally(e -> {
-                    e.printStackTrace();
-                    return null;
-                });
+        })).thenCompose(token -> {
+            return onLocalRemoval.get().thenCompose(v -> clusterBridge.removeItem(item, storageType).thenCompose(vv -> clusterBridge.unlockItem(item, token, storageType)));
+        }).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return null;
+        });
     }
 }
