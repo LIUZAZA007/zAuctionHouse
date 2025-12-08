@@ -244,6 +244,12 @@ item-lore:
     - ""
     - "#8c8c8c• #2CCED2Click to retrieve this item"
 
+  being-purchased-item:
+    - ""
+    - "<white>⌚ #92ffffExpire#8c8c8c: #969696%time-remaining%"
+    - ""
+    - "#8c8c8c• #ff3535Your item is being purchased, you cannot retrieve it."
+
   status:
     seller: "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
     buyer: "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"
