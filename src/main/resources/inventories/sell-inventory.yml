@@ -1,36 +1,40 @@
-name: "&eVente en lot"
+name: "#0c1719Bulk sale"
 size: 54
 items:
-  sell-slots:
-    type: ZAUCTIONHOUSE_SELL_SLOT
-    slots:
-      - 0-44
-  confirm:
-    type: ZAUCTIONHOUSE_SELL_BUY
-    slot: 48
-    item:
-      material: LIME_CONCRETE
-      name: "&aConfirmer la vente"
-      lore:
-        - "&7Prix: &e%price%"
-        - "&7Monnaie: &e%economy%"
-  cancel:
-    type: ZAUCTIONHOUSE_SELL_CANCEL
-    slot: 50
-    item:
-      material: RED_CONCRETE
-      name: "&cAnnuler"
-      lore:
-        - "&7Cliquez pour annuler"
+
   decoration:
     item:
       material: GRAY_STAINED_GLASS_PANE
       name: " "
     slots:
-      - 45
-      - 46
-      - 47
-      - 49
-      - 51
-      - 52
-      - 53
+      - 0-8
+      - 45-53
+
+  sell-slots:
+    type: ZAUCTIONHOUSE_SELL_SLOT
+    slots:
+      - 9-44
+
+  confirm:
+    type: ZAUCTIONHOUSE_SELL_BUY
+    slot: 48
+    item:
+      material: GREEN_STAINED_GLASS_PANE
+      name: "#00ff00<bold>ᴄᴏɴғɪʀᴍ sᴀʟᴇ"
+      lore:
+        - ""
+        - "<white>⌂ #92ffffEconomy#8c8c8c: #969696%economy%"
+        - "<white>☆ #92ffffPrice#8c8c8c: #2CCED2%price%"
+        - ""
+        - "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ᴄᴏɴғɪʀᴍ sᴀʟᴇ"
+
+  cancel:
+    type: ZAUCTIONHOUSE_SELL_CANCEL
+    slot: 50
+    item:
+      material: RED_STAINED_GLASS_PANE
+      name: "#ff0000<bold>ᴄᴀɴᴄᴇʟ"
+      lore:
+        - "#92ffffCancel the sale"
+        - ""
+        - "#8c8c8c• #2CCED2Click #92ffffto cancel the sale"

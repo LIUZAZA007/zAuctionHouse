@@ -58,7 +58,8 @@ public class ZAuctionItem extends ZItem implements AuctionItem {
     @Override
     public String createStatus(Player player) {
         var config = this.plugin.getConfiguration().getItemLore();
-        return this.sellerUniqueId.equals(player.getUniqueId()) ? config.sellerStatus() : config.buyerStatus();
+        var isSeller = this.sellerUniqueId.equals(player.getUniqueId());
+        return this.itemStacks.size() == 1 ? (isSeller ? config.sellerStatus() : config.buyerStatus()) : (isSeller ? config.rightSellerStatus() : config.rightBuyerStatus());
     }
 
     @Override
