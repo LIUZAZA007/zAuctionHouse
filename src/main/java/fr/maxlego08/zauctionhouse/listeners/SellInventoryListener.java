@@ -29,13 +29,13 @@ public class SellInventoryListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
         int rawSlot = event.getRawSlot();
-        if (rawSlot == SellInventoryHolder.CONFIRM_SLOT) {
+        if (rawSlot == holder.getConfirmSlot()) {
             event.setCancelled(true);
             this.handleConfirm(player, holder);
             return;
         }
 
-        if (rawSlot == SellInventoryHolder.CANCEL_SLOT) {
+        if (rawSlot == holder.getCancelSlot()) {
             event.setCancelled(true);
             this.handleCancel(player, holder);
             return;

@@ -12,20 +12,25 @@ public class SellInventoryHolder implements InventoryHolder {
 
     public static final int CONFIRM_SLOT = 48;
     public static final int CANCEL_SLOT = 50;
-    private static final Set<Integer> LOCKED_SLOTS = Set.of(45, 46, 47, 49, 51, 52, 53, CONFIRM_SLOT, CANCEL_SLOT);
 
     private final UUID playerUniqueId;
     private final BigDecimal price;
     private final long expiredAt;
     private final AuctionEconomy auctionEconomy;
+    private final Set<Integer> lockedSlots;
+    private final int confirmSlot;
+    private final int cancelSlot;
     private Inventory inventory;
     private boolean completed;
 
-    public SellInventoryHolder(UUID playerUniqueId, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy) {
+    public SellInventoryHolder(UUID playerUniqueId, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy, Set<Integer> lockedSlots, int confirmSlot, int cancelSlot) {
         this.playerUniqueId = playerUniqueId;
         this.price = price;
         this.expiredAt = expiredAt;
         this.auctionEconomy = auctionEconomy;
+        this.lockedSlots = lockedSlots;
+        this.confirmSlot = confirmSlot;
+        this.cancelSlot = cancelSlot;
     }
 
     @Override
@@ -53,12 +58,20 @@ public class SellInventoryHolder implements InventoryHolder {
         return auctionEconomy;
     }
 
-    public static Set<Integer> getLockedSlots() {
-        return LOCKED_SLOTS;
+    public Set<Integer> getLockedSlots() {
+        return lockedSlots;
     }
 
     public boolean isLockedSlot(int slot) {
-        return LOCKED_SLOTS.contains(slot);
+        return lockedSlots.contains(slot);
+    }
+
+    public int getConfirmSlot() {
+        return confirmSlot;
+    }
+
+    public int getCancelSlot() {
+        return cancelSlot;
     }
 
     public boolean isCompleted() {

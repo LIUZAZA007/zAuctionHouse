@@ -11,12 +11,11 @@ import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
 import fr.maxlego08.zauctionhouse.api.item.ItemType;
 import fr.maxlego08.zauctionhouse.inventory.SellInventoryHolder;
+import fr.maxlego08.zauctionhouse.inventory.SellInventoryLayout;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.Material;
-import org.bukkit.ChatColor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,10 +26,12 @@ public class SellService extends ZUtils implements AuctionSellService {
 
     private final AuctionPlugin plugin;
     private final AuctionManager manager;
+    private final SellInventoryLayout sellInventoryLayout;
 
     public SellService(AuctionPlugin plugin, AuctionManager manager) {
         this.plugin = plugin;
         this.manager = manager;
+        this.sellInventoryLayout = new SellInventoryLayout(plugin);
     }
 
     @Override
@@ -82,47 +83,11 @@ public class SellService extends ZUtils implements AuctionSellService {
     @Override
     public void openSellInventory(Player player, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy) {
 
-        SellInventoryHolder holder = new SellInventoryHolder(player.getUniqueId(), price, expiredAt, auctionEconomy);
-        Inventory inventory = this.plugin.getServer().createInventory(holder, 54, ChatColor.translateAlternateColorCodes('&', this.getMessage(Message.SELL_INVENTORY_TITLE)));
+        SellInventoryHolder holder = this.sellInventoryLayout.createHolder(player, price, expiredAt, auctionEconomy);
+        Inventory inventory = this.sellInventoryLayout.buildInventory(holder, price, auctionEconomy);
         holder.setInventory(inventory);
 
-        this.decorateInventory(inventory, price, auctionEconomy);
-
         player.openInventory(inventory);
-    }
-
-    private void decorateInventory(Inventory inventory, BigDecimal price, AuctionEconomy auctionEconomy) {
-
-        var economyManager = this.plugin.getEconomyManager();
-        var confirmItem = new ItemStack(Material.LIME_CONCRETE);
-        var confirmMeta = confirmItem.getItemMeta();
-        confirmMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.getMessage(Message.SELL_INVENTORY_CONFIRM_NAME)));
-        confirmMeta.setLore(List.of(
-                ChatColor.translateAlternateColorCodes('&', this.getMessage(Message.SELL_INVENTORY_CONFIRM_LORE, "%price%", economyManager.format(auctionEconomy, price))),
-                ChatColor.translateAlternateColorCodes('&', this.getMessage(Message.SELL_INVENTORY_CONFIRM_ECONOMY, "%economy%", auctionEconomy.getName()))
-        ));
-        confirmItem.setItemMeta(confirmMeta);
-
-        var cancelItem = new ItemStack(Material.RED_CONCRETE);
-        var cancelMeta = cancelItem.getItemMeta();
-        cancelMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.getMessage(Message.SELL_INVENTORY_CANCEL_NAME)));
-        cancelMeta.setLore(List.of(ChatColor.translateAlternateColorCodes('&', this.getMessage(Message.SELL_INVENTORY_CANCEL_LORE))));
-        cancelItem.setItemMeta(cancelMeta);
-
-        var decoration = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
-        var decorationMeta = decoration.getItemMeta();
-        decorationMeta.setDisplayName(" ");
-        decoration.setItemMeta(decorationMeta);
-
-        Set<Integer> lockedSlots = SellInventoryHolder.getLockedSlots();
-        for (int i = 45; i < inventory.getSize(); i++) {
-            if (lockedSlots.contains(i)) {
-                inventory.setItem(i, decoration);
-            }
-        }
-
-        inventory.setItem(SellInventoryHolder.CONFIRM_SLOT, confirmItem);
-        inventory.setItem(SellInventoryHolder.CANCEL_SLOT, cancelItem);
     }
 
     private boolean validateSell(Player player, BigDecimal price, AuctionEconomy auctionEconomy, List<ItemStack> itemStacks) {

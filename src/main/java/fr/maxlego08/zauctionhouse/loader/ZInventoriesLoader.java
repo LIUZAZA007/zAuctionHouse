@@ -154,7 +154,8 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
                 "admin-expired-items",
                 "admin-purchased-items",
                 "remove-confirm",
-                "purchase-confirm"
+                "purchase-confirm",
+                "sell-inventory"
         );
     }
 

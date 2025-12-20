@@ -1,0 +1,37 @@
+name: "&eVente en lot"
+size: 54
+locked-slots:
+  - 45-53
+items:
+  confirm:
+    locked: true
+    slots:
+      - 48
+    item:
+      material: LIME_CONCRETE
+      name: "&aConfirmer la vente"
+      lore:
+        - "&7Prix: &e%price%"
+        - "&7Monnaie: &e%economy%"
+  cancel:
+    locked: true
+    slots:
+      - 50
+    item:
+      material: RED_CONCRETE
+      name: "&cAnnuler"
+      lore:
+        - "&7Cliquez pour annuler"
+  decoration:
+    locked: true
+    slots:
+      - 45
+      - 46
+      - 47
+      - 49
+      - 51
+      - 52
+      - 53
+    item:
+      material: GRAY_STAINED_GLASS_PANE
+      name: " "
