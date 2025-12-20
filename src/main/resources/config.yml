@@ -48,7 +48,7 @@ database-configuration: # Prefix applied to all tables created by the plugin.
   # Activates verbose SQL logs, useful for identifying database issues.
   debug: true
 
-# Vous permet de définir des clés qui seront remplacées par la couleur pour vos messages.
+# Il vous permet de définir des clés qui seront remplacées par la couleur pour vos messages.
 # Cela permet de simplifier la configuration de vos messages
 message-colors:
   - key: <primary>
@@ -69,7 +69,7 @@ commands: # Commande principale, /zauctionhouse
       - hdv
       - auction
       - zauction
-  
+
   # Commande de vente /zauctionhouse sell
   sell:
     aliases:
@@ -90,6 +90,25 @@ commands: # Commande principale, /zauctionhouse
         auto-completion:
           - '1'
           - '%max-stack-size%'
+      - name: economy
+        display-name: economy
+        required: false
+        auto-completion:
+          - vault
+
+  sell-inventory:
+    aliases:
+      - sellinventory
+      - si
+      - sellinv
+    arguments:
+      - name: price
+        display-name: price
+        required: true
+        auto-completion:
+          - 1000
+          - 10000
+          - 25000
       - name: economy
         display-name: economy
         required: false
@@ -140,7 +159,7 @@ expiration:
           expiration: 7200
         - permission: zauctionhouse.expiration.legend
           expiration: 259200
-  
+
   bid:
     default-expiration: 172800
     permission:
@@ -152,7 +171,7 @@ expiration:
           expiration: 7200
         - permission: zauctionhouse.expiration.legend
           expiration: 259200
-  
+
   rent:
     default-expiration: 172800
     permission:
@@ -164,12 +183,12 @@ expiration:
           expiration: 7200
         - permission: zauctionhouse.expiration.legend
           expiration: 259200
-  
+
   expire:
     default-expiration: 604800
     permission:
       enable: false
-  
+
   purchase:
     default-expiration: 604800
     permission:
@@ -223,7 +242,7 @@ item-lore:
     - "<white>☆ #92ffffPrice#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffExpire#8c8c8c: #969696%time-remaining%"
     - ""
-    - " <white>» #cfcfcfʟᴇғᴛ ᴄʟɪᴄᴋ ᴛᴏ sᴇᴇ ᴛʜᴇ ᴄᴏɴᴛᴇɴᴛ"
+    - "#8c8c8c• #2CCED2ʟᴇғᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ sᴇᴇ ᴛʜᴇ ᴄᴏɴᴛᴇɴᴛ"
     - "%status%"
 
   expired-item:
@@ -253,18 +272,21 @@ item-lore:
   status:
     seller: "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
     buyer: "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"
+    right-seller: "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
+    right-buyer: "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"
 
 # Permet de définir l'item qui sera affiché si pour un item en vente il y a plusieurs items
 special-items:
   auction-item:
     material: CHEST
-    name: "&cChest Content"
+    name: "#00ff00Bulk sale"
 
 item-display:
   lang: "#8ee6e3x%amount% &7<lang:%item-translation-key%>"
   item-name: "#8ee6e3x%amount% &7%item-name%"
-  and: " and "
-  between: ", "
+  and: " &fand "
+  between: "&f, "
+  merge-similar-items: true
 
 time: # ---- Unités (singulier / pluriel) ----
   second: second

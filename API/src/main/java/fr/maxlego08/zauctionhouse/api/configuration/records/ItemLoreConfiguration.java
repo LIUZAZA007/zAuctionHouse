@@ -13,7 +13,9 @@ public record ItemLoreConfiguration(
         List<String> ownedLore,
         List<String> beingPurchasedLore,
         String sellerStatus,
-        String buyerStatus
+        String buyerStatus,
+        String rightSellerStatus,
+        String rightBuyerStatus
 ) {
     public static ItemLoreConfiguration of(AuctionPlugin plugin, FileConfiguration config) {
         return new ItemLoreConfiguration(
@@ -23,8 +25,10 @@ public record ItemLoreConfiguration(
                 config.getStringList("item-lore.expired-item"),
                 config.getStringList("item-lore.owned-item"),
                 config.getStringList("item-lore.being-purchased-item"),
-                config.getString("item-lore.status.seller", "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"),
-                config.getString("item-lore.status.buyer", "<#8c8c8c>• <#92bed8>ᴄʟɪᴄᴋ <#e6fff3>ᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ")
+                config.getString("item-lore.status.seller", "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"),
+                config.getString("item-lore.status.buyer", "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"),
+                config.getString("item-lore.status.right-seller", "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"),
+                config.getString("item-lore.status.right-buyer", "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ")
         );
     }
 }

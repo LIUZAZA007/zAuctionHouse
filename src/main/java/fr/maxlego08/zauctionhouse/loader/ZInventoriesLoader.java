@@ -10,6 +10,9 @@ import fr.maxlego08.zauctionhouse.api.InventoriesLoader;
 import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.buttons.ShowButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellBuyButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellCancelButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellSlotButton;
 import fr.maxlego08.zauctionhouse.buttons.admin.AdminExpiredItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.admin.AdminOwnedItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.admin.AdminPurchasedItemsButton;
@@ -112,6 +115,9 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
         this.buttonManager.register(new NoneLoader(this.plugin, ShowButton.class, "ZAUCTIONHOUSE_SHOW"));
         this.buttonManager.register(new NoneLoader(this.plugin, ConfirmRemoveListedButton.class, "ZAUCTIONHOUSE_CONFIRM_REMOVE_LISTED"));
         this.buttonManager.register(new NoneLoader(this.plugin, ConfirmPurchaseButton.class, "ZAUCTIONHOUSE_CONFIRM_PURCHASE"));
+        this.buttonManager.register(new NoneLoader(this.plugin, SellSlotButton.class, "ZAUCTIONHOUSE_SELL_SLOT"));
+        this.buttonManager.register(new NoneLoader(this.plugin, SellBuyButton.class, "ZAUCTIONHOUSE_SELL_BUY"));
+        this.buttonManager.register(new NoneLoader(this.plugin, SellCancelButton.class, "ZAUCTIONHOUSE_SELL_CANCEL"));
 
         this.buttonManager.register(new NoneLoader(this.plugin, ExpiredInventoryButton.class, "ZAUCTIONHOUSE_EXPIRED_INVENTORY"));
         this.buttonManager.register(new NoneLoader(this.plugin, OwnedInventoryButton.class, "ZAUCTIONHOUSE_OWNED_INVENTORY"));
@@ -154,7 +160,8 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
                 "admin-expired-items",
                 "admin-purchased-items",
                 "remove-confirm",
-                "purchase-confirm"
+                "purchase-confirm",
+                "sell-inventory"
         );
     }
 

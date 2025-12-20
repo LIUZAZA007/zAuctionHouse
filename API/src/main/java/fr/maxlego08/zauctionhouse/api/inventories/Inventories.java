@@ -5,6 +5,7 @@ public enum Inventories {
     AUCTION("auction"),
     REMOVE_CONFIRM("remove-confirm"),
     PURCHASE_CONFIRM("purchase-confirm"),
+    SELL_INVENTORY("sell-inventory"),
     EXPIRED_ITEMS("expired-items"),
     PURCHASED_ITEMS("purchased-items"),
     OWNED_ITEMS("owned-items"),
