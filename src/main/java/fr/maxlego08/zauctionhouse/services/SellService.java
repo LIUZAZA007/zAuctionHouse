@@ -4,34 +4,28 @@ import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
+import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
+import fr.maxlego08.zauctionhouse.api.item.ItemType;
 import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.log.LogType;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
-import fr.maxlego08.zauctionhouse.api.item.ItemType;
-import fr.maxlego08.zauctionhouse.inventory.SellInventoryHolder;
-import fr.maxlego08.zauctionhouse.inventory.SellInventoryLayout;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class SellService extends ZUtils implements AuctionSellService {
 
     private final AuctionPlugin plugin;
     private final AuctionManager manager;
-    private final SellInventoryLayout sellInventoryLayout;
-
     public SellService(AuctionPlugin plugin, AuctionManager manager) {
         this.plugin = plugin;
         this.manager = manager;
-        this.sellInventoryLayout = new SellInventoryLayout(plugin);
     }
 
     @Override
@@ -83,11 +77,13 @@ public class SellService extends ZUtils implements AuctionSellService {
     @Override
     public void openSellInventory(Player player, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy) {
 
-        SellInventoryHolder holder = this.sellInventoryLayout.createHolder(player, price, expiredAt, auctionEconomy);
-        Inventory inventory = this.sellInventoryLayout.buildInventory(holder, price, auctionEconomy);
-        holder.setInventory(inventory);
+        var cache = this.manager.getCache(player);
+        cache.set(PlayerCacheKey.SELL_PRICE, price);
+        cache.set(PlayerCacheKey.SELL_ECONOMY, auctionEconomy);
+        cache.set(PlayerCacheKey.SELL_EXPIRED_AT, expiredAt);
+        cache.set(PlayerCacheKey.SELL_AMOUNT, 1);
 
-        player.openInventory(inventory);
+        this.plugin.getInventoriesLoader().openInventory(player, Inventories.SELL_INVENTORY);
     }
 
     private boolean validateSell(Player player, BigDecimal price, AuctionEconomy auctionEconomy, List<ItemStack> itemStacks) {

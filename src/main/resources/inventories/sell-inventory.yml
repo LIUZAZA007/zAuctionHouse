@@ -1,12 +1,13 @@
 name: "&eVente en lot"
 size: 54
-locked-slots:
-  - 45-53
 items:
-  confirm:
-    locked: true
+  sell-slots:
+    type: ZAUCTIONHOUSE_SELL_SLOT
     slots:
-      - 48
+      - 0-44
+  confirm:
+    type: ZAUCTIONHOUSE_SELL_BUY
+    slot: 48
     item:
       material: LIME_CONCRETE
       name: "&aConfirmer la vente"
@@ -14,16 +15,17 @@ items:
         - "&7Prix: &e%price%"
         - "&7Monnaie: &e%economy%"
   cancel:
-    locked: true
-    slots:
-      - 50
+    type: ZAUCTIONHOUSE_SELL_CANCEL
+    slot: 50
     item:
       material: RED_CONCRETE
       name: "&cAnnuler"
       lore:
         - "&7Cliquez pour annuler"
   decoration:
-    locked: true
+    item:
+      material: GRAY_STAINED_GLASS_PANE
+      name: " "
     slots:
       - 45
       - 46
@@ -32,6 +34,3 @@ items:
       - 51
       - 52
       - 53
-    item:
-      material: GRAY_STAINED_GLASS_PANE
-      name: " "
