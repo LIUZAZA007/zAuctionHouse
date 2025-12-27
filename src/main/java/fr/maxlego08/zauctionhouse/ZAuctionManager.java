@@ -27,12 +27,18 @@ import fr.maxlego08.zauctionhouse.services.RemoveService;
 import fr.maxlego08.zauctionhouse.services.SellService;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import fr.maxlego08.zauctionhouse.utils.cache.ZPlayerCache;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +55,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     private final AuctionExpireService auctionExpireService;
 
     private final Map<Player, PlayerCache> caches = new HashMap<>();
-    private final Map<StorageType, List<Item>> storageItems = new HashMap<>();
+    private final Map<StorageType, Int2ObjectMap<Item>> storageItemsById = new EnumMap<>(StorageType.class);
+    private final Map<UUID, IntList> idsListedByOwner = new HashMap<>();
+    private final Map<UUID, IntList> idsExpiredByOwner = new HashMap<>();
+    private final Map<UUID, IntList> idsPurchasedByBuyer = new HashMap<>();
 
     public ZAuctionManager(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -59,7 +68,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         this.auctionExpireService = new ExpireService(plugin, this);
 
         for (StorageType value : StorageType.values()) {
-            this.storageItems.put(value, new ArrayList<>());
+            this.storageItemsById.put(value, new Int2ObjectOpenHashMap<>());
         }
     }
 
@@ -113,92 +122,183 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
     @Override
     public List<Item> getItems(StorageType storageType) {
-        return this.storageItems.get(storageType);
+        return new ArrayList<>(this.storageItemsById.getOrDefault(storageType, Int2ObjectMaps.emptyMap()).values());
     }
 
     @Override
     public List<Item> getItems(StorageType storageType, Predicate<Item> predicate) {
-        List<Item> items = new ArrayList<>();
-
-        var iterator = getItems(storageType).iterator();
-        while (iterator.hasNext()) {
-
-            var item = iterator.next();
-            if (item.isExpired()) {
-                this.auctionExpireService.processExpiredItem(item, storageType);
-                iterator.remove();
-                continue;
-            }
-
-            if (predicate.test(item)) {
-                items.add(item);
-            }
-        }
-        return items;
+        return resolveItems(storageType, getItemIds(storageType, predicate, null));
     }
 
     @Override
     public List<Item> getItems(StorageType storageType, Predicate<Item> predicate, Comparator<Item> comparator) {
-
-        List<Item> result = getItems(storageType, predicate);
-
-        if (comparator != null && result.size() > 1) {
-            result.sort(comparator);
-        }
-
-        return result;
+        return resolveItems(storageType, getItemIds(storageType, predicate, comparator));
     }
 
     @Override
     public void addItem(StorageType storageType, Item item) {
-        getItems(storageType).add(item);
+        var storage = this.storageItemsById.get(storageType);
+        storage.put(item.getId(), item);
+        this.indexItem(storageType, item);
     }
 
     @Override
     public void removeItem(StorageType storageType, Item item) {
-        getItems(storageType).remove(item);
+        removeItem(storageType, item.getId());
     }
 
     @Override
     public void removeItem(StorageType storageType, int itemId) {
-        getItems(storageType).removeIf(item -> item.getId() == itemId);
+        var storage = this.storageItemsById.get(storageType);
+        if (storage == null) return;
+
+        Item removed = storage.remove(itemId);
+        if (removed != null) {
+            this.deindexItem(storageType, removed);
+        }
     }
 
     @Override
     public List<Item> getItemsListedForSale(Player player) {
         var cache = getCache(player);
         var sort = cache.get(PlayerCacheKey.ITEM_SORT, this.plugin.getConfiguration().getSort().defaultSort());
-        return cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> getItems(StorageType.LISTED, item -> item.getStatus() == ItemStatus.AVAILABLE, sort.getComparator()));
+        IntList ids = cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> getItemIds(StorageType.LISTED, item -> item.getStatus() == ItemStatus.AVAILABLE, sort.getComparator()));
+        return resolveItems(StorageType.LISTED, ids);
     }
 
     @Override
     public List<Item> getExpiredItems(Player player) {
-        return getCache(player).getOrCompute(PlayerCacheKey.ITEMS_EXPIRED, () -> getItems(StorageType.EXPIRED, item -> item.getSellerUniqueId().equals(player.getUniqueId()), Comparator.comparing(Item::getExpiredAt)));
+        IntList ids = getCache(player).getOrCompute(PlayerCacheKey.ITEMS_EXPIRED, () -> getItemIds(StorageType.EXPIRED, item -> item.getSellerUniqueId().equals(player.getUniqueId()), Comparator.comparing(Item::getExpiredAt)));
+        return resolveItems(StorageType.EXPIRED, ids);
     }
 
     @Override
     public List<Item> getExpiredItems(UUID uniqueId) {
-        return getItems(StorageType.EXPIRED, item -> item.getSellerUniqueId().equals(uniqueId), Comparator.comparing(Item::getExpiredAt));
+        return resolveItems(StorageType.EXPIRED, getItemIds(StorageType.EXPIRED, item -> item.getSellerUniqueId().equals(uniqueId), Comparator.comparing(Item::getExpiredAt)));
     }
 
     @Override
     public List<Item> getPlayerOwnedItems(Player player) {
-        return getCache(player).getOrCompute(PlayerCacheKey.ITEMS_OWNED, () -> getItems(StorageType.LISTED, item -> item.getSellerUniqueId().equals(player.getUniqueId()), Comparator.comparing(Item::getExpiredAt)));
+        IntList ids = getCache(player).getOrCompute(PlayerCacheKey.ITEMS_OWNED, () -> getItemIds(StorageType.LISTED, item -> item.getSellerUniqueId().equals(player.getUniqueId()), Comparator.comparing(Item::getExpiredAt)));
+        return resolveItems(StorageType.LISTED, ids);
     }
 
     @Override
     public List<Item> getPlayerOwnedItems(UUID uniqueId) {
-        return getItems(StorageType.LISTED, item -> item.getSellerUniqueId().equals(uniqueId), Comparator.comparing(Item::getExpiredAt));
+        return resolveItems(StorageType.LISTED, getItemIds(StorageType.LISTED, item -> item.getSellerUniqueId().equals(uniqueId), Comparator.comparing(Item::getExpiredAt)));
     }
 
     @Override
     public List<Item> getPurchasedItems(Player player) {
-        return getCache(player).getOrCompute(PlayerCacheKey.ITEMS_PURCHASED, () -> getItems(StorageType.PURCHASED, item -> item.getBuyerUniqueId().equals(player.getUniqueId()), Comparator.comparing(Item::getExpiredAt)));
+        IntList ids = getCache(player).getOrCompute(PlayerCacheKey.ITEMS_PURCHASED, () -> getItemIds(StorageType.PURCHASED, item -> item.getBuyerUniqueId() != null && item.getBuyerUniqueId().equals(player.getUniqueId()), Comparator.comparing(Item::getExpiredAt)));
+        return resolveItems(StorageType.PURCHASED, ids);
     }
 
     @Override
     public List<Item> getPurchasedItems(UUID uniqueId) {
-        return getItems(StorageType.PURCHASED, item -> item.getBuyerUniqueId() != null && item.getBuyerUniqueId().equals(uniqueId), Comparator.comparing(Item::getExpiredAt));
+        return resolveItems(StorageType.PURCHASED, getItemIds(StorageType.PURCHASED, item -> item.getBuyerUniqueId() != null && item.getBuyerUniqueId().equals(uniqueId), Comparator.comparing(Item::getExpiredAt)));
+    }
+
+    @Override
+    public List<Item> resolveItems(StorageType storageType, IntList ids) {
+        if (ids == null || ids.isEmpty()) return List.of();
+
+        Int2ObjectMap<Item> storage = this.storageItemsById.get(storageType);
+        if (storage == null || storage.isEmpty()) return List.of();
+
+        List<Item> resolved = new ArrayList<>(ids.size());
+        for (int id : ids) {
+            Item item = storage.get(id);
+            if (item != null) {
+                resolved.add(item);
+            }
+        }
+
+        return resolved;
+    }
+
+    public List<Item> onPlayerOpenMenu(Player player) {
+        IntList ids = getCache(player).get(PlayerCacheKey.ITEMS_LISTED, new IntArrayList());
+        return resolveItems(StorageType.LISTED, ids);
+    }
+
+    private IntList getItemIds(StorageType storageType, Predicate<Item> predicate, Comparator<Item> comparator) {
+        Int2ObjectMap<Item> items = this.storageItemsById.get(storageType);
+        if (items == null || items.isEmpty()) return new IntArrayList();
+
+        List<Item> filtered = new ArrayList<>();
+        for (Item item : items.values()) {
+            if (item.isExpired()) {
+                this.auctionExpireService.processExpiredItem(item, storageType);
+                continue;
+            }
+
+            if (predicate.test(item)) {
+                filtered.add(item);
+            }
+        }
+
+        if (comparator != null && filtered.size() > 1) {
+            filtered.sort(comparator);
+        }
+
+        IntList ids = new IntArrayList(filtered.size());
+        for (Item item : filtered) {
+            ids.add(item.getId());
+        }
+
+        return ids;
+    }
+
+    private void indexItem(StorageType storageType, Item item) {
+        Map<UUID, IntList> index = getIndexFor(storageType);
+        if (index == null) return;
+
+        UUID owner = getOwner(storageType, item);
+        addToIndex(index, owner, item.getId());
+    }
+
+    private void deindexItem(StorageType storageType, Item item) {
+        Map<UUID, IntList> index = getIndexFor(storageType);
+        if (index == null) return;
+
+        UUID owner = getOwner(storageType, item);
+        removeFromIndex(index, owner, item.getId());
+    }
+
+    private Map<UUID, IntList> getIndexFor(StorageType storageType) {
+        return switch (storageType) {
+            case LISTED -> this.idsListedByOwner;
+            case EXPIRED -> this.idsExpiredByOwner;
+            case PURCHASED -> this.idsPurchasedByBuyer;
+            default -> null;
+        };
+    }
+
+    private UUID getOwner(StorageType storageType, Item item) {
+        return switch (storageType) {
+            case LISTED, EXPIRED -> item.getSellerUniqueId();
+            case PURCHASED -> item.getBuyerUniqueId();
+            default -> null;
+        };
+    }
+
+    private void addToIndex(Map<UUID, IntList> index, UUID owner, int itemId) {
+        if (owner == null) return;
+
+        index.computeIfAbsent(owner, uuid -> new IntArrayList()).add(itemId);
+    }
+
+    private void removeFromIndex(Map<UUID, IntList> index, UUID owner, int itemId) {
+        if (owner == null) return;
+
+        IntList ids = index.get(owner);
+        if (ids == null) return;
+
+        ids.rem(itemId);
+        if (ids.isEmpty()) {
+            index.remove(owner);
+        }
     }
 
     @Override
@@ -516,8 +616,8 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
     private void removeFromCache(Player player, Item item) {
         if (this.caches.containsKey(player)) {
-            List<Item> items = this.caches.get(player).get(PlayerCacheKey.ITEMS_LISTED);
-            items.remove(item);
+            IntList items = this.caches.get(player).get(PlayerCacheKey.ITEMS_LISTED);
+            items.rem(item.getId());
         }
     }
 

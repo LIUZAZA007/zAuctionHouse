@@ -4,18 +4,18 @@ import com.google.common.reflect.TypeToken;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.SortItem;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Supplier;
 
 public enum PlayerCacheKey {
 
-    ITEMS_LISTED(new TypeToken<List<Item>>() {}, Collections::emptyList),
-    ITEMS_EXPIRED(new TypeToken<List<Item>>() {}, Collections::emptyList),
-    ITEMS_PURCHASED(new TypeToken<List<Item>>() {}, Collections::emptyList),
-    ITEMS_OWNED(new TypeToken<List<Item>>() {}, Collections::emptyList),
+    ITEMS_LISTED(new TypeToken<IntList>() {}, IntArrayList::new),
+    ITEMS_EXPIRED(new TypeToken<IntList>() {}, IntArrayList::new),
+    ITEMS_PURCHASED(new TypeToken<IntList>() {}, IntArrayList::new),
+    ITEMS_OWNED(new TypeToken<IntList>() {}, IntArrayList::new),
     ADMIN_TARGET(new TypeToken<java.util.UUID>() {}, () -> null),
     ADMIN_TARGET_NAME(new TypeToken<String>() {}, () -> ""),
     ITEM_SHOW(new TypeToken<Item>() {}, () -> null),

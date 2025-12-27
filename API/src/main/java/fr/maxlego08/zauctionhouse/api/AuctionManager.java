@@ -9,6 +9,7 @@ import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCache;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -75,6 +76,15 @@ public interface AuctionManager {
      * @return immutable or defensive copy list of items currently recorded for that storage type
      */
     List<Item> getItems(StorageType storageType);
+
+    /**
+     * Resolves cached item identifiers back to their live instances from the storage map.
+     *
+     * @param storageType logical container to read from
+     * @param ids         cached identifiers to resolve
+     * @return resolved items in the same order as provided ids when possible
+     */
+    List<Item> resolveItems(StorageType storageType, IntList ids);
 
     /**
      * Retrieves items from the given storage type and filters them before returning. Filtering is
