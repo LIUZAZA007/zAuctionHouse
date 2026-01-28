@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NonNull;
 
 public class OwnedInventoryButton extends Button {
 
@@ -30,17 +31,16 @@ public class OwnedInventoryButton extends Button {
     }
 
     @Override
-    public void onClick(Player player, InventoryClickEvent event, InventoryEngine inventory, int slot, Placeholders placeholders) {
+    public void onClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
         this.plugin.getInventoriesLoader().openInventory(player, Inventories.OWNED_ITEMS);
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
+    public ItemStack getCustomItemStack(@NonNull Player player, Placeholders placeholders) {
 
         var list = this.plugin.getAuctionManager().getPlayerOwnedItems(player);
 
-        Placeholders placeholders = new Placeholders();
         placeholders.register("owned-items", String.valueOf(list.size()));
         placeholders.register("s", list.size() > 1 ? "s" : "");
         return getItemStack().build(player, false, placeholders);

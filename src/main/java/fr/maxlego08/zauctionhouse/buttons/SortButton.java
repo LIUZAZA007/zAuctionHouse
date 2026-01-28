@@ -35,13 +35,12 @@ public class SortButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
+    public ItemStack getCustomItemStack(Player player, Placeholders placeholders) {
 
         var config = this.plugin.getConfiguration().getSort();
         var cache = this.plugin.getAuctionManager().getCache(player);
 
         MenuItemStack itemStack = this.getItemStack();
-        Placeholders placeholders = new Placeholders();
 
         this.sortItems.forEach(sort -> {
             SortItem currentSort = cache.get(PlayerCacheKey.ITEM_SORT, config.defaultSort());

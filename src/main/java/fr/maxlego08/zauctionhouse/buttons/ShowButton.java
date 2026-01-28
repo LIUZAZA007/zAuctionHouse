@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.buttons;
 
 import fr.maxlego08.menu.api.button.Button;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.item.Item;
@@ -17,7 +18,7 @@ public class ShowButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
+    public ItemStack getCustomItemStack(Player player, Placeholders placeholders) {
         Item item = this.plugin.getAuctionManager().getCache(player).get(PlayerCacheKey.ITEM_SHOW);
         return item.buildItemStack(player);
     }

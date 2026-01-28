@@ -74,10 +74,9 @@ public class SellBuyButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
+    public ItemStack getCustomItemStack(Player player, Placeholders placeholders) {
         MenuItemStack menuItemStack = this.getItemStack();
 
-        Placeholders placeholders = new Placeholders();
         var manager = this.plugin.getAuctionManager();
         var cache = manager.getCache(player);
         BigDecimal price = cache.get(PlayerCacheKey.SELL_PRICE, BigDecimal.ZERO);

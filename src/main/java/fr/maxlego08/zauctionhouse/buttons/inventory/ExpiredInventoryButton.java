@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NonNull;
 
 public class ExpiredInventoryButton extends Button {
 
@@ -36,11 +37,10 @@ public class ExpiredInventoryButton extends Button {
     }
 
     @Override
-    public ItemStack getCustomItemStack(Player player) {
+    public ItemStack getCustomItemStack(@NonNull Player player, Placeholders placeholders) {
 
         var list = this.plugin.getAuctionManager().getExpiredItems(player);
 
-        Placeholders placeholders = new Placeholders();
         placeholders.register("expired-items", String.valueOf(list.size()));
         placeholders.register("s", list.size() > 1 ? "s" : "");
         return getItemStack().build(player, false, placeholders);

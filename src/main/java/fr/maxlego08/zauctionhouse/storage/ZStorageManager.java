@@ -50,9 +50,10 @@ public class ZStorageManager implements StorageManager {
     @Override
     public boolean onEnable() {
 
+        var sarahLogger = JULogger.from(this.plugin.getLogger());
         var databaseConfiguration = this.getDatabaseConfiguration();
         var isSqlite = databaseConfiguration.getDatabaseType() == DatabaseType.SQLITE;
-        this.databaseConnection = isSqlite ? new SqliteConnection(databaseConfiguration, this.plugin.getDataFolder()) : new HikariDatabaseConnection(databaseConfiguration);
+        this.databaseConnection = isSqlite ? new SqliteConnection(databaseConfiguration, this.plugin.getDataFolder(), sarahLogger) : new HikariDatabaseConnection(databaseConfiguration, sarahLogger);
 
         if (!databaseConnection.isValid()) {
 
@@ -80,7 +81,7 @@ public class ZStorageManager implements StorageManager {
         this.repositories.register(AuctionItemRepository.class);
         this.repositories.register(LogRepository.class);
 
-        MigrationManager.execute(this.databaseConnection, JULogger.from(this.plugin.getLogger()));
+        MigrationManager.execute(this.databaseConnection, sarahLogger);
 
         return true;
     }
