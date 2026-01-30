@@ -1,16 +1,3 @@
-# ╔═══════════════════════════════════════════════════════════════╗
-# ║           zAuctionHouseV4 - Categories Configuration          ║
-# ╠═══════════════════════════════════════════════════════════════╣
-# ║  Documentation: https://zauctionhouse.groupez.dev/categories  ║
-# ╚═══════════════════════════════════════════════════════════════╝
-
-# Configuration version (do not modify)
-config-version: 1
-
-# ┌─────────────────────────────────────────────────────────────────┐
-# │                    GLOBAL SETTINGS                              │
-# └─────────────────────────────────────────────────────────────────┘
-
 settings:
   # Enable or disable the category system
   # If disabled, all items will be shown together without filtering

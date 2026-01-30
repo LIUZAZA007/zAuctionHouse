@@ -1164,25 +1164,25 @@ weapons:
 
 ### 9.1 Phase 1 : Core (Sprint 1)
 
-- [ ] **Modèle de données**
-  - [ ] `Category` interface (API module)
-  - [ ] `CategoryRule` interface (API module)
-  - [ ] `ZCategory` implementation
-  - [ ] `CategoryManager` interface et impl
+- [x] **Modèle de données**
+  - [x] `Category` interface (API module)
+  - [x] `CategoryRule` interface (API module)
+  - [x] `ZCategory` implementation
+  - [x] `CategoryManager` interface et impl
 
-- [ ] **Règles de base**
-  - [ ] `MaterialRule`
-  - [ ] `MaterialTagRule`
-  - [ ] `MaterialSuffixRule`
-  - [ ] `NameRule` (EQUALS/CONTAINS)
-  - [ ] `LoreRule` (EQUALS/CONTAINS)
-  - [ ] `CustomModelDataRule`
+- [x] **Règles de base**
+  - [x] `MaterialRule`
+  - [x] `MaterialTagRule`
+  - [x] `MaterialSuffixRule`
+  - [x] `NameRule` (EQUALS/CONTAINS)
+  - [x] `LoreRule` (EQUALS/CONTAINS)
+  - [x] `CustomModelDataRule`
 
-- [ ] **Chargement configuration**
-  - [ ] Parser YAML categories.yml
-  - [ ] Auto-load categories/*.yml
-  - [ ] Validation avec messages erreur
-  - [ ] Hot-reload support
+- [x] **Chargement configuration**
+  - [x] Parser YAML categories.yml
+  - [x] Auto-load categories/*.yml
+  - [x] Validation avec messages erreur
+  - [x] Hot-reload support
 
 ### 9.2 Phase 2 : Intégrations (Sprint 2)
 

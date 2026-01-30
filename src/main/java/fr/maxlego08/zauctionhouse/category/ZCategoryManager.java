@@ -63,6 +63,7 @@ public class ZCategoryManager implements CategoryManager {
         if (this.miscCategory == null) {
             this.miscCategory = ZCategory.miscellaneous("misc", "&8Miscellaneous", CategoryIcon.of(Material.CHEST));
             this.categories.put("misc", this.miscCategory);
+            this.plugin.getLogger().warning("No 'misc' category found, creating default one");
         }
 
         // Sort categories by priority
@@ -83,9 +84,9 @@ public class ZCategoryManager implements CategoryManager {
                 }
             }
 
-            // Load categories from root level (each key is a category)
+            // Load categories from the root level (each key is a category)
             for (String key : configuration.getKeys(false)) {
-                if (key.equals("settings") || key.equals("config-version") || key.equals("dynamic-categories") || key.equals("custom-items-support")) {
+                if (key.equals("settings") || key.equals("dynamic-categories") || key.equals("custom-items-support")) {
                     continue;
                 }
 
