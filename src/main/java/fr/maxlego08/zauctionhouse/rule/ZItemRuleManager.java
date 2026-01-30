@@ -4,36 +4,28 @@ import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.event.events.RuleLoadEvent;
 import fr.maxlego08.zauctionhouse.api.rules.ItemRuleManager;
 import fr.maxlego08.zauctionhouse.api.rules.Rule;
+import fr.maxlego08.zauctionhouse.api.rules.RuleLoaderRegistry;
 import fr.maxlego08.zauctionhouse.api.rules.Rules;
 import fr.maxlego08.zauctionhouse.rule.rules.AndRule;
-import fr.maxlego08.zauctionhouse.rule.rules.LoreContainsRule;
-import fr.maxlego08.zauctionhouse.rule.rules.MaterialRule;
-import fr.maxlego08.zauctionhouse.rule.rules.ModelDataRule;
-import fr.maxlego08.zauctionhouse.rule.rules.NameContainsRule;
-import fr.maxlego08.zauctionhouse.rule.rules.TagRule;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ZItemRuleManager implements ItemRuleManager {
 
     private final AuctionPlugin plugin;
+    private final RuleLoaderRegistry ruleLoaderRegistry;
     private Rules blacklist = Rules.emptyDisabled();
     private Rules whitelist = Rules.emptyDisabled();
 
-    public ZItemRuleManager(AuctionPlugin plugin) {
+    public ZItemRuleManager(AuctionPlugin plugin, RuleLoaderRegistry ruleLoaderRegistry) {
         this.plugin = plugin;
+        this.ruleLoaderRegistry = ruleLoaderRegistry;
     }
 
     @Override
@@ -134,86 +126,17 @@ public class ZItemRuleManager implements ItemRuleManager {
         List<Rule> topLevelRules = new ArrayList<>();
 
         for (Map<?, ?> map : maps) {
-            List<Rule> subRules = buildSubRulesFromMap(map);
+            List<Rule> subRules = ruleLoaderRegistry.loadRules(map);
             if (!subRules.isEmpty()) {
-                topLevelRules.add(new AndRule(subRules));
+                if (subRules.size() == 1) {
+                    topLevelRules.add(subRules.getFirst());
+                } else {
+                    topLevelRules.add(new AndRule(subRules));
+                }
             }
         }
 
         return new Rules(enabled, topLevelRules);
-    }
-
-    private List<Rule> buildSubRulesFromMap(Map<?, ?> map) {
-        List<Rule> subRules = new ArrayList<>();
-
-        // materials
-        List<String> materialNames = asStringList(map.get("materials"));
-        if (!materialNames.isEmpty()) {
-            Set<Material> materials = materialNames.stream().map(name -> {
-                try {
-                    return Material.valueOf(name.toUpperCase(Locale.ROOT));
-                } catch (IllegalArgumentException e) {
-                    return null;
-                }
-            }).filter(Objects::nonNull).collect(Collectors.toSet());
-
-            if (!materials.isEmpty()) {
-                subRules.add(new MaterialRule(materials));
-            }
-        }
-
-        List<String> nameContains = asStringList(map.get("name-contains"));
-        if (!nameContains.isEmpty()) {
-            subRules.add(new NameContainsRule(nameContains));
-        }
-
-        List<String> loreContains = asStringList(map.get("lore-contains"));
-        if (!loreContains.isEmpty()) {
-            subRules.add(new LoreContainsRule(loreContains));
-        }
-
-        List<Integer> modelData = asIntegerList(map.get("model-data"));
-        if (!modelData.isEmpty()) {
-            subRules.add(new ModelDataRule(new HashSet<>(modelData)));
-        }
-
-        List<String> tagNames = asStringList(map.get("tag-material"));
-        if (!tagNames.isEmpty()) {
-            subRules.add(new TagRule(tagNames));
-        }
-
-        return subRules;
-    }
-
-    private List<String> asStringList(Object raw) {
-        if (!(raw instanceof List<?> list)) {
-            return List.of();
-        }
-        List<String> result = new ArrayList<>();
-        for (Object o : list) {
-            if (o != null) {
-                result.add(String.valueOf(o));
-            }
-        }
-        return result;
-    }
-
-    private List<Integer> asIntegerList(Object raw) {
-        if (!(raw instanceof List<?> list)) {
-            return List.of();
-        }
-        List<Integer> result = new ArrayList<>();
-        for (Object o : list) {
-            if (o instanceof Number number) {
-                result.add(number.intValue());
-            } else if (o != null) {
-                try {
-                    result.add(Integer.parseInt(String.valueOf(o)));
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-        return result;
     }
 }
 

@@ -1,17 +1,34 @@
+# Blacklist - Items matching these rules cannot be sold
 blacklist:
   enabled: true
   rules:
-    - materials:
+    # Block bedrock
+    - type: material
+      materials:
         - BEDROCK
-    - lore-contains:
-        - "Untradeable"
-      model-data:
-        - 1001
 
+    # Block items with "Untradeable" in lore AND specific model data
+    - type: and
+      rules:
+        - type: lore
+          mode: CONTAINS
+          values:
+            - "Untradeable"
+        - type: custom-model-data
+          values:
+            - 1001
+
+# Whitelist - Only items matching these rules can be sold (if enabled)
 whitelist:
   enabled: false
   rules:
-    - materials:
-        - NETHER_STAR
-      name-contains:
-        - "Voucher"
+    # Allow only Nether Stars with "Voucher" in name
+    - type: and
+      rules:
+        - type: material
+          materials:
+            - NETHER_STAR
+        - type: name
+          mode: CONTAINS
+          values:
+            - "Voucher"
