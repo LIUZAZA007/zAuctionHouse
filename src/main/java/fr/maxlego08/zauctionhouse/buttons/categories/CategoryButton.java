@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.buttons;
+package fr.maxlego08.zauctionhouse.buttons.categories;
 
 import fr.maxlego08.menu.api.button.Button;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
@@ -6,6 +6,7 @@ import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.category.Category;
+import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jspecify.annotations.NonNull;
@@ -25,8 +26,7 @@ public class CategoryButton extends Button {
     }
 
     @Override
-    public void onClick(@NonNull Player player, @NonNull InventoryClickEvent event,
-                        @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders) {
+    public void onClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
 
         var categoryManager = this.plugin.getCategoryManager();
@@ -39,7 +39,7 @@ public class CategoryButton extends Button {
 
         Category category = optionalCategory.get();
 
-        // Store the selected category in player cache
+        // Store the selected category in the player cache
         var cache = this.plugin.getAuctionManager().getCache(player);
         cache.set(PlayerCacheKey.CURRENT_CATEGORY, category);
 
@@ -47,7 +47,7 @@ public class CategoryButton extends Button {
         cache.remove(PlayerCacheKey.ITEMS_LISTED);
 
         // Update the inventory to show items from this category
-        this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+        this.plugin.getInventoriesLoader().openInventory(player, Inventories.AUCTION);
     }
 
     /**

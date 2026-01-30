@@ -4,7 +4,7 @@ import fr.maxlego08.menu.api.button.Button;
 import fr.maxlego08.menu.api.button.DefaultButtonValue;
 import fr.maxlego08.menu.api.loader.ButtonLoader;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
-import fr.maxlego08.zauctionhouse.buttons.CategoryButton;
+import fr.maxlego08.zauctionhouse.buttons.categories.CategoryButton;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class CategoryButtonLoader extends ButtonLoader {
