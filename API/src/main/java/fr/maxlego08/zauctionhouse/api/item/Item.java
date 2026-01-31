@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -188,14 +189,14 @@ public interface Item {
     /**
      * @return list of categories this item belongs to
      */
-    List<Category> getCategories();
+    Set<Category> getCategories();
 
     /**
      * Sets the categories for this item.
      *
      * @param categories list of categories
      */
-    void setCategories(List<Category> categories);
+    void setCategories(Set<Category> categories);
 
     /**
      * Checks if the item belongs to a specific category.

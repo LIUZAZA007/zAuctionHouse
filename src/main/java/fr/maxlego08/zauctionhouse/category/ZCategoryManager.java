@@ -4,6 +4,8 @@ import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.category.Category;
 import fr.maxlego08.zauctionhouse.api.category.CategoryIcon;
 import fr.maxlego08.zauctionhouse.api.category.CategoryManager;
+import fr.maxlego08.zauctionhouse.api.item.Item;
+import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.rules.ItemRuleContext;
 import fr.maxlego08.zauctionhouse.api.rules.Rule;
 import fr.maxlego08.zauctionhouse.api.rules.loader.RuleLoaderRegistry;
@@ -212,5 +214,27 @@ public class ZCategoryManager implements CategoryManager {
     @Override
     public int getCategoryCount() {
         return categories.size();
+    }
+
+    @Override
+    public void applyCategories(Item item) {
+
+        if (item == null) return;
+
+        item.getCategories().clear();
+
+        Set<Category> categories = new HashSet<>();
+
+        if (item instanceof AuctionItem auctionItem) {
+            for (ItemStack itemStack : auctionItem.getItemStacks()) {
+                Category category = this.getCategoryFor(itemStack);
+                if (category != null) {
+                    categories.add(category);
+                }
+            }
+        }
+
+        plugin.getLogger().info("Categories " + categories);
+        item.setCategories(categories);
     }
 }

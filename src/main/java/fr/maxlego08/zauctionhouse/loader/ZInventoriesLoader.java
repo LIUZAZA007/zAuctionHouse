@@ -11,9 +11,6 @@ import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.buttons.AuctionItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.ShowButton;
-import fr.maxlego08.zauctionhouse.buttons.sell.SellBuyButton;
-import fr.maxlego08.zauctionhouse.buttons.sell.SellCancelButton;
-import fr.maxlego08.zauctionhouse.buttons.sell.SellSlotButton;
 import fr.maxlego08.zauctionhouse.buttons.admin.AdminExpiredItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.admin.AdminOwnedItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.admin.AdminPurchasedItemsButton;
@@ -26,6 +23,9 @@ import fr.maxlego08.zauctionhouse.buttons.list.ExpiredItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.ListedItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.OwnedItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.PurchasedItemsButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellBuyButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellCancelButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellSlotButton;
 import fr.maxlego08.zauctionhouse.loader.buttons.CategoryButtonLoader;
 import fr.maxlego08.zauctionhouse.loader.buttons.SortLoader;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
@@ -166,7 +166,8 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
                 "remove-confirm",
                 "purchase-confirm",
                 "auction-item",
-                "sell-inventory"
+                "sell-inventory",
+                "categories"
         );
     }
 

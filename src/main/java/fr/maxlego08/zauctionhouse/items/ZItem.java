@@ -11,11 +11,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class ZItem implements Item {
 
@@ -32,7 +28,7 @@ public abstract class ZItem implements Item {
     protected ItemStatus itemStatus = ItemStatus.AVAILABLE;
     protected UUID buyerUniqueId;
     protected String buyerName;
-    protected List<Category> categories = new ArrayList<>();
+    protected Set<Category> categories = new HashSet<>();
 
     public ZItem(AuctionPlugin plugin, int id, String serverName, UUID sellerUniqueId, String sellerName, BigDecimal price, AuctionEconomy auctionEconomy, Date createdAt, Date expiredAt) {
         this.plugin = plugin;
@@ -168,13 +164,13 @@ public abstract class ZItem implements Item {
     }
 
     @Override
-    public List<Category> getCategories() {
+    public Set<Category> getCategories() {
         return this.categories;
     }
 
     @Override
-    public void setCategories(List<Category> categories) {
-        this.categories = categories != null ? categories : new ArrayList<>();
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories != null ? categories : new HashSet<>();
     }
 
     @Override

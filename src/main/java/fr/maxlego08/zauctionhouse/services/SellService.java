@@ -40,9 +40,9 @@ public class SellService extends ZUtils implements AuctionSellService {
         removeItemInHand(player, amount);
 
         var storageManager = this.plugin.getStorageManager();
-        storageManager.createAuctionItem(player, price, expiredAt, List.of(clonedItemStack), auctionEconomy)
-                .thenAccept(auctionItem -> this.postSell(player, auctionItem, auctionEconomy))
-                .exceptionally(throwable -> {
+        storageManager.createAuctionItem(player, price, expiredAt, List.of(clonedItemStack), auctionEconomy) //
+                .thenAccept(auctionItem -> this.postSell(player, auctionItem, auctionEconomy)) //
+                .exceptionally(throwable -> { //
                     this.plugin.getLogger().severe("Unable to sell item");
                     throwable.printStackTrace();
                     player.getInventory().addItem(clonedItemStack);
@@ -65,14 +65,12 @@ public class SellService extends ZUtils implements AuctionSellService {
         }
 
         var storageManager = this.plugin.getStorageManager();
-        storageManager.createAuctionItem(player, price, expiredAt, sellableItems, auctionEconomy)
-                .thenAccept(auctionItem -> this.postSell(player, auctionItem, auctionEconomy))
-                .exceptionally(throwable -> {
-                    this.plugin.getLogger().severe("Unable to sell item");
-                    throwable.printStackTrace();
-                    sellableItems.forEach(itemStack -> player.getInventory().addItem(itemStack));
-                    return null;
-                });
+        storageManager.createAuctionItem(player, price, expiredAt, sellableItems, auctionEconomy).thenAccept(auctionItem -> this.postSell(player, auctionItem, auctionEconomy)).exceptionally(throwable -> {
+            this.plugin.getLogger().severe("Unable to sell item");
+            throwable.printStackTrace();
+            sellableItems.forEach(itemStack -> player.getInventory().addItem(itemStack));
+            return null;
+        });
     }
 
     @Override
@@ -158,6 +156,9 @@ public class SellService extends ZUtils implements AuctionSellService {
      * @param auctionEconomy the economy of the auction item
      */
     private void postSell(Player player, AuctionItem auctionItem, AuctionEconomy auctionEconomy) {
+
+        // Ajout des catégories de l'item
+        this.plugin.getCategoryManager().applyCategories(auctionItem);
 
         this.manager.addItem(StorageType.LISTED, auctionItem);
 

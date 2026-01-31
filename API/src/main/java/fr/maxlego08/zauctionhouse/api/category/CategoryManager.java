@@ -1,5 +1,6 @@
 package fr.maxlego08.zauctionhouse.api.category;
 
+import fr.maxlego08.zauctionhouse.api.item.Item;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -85,4 +86,6 @@ public interface CategoryManager {
      * @return category count
      */
     int getCategoryCount();
+
+    void applyCategories(Item item);
 }

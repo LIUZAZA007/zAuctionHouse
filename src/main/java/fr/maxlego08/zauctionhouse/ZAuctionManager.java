@@ -28,22 +28,11 @@ import fr.maxlego08.zauctionhouse.services.RemoveService;
 import fr.maxlego08.zauctionhouse.services.SellService;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import fr.maxlego08.zauctionhouse.utils.cache.ZPlayerCache;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
@@ -138,16 +127,6 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
     @Override
     public void addItem(StorageType storageType, Item item) {
-        // Assign categories when adding to LISTED storage
-        if (storageType == StorageType.LISTED && item instanceof AuctionItem auctionItem) {
-            var itemStack = auctionItem.getItemStack();
-            if (itemStack != null) {
-                var categoryManager = this.plugin.getCategoryManager();
-                var categories = categoryManager.getCategoriesFor(itemStack);
-                item.setCategories(categories);
-            }
-        }
-
         var storage = this.storageItemsById.get(storageType);
         storage.put(item.getId(), item);
         this.indexItem(storageType, item);
@@ -176,8 +155,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         var category = cache.get(PlayerCacheKey.CURRENT_CATEGORY, (Category) null);
 
         Predicate<Item> predicate = item -> item.getStatus() == ItemStatus.AVAILABLE;
-
-        // Apply category filter if a category is selected
+        
         if (category != null) {
             predicate = predicate.and(item -> item.hasCategory(category));
         }

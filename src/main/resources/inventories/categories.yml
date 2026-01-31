@@ -1,21 +1,11 @@
-# ╔═══════════════════════════════════════════════════════════════╗
-# ║                   Categories Menu Template                     ║
-# ╠═══════════════════════════════════════════════════════════════╣
-# ║  This menu displays all available categories for filtering.    ║
-# ║  Players can click on a category to view items in that         ║
-# ║  category.                                                     ║
-# ╚═══════════════════════════════════════════════════════════════╝
-
 name: "#0c1719Categories"
 size: 54
 
 patterns:
   - 'zauctionhouse-decoration'
+  - 'zauctionhouse-back'
 
 items:
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                     ALL ITEMS BUTTON                            │
-  # └─────────────────────────────────────────────────────────────────┘
   all-items:
     type: ZAUCTIONHOUSE_CATEGORY
     category: all
@@ -30,9 +20,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                        CATEGORY: BLOCKS                         │
-  # └─────────────────────────────────────────────────────────────────┘
   blocks:
     type: ZAUCTIONHOUSE_CATEGORY
     category: blocks
@@ -47,9 +34,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                       CATEGORY: WEAPONS                         │
-  # └─────────────────────────────────────────────────────────────────┘
   weapons:
     type: ZAUCTIONHOUSE_CATEGORY
     category: weapons
@@ -65,9 +49,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                        CATEGORY: ARMOR                          │
-  # └─────────────────────────────────────────────────────────────────┘
   armor:
     type: ZAUCTIONHOUSE_CATEGORY
     category: armor
@@ -82,9 +63,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                        CATEGORY: TOOLS                          │
-  # └─────────────────────────────────────────────────────────────────┘
   tools:
     type: ZAUCTIONHOUSE_CATEGORY
     category: tools
@@ -99,9 +77,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                     CATEGORY: CONSUMABLES                       │
-  # └─────────────────────────────────────────────────────────────────┘
   consumables:
     type: ZAUCTIONHOUSE_CATEGORY
     category: consumables
@@ -116,9 +91,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                      CATEGORY: RESOURCES                        │
-  # └─────────────────────────────────────────────────────────────────┘
   resources:
     type: ZAUCTIONHOUSE_CATEGORY
     category: resources
@@ -133,9 +105,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                  CATEGORY: ENCHANTED BOOKS                      │
-  # └─────────────────────────────────────────────────────────────────┘
   enchanted-books:
     type: ZAUCTIONHOUSE_CATEGORY
     category: enchanted-books
@@ -150,9 +119,6 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
 
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                    CATEGORY: MISCELLANEOUS                      │
-  # └─────────────────────────────────────────────────────────────────┘
   misc:
     type: ZAUCTIONHOUSE_CATEGORY
     category: misc
@@ -166,17 +132,3 @@ items:
         - "#92ffffItems#8c8c8c: #2CCED2%zauctionhouse_category_count_misc%"
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto browse"
-
-  # ┌─────────────────────────────────────────────────────────────────┐
-  # │                         BACK BUTTON                             │
-  # └─────────────────────────────────────────────────────────────────┘
-  back:
-    type: BACK
-    slot: 49
-    item:
-      url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjllYTFkODYyNDdmNGFmMzUxZWQxODY2YmNhNmEzMDQwYTA2YzY4MTc3Yzc4ZTQyMzE2YTEwOThlNjBmYjdkMyJ9fX0="
-      name: "#2CCED2<bold>ʙᴀᴄᴋ"
-      lore:
-        - "#92ffffReturn to the auction house"
-        - ""
-        - "#8c8c8c• #2CCED2Click #92ffffto go back"
