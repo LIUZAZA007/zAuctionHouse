@@ -131,6 +131,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         var storage = this.storageItemsById.get(storageType);
         storage.put(item.getId(), item);
         this.indexItem(storageType, item);
+
+        if (storageType == StorageType.LISTED) {
+            this.plugin.getCategoryManager().invalidateCategoryCountCache();
+        }
     }
 
     @Override
@@ -146,6 +150,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         Item removed = storage.remove(itemId);
         if (removed != null) {
             this.deindexItem(storageType, removed);
+
+            if (storageType == StorageType.LISTED) {
+                this.plugin.getCategoryManager().invalidateCategoryCountCache();
+            }
         }
     }
 

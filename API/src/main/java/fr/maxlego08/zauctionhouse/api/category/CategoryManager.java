@@ -87,5 +87,33 @@ public interface CategoryManager {
      */
     int getCategoryCount();
 
+    /**
+     * Applies categories to an item based on its ItemStack(s).
+     *
+     * @param item the item to categorize
+     */
     void applyCategories(Item item);
+
+    /**
+     * Gets the number of listed items in a specific category.
+     * <p>
+     * This method uses a cache for performance. The cache is invalidated
+     * when items are added, removed, or when the plugin is reloaded.
+     *
+     * @param categoryId the category identifier, or "all" for total count
+     * @return the number of items in the category
+     */
+    long getItemCountForCategory(String categoryId);
+
+    /**
+     * Invalidates the category count cache.
+     * <p>
+     * This should be called when:
+     * <ul>
+     *     <li>An item is added to the auction house</li>
+     *     <li>An item is removed from the auction house</li>
+     *     <li>The plugin is reloaded</li>
+     * </ul>
+     */
+    void invalidateCategoryCountCache();
 }

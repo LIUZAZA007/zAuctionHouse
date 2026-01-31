@@ -5,6 +5,7 @@ import fr.maxlego08.zauctionhouse.api.category.Category;
 import fr.maxlego08.zauctionhouse.api.category.CategoryIcon;
 import fr.maxlego08.zauctionhouse.api.category.CategoryManager;
 import fr.maxlego08.zauctionhouse.api.item.Item;
+import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.rules.ItemRuleContext;
 import fr.maxlego08.zauctionhouse.api.rules.Rule;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
@@ -28,6 +30,7 @@ public class ZCategoryManager implements CategoryManager {
     private final AuctionPlugin plugin;
     private final RuleLoaderRegistry ruleLoaderRegistry;
     private final Map<String, Category> categories = new HashMap<>();
+    private final Map<String, Long> categoryCountCache = new ConcurrentHashMap<>();
     private List<Category> sortedCategories = List.of();
     private Category miscCategory;
     private boolean enabled = true;
@@ -40,6 +43,7 @@ public class ZCategoryManager implements CategoryManager {
     @Override
     public void loadCategories() {
         this.categories.clear();
+        this.invalidateCategoryCountCache();
 
         // Save default categories.yml if not exists
         File mainFile = new File(this.plugin.getDataFolder(), "categories.yml");
@@ -238,5 +242,26 @@ public class ZCategoryManager implements CategoryManager {
 
         plugin.getLogger().info("Categories " + categories);
         item.setCategories(categories);
+    }
+
+    @Override
+    public long getItemCountForCategory(String categoryId) {
+        return this.categoryCountCache.computeIfAbsent(categoryId.toLowerCase(Locale.ROOT), this::computeCategoryCount);
+    }
+
+    @Override
+    public void invalidateCategoryCountCache() {
+        this.categoryCountCache.clear();
+    }
+
+    private long computeCategoryCount(String categoryId) {
+        var manager = this.plugin.getAuctionManager();
+        var items = manager.getItems(StorageType.LISTED);
+
+        if (categoryId.equals("all")) {
+            return items.size();
+        }
+
+        return items.stream().filter(item -> item.hasCategory(categoryId)).count();
     }
 }

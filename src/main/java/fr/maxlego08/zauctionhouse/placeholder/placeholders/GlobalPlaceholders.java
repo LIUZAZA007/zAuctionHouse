@@ -11,6 +11,7 @@ public class GlobalPlaceholders implements PlaceholderRegister {
     public void register(Placeholder placeholder, AuctionPlugin plugin) {
 
         var manager = plugin.getAuctionManager();
+        var categoryManager = plugin.getCategoryManager();
 
         placeholder.register("listed_items", player -> String.valueOf(manager.getItems(StorageType.LISTED).size()), "Returns the number of listed items");
 
@@ -19,19 +20,7 @@ public class GlobalPlaceholders implements PlaceholderRegister {
                 return "0";
             }
 
-            String categoryId = args.toLowerCase();
-            var items = manager.getItems(StorageType.LISTED);
-
-            // Special case: "all" returns total count
-            if (categoryId.equals("all")) {
-                return String.valueOf(items.size());
-            }
-
-            // Count items that have this category
-            long count = items.stream()
-                    .filter(item -> item.hasCategory(categoryId))
-                    .count();
-
+            long count = categoryManager.getItemCountForCategory(args);
             return String.valueOf(count);
         }, "Returns the number of items in a category", "<category_id>");
     }
