@@ -23,11 +23,22 @@ public class PlayerRepository extends Repository {
         });
     }
 
+    public void upsertPlayer(UUID uniqueId, String name) {
+        this.upsert(schema -> {
+            schema.uuid("unique_id", uniqueId).primary();
+            schema.string("name", name);
+        });
+    }
+
     public List<PlayerDTO> select() {
         return selectAll(PlayerDTO.class);
     }
 
     public String select(UUID uniqueId) {
         return select(PlayerDTO.class, schema -> schema.where("unique_id", uniqueId.toString())).stream().findFirst().map(PlayerDTO::name).orElse(null);
+    }
+
+    public UUID selectByName(String name) {
+        return select(PlayerDTO.class, schema -> schema.where("name", name)).stream().findFirst().map(PlayerDTO::unique_id).orElse(null);
     }
 }

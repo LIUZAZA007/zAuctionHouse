@@ -130,10 +130,23 @@ public class ZStorageManager implements StorageManager {
     }
 
     @Override
+    public void upsertPlayer(UUID uniqueId, String name) {
+        async(() -> with(PlayerRepository.class).upsertPlayer(uniqueId, name));
+    }
+
+    @Override
     public CompletableFuture<AuctionItem> createAuctionItem(Player seller, BigDecimal price, long expiredAt, List<ItemStack> itemStacks, AuctionEconomy auctionEconomy) {
         return CompletableFuture.supplyAsync(() -> {
             int itemId = with(ItemRepository.class).create(seller, ItemType.AUCTION, price, expiredAt, auctionEconomy);
             return with(AuctionItemRepository.class).create(seller, itemId, price, expiredAt, itemStacks, auctionEconomy);
+        }, this.plugin.getExecutorService());
+    }
+
+    @Override
+    public CompletableFuture<AuctionItem> createAuctionItem(UUID sellerUniqueId, String sellerName, BigDecimal price, long expiredAt, List<ItemStack> itemStacks, AuctionEconomy auctionEconomy) {
+        return CompletableFuture.supplyAsync(() -> {
+            int itemId = with(ItemRepository.class).create(sellerUniqueId, ItemType.AUCTION, price, expiredAt, auctionEconomy);
+            return with(AuctionItemRepository.class).create(sellerUniqueId, sellerName, itemId, price, expiredAt, itemStacks, auctionEconomy);
         }, this.plugin.getExecutorService());
     }
 

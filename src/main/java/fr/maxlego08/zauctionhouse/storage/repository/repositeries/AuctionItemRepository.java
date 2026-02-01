@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class AuctionItemRepository extends Repository {
 
@@ -23,13 +24,17 @@ public class AuctionItemRepository extends Repository {
     }
 
     public AuctionItem create(Player seller, int itemId, BigDecimal price, long expiredAt, List<ItemStack> itemStacks, AuctionEconomy auctionEconomy) {
+        return create(seller.getUniqueId(), seller.getName(), itemId, price, expiredAt, itemStacks, auctionEconomy);
+    }
+
+    public AuctionItem create(UUID sellerUniqueId, String sellerName, int itemId, BigDecimal price, long expiredAt, List<ItemStack> itemStacks, AuctionEconomy auctionEconomy) {
         for (ItemStack itemStack : itemStacks) {
             insertSchema(schema -> {
                 schema.object("item_id", itemId);
                 schema.string("itemstack", Base64ItemStack.encode(itemStack));
             });
         }
-        return new ZAuctionItem(this.plugin, itemId, this.plugin.getConfiguration().getServerName(), seller.getUniqueId(), seller.getName(), price, auctionEconomy, new Date(), new Date(expiredAt), itemStacks);
+        return new ZAuctionItem(this.plugin, itemId, this.plugin.getConfiguration().getServerName(), sellerUniqueId, sellerName, price, auctionEconomy, new Date(), new Date(expiredAt), itemStacks);
     }
 
     public List<AuctionItemDTO> select(List<String> ids) {

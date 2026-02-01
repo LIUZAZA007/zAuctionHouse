@@ -57,6 +57,29 @@ public interface StorageManager {
     CompletableFuture<AuctionItem> createAuctionItem(Player seller, BigDecimal price, long expiredAt, List<ItemStack> itemStacks, AuctionEconomy auctionEconomy);
 
     /**
+     * Creates and persists a new auction item record using UUID and name directly.
+     * This is useful for generating test data without requiring online players.
+     *
+     * @param sellerUniqueId seller's UUID
+     * @param sellerName     seller's name
+     * @param price          price of the listing
+     * @param expiredAt      expiration timestamp in milliseconds
+     * @param itemStacks     item stacks being sold
+     * @param auctionEconomy economy to use for the listing
+     * @return future containing the created {@link AuctionItem}
+     */
+    CompletableFuture<AuctionItem> createAuctionItem(UUID sellerUniqueId, String sellerName, BigDecimal price, long expiredAt, List<ItemStack> itemStacks, AuctionEconomy auctionEconomy);
+
+    /**
+     * Inserts or updates the player entry using UUID and name directly.
+     * This is useful for registering fake players for test data.
+     *
+     * @param uniqueId player's UUID
+     * @param name     player's name
+     */
+    void upsertPlayer(UUID uniqueId, String name);
+
+    /**
      * Provides access to a specific repository module backed by the storage manager.
      *
      * @param module repository class to retrieve

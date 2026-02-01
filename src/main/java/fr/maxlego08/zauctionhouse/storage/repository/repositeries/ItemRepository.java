@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ItemRepository extends Repository {
 
@@ -23,11 +24,15 @@ public class ItemRepository extends Repository {
     }
 
     public int create(Player seller, ItemType itemType, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy) {
+        return create(seller.getUniqueId(), itemType, price, expiredAt, auctionEconomy);
+    }
+
+    public int create(UUID sellerUniqueId, ItemType itemType, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy) {
         var expiredAtDate = new Date(expiredAt);
         var serverName = this.plugin.getConfiguration().getServerName();
         return insertSchema(schema -> {
             schema.string("item_type", itemType.name());
-            schema.uuid("seller_unique_id", seller.getUniqueId());
+            schema.uuid("seller_unique_id", sellerUniqueId);
             schema.string("economy_name", auctionEconomy.getName());
             schema.decimal("price", price);
             schema.object("expired_at", expiredAtDate);

@@ -68,7 +68,17 @@ public enum Message {
     WORLD_BANNED("<error>You cannot sell items in this world."),
 
     ITEM_BLACKLISTED("<error>You cannot sell blacklisted items."),
-    ITEM_WHITELISTED("<error>You cannot sell an item that is not whitelist.");
+    ITEM_WHITELISTED("<error>You cannot sell an item that is not whitelist."),
+
+    ADMIN_GENERATE_WARNING("<error>⚠ WARNING ⚠",
+            "<error>This command will generate <white>%amount%<error> fake auction items for performance testing.",
+            "<error>This data is <white>FAKE<error> and will need to be reset after testing.",
+            "<error>Execute this command again within <white>30 seconds<error> to confirm."),
+    ADMIN_GENERATE_CONFIRMED("<success>Generation confirmed! Creating <white>%amount%<success> auction items..."),
+    ADMIN_GENERATE_PROGRESS("<gray>Progress: <white>%current%<gray>/<white>%total%<gray> items created..."),
+    ADMIN_GENERATE_COMPLETE("<success>Successfully generated <white>%amount%<success> auction items in <white>%time%ms<success>."),
+    ADMIN_GENERATE_NO_MATERIALS("<error>No valid materials found in categories. Make sure you have categories other than 'misc' configured."),
+    ADMIN_GENERATE_INVALID_AMOUNT("<error>Invalid amount. Please specify a number between <white>1<error> and <white>100000<error>.");
 
     private AuctionPlugin plugin;
     private List<AuctionMessage> messages = new ArrayList<>();
