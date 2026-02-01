@@ -1,0 +1,95 @@
+# Discord Webhook Notifications
+# This feature allows you to send notifications to Discord when items are listed or purchased.
+
+enabled: false
+
+# Server name used in placeholders
+server-name: "My Server"
+
+webhooks:
+  sell:
+    enabled: false
+    url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Webhook username (overrides the default webhook name)
+    username: "zAuctionHouse"
+    # Webhook avatar URL (overrides the default webhook avatar)
+    avatar-url: ""
+    # Message content (appears above the embed)
+    content: ""
+    embed:
+      title: "New Item Listed!"
+      description: "**%seller_name%** has listed an item for sale"
+      color: "#00FF00"
+      fields:
+        - name: "Item"
+          value: "%item_display%"
+          inline: true
+        - name: "Price"
+          value: "%formatted_price%"
+          inline: true
+        - name: "Quantity"
+          value: "%item_amount%"
+          inline: true
+        - name: "Economy"
+          value: "%economy_display_name%"
+          inline: true
+      footer:
+        text: "Server: %server_name%"
+        icon-url: ""
+      author:
+        name: "%seller_name%"
+        url: ""
+        icon-url: "https://mc-heads.net/avatar/%seller_uuid%"
+      thumbnail:
+        url: "https://img.groupez.dev/minecraft/%item_material%.png"
+      image:
+        url: ""
+      timestamp: true
+
+  purchase:
+    enabled: false
+    url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+    # Webhook username (overrides the default webhook name)
+    username: "zAuctionHouse"
+    # Webhook avatar URL (overrides the default webhook avatar)
+    avatar-url: ""
+    # Message content (appears above the embed)
+    content: ""
+    embed:
+      title: "Item Purchased!"
+      description: "**%buyer_name%** has purchased an item from **%seller_name%**"
+      color: "#FFD700"
+      fields:
+        - name: "Item"
+          value: "%item_display%"
+          inline: true
+        - name: "Price"
+          value: "%formatted_price%"
+          inline: true
+        - name: "Buyer"
+          value: "%buyer_name%"
+          inline: true
+        - name: "Seller"
+          value: "%seller_name%"
+          inline: true
+      footer:
+        text: "Server: %server_name%"
+        icon-url: ""
+      author:
+        name: "%buyer_name%"
+        url: ""
+        icon-url: "https://mc-heads.net/avatar/%buyer_uuid%"
+      thumbnail:
+        url: ""
+      image:
+        url: ""
+      timestamp: true
+
+# Available placeholders:
+# Item: %item_id%, %item_material%, %item_display%, %item_amount%, %item_lore%, %item_enchantments%, %item_custom_model_data%
+# Seller: %seller_name%, %seller_uuid%
+# Buyer: %buyer_name%, %buyer_uuid%
+# Price: %price%, %formatted_price%, %economy_name%, %economy_display_name%
+# Time: %created_at%, %expires_at%, %remaining_time%, %timestamp%
+# Server: %server_name%
+# Categories: %category_names%, %category_count%

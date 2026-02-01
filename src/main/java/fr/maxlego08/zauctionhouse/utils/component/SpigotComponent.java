@@ -63,4 +63,9 @@ public class SpigotComponent implements ComponentMessage {
     public String getItemStackDisplayName(ItemStack itemStack) {
         return itemStack.getItemMeta().getDisplayName().replace("§", "&");
     }
+
+    @Override
+    public String stripColor(String message) {
+        return message.replace("§", "&");
+    }
 }

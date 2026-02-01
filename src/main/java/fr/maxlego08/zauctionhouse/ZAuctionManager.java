@@ -22,6 +22,7 @@ import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
 import fr.maxlego08.zauctionhouse.buttons.list.ListedItemsButton;
+import fr.maxlego08.zauctionhouse.discord.DiscordWebhookService;
 import fr.maxlego08.zauctionhouse.services.ExpireService;
 import fr.maxlego08.zauctionhouse.services.PurchaseService;
 import fr.maxlego08.zauctionhouse.services.RemoveService;
@@ -567,6 +568,14 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         }
 
         logItemAction(LogType.PURCHASE, auctionItem, player, auctionItem.getSellerUniqueId(), "purchase_item");
+
+        // Discord webhook notification
+        if (this.plugin instanceof ZAuctionPlugin zAuctionPlugin) {
+            DiscordWebhookService discordService = zAuctionPlugin.getDiscordWebhookService();
+            if (discordService != null && discordService.isEnabled()) {
+                discordService.notifyItemPurchased(player, auctionItem);
+            }
+        }
 
         return updateFuture;
     }

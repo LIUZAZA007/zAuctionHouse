@@ -11,6 +11,7 @@ import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.log.LogType;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
+import fr.maxlego08.zauctionhouse.ZAuctionPlugin;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -178,5 +179,13 @@ public class SellService extends ZUtils implements AuctionSellService {
             throwable.printStackTrace();
             return null;
         });
+
+        // Discord webhook notification
+        if (this.plugin instanceof ZAuctionPlugin zAuctionPlugin) {
+            var discordService = zAuctionPlugin.getDiscordWebhookService();
+            if (discordService != null && discordService.isEnabled()) {
+                discordService.notifyItemSold(player, auctionItem);
+            }
+        }
     }
 }

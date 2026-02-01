@@ -79,5 +79,7 @@ public interface ComponentMessage {
      * @return the display name of the ItemStack, or null if no display name is set
      */
     String getItemStackDisplayName(ItemStack itemStack);
+
+    String stripColor(String message);
 }
 

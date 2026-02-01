@@ -20,6 +20,7 @@ import fr.maxlego08.zauctionhouse.api.utils.Plugins;
 import fr.maxlego08.zauctionhouse.category.ZCategoryManager;
 import fr.maxlego08.zauctionhouse.cluster.LocalAuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.command.CommandManager;
+import fr.maxlego08.zauctionhouse.discord.DiscordWebhookService;
 import fr.maxlego08.zauctionhouse.command.commands.CommandAuction;
 import fr.maxlego08.zauctionhouse.configuration.MainConfiguration;
 import fr.maxlego08.zauctionhouse.economy.ZEconomyManager;
@@ -66,6 +67,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     private final ItemRuleManager itemRuleManager = new ZItemRuleManager(this, ruleLoaderRegistry);
     private final CategoryManager categoryManager = new ZCategoryManager(this, ruleLoaderRegistry);
     private InventoriesLoader inventoriesLoader;
+    private DiscordWebhookService discordWebhookService;
     private boolean isEnabled = false;
     private PlatformScheduler platformScheduler;
     private AuctionClusterBridge auctionClusterBridge = new LocalAuctionClusterBridge();
@@ -91,6 +93,8 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         this.inventoriesLoader = new ZInventoriesLoader(this);
 
         this.loadFiles();
+
+        this.discordWebhookService = new DiscordWebhookService(this);
 
         this.addListener(new PlayerListener(this));
 
@@ -133,6 +137,10 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         this.economyManager.loadEconomies(); // Load economies.yml
         this.itemRuleManager.loadRules(); // Load rules.yml
         this.categoryManager.loadCategories(); // Load categories.yml
+
+        if (this.discordWebhookService != null) {
+            this.discordWebhookService.loadConfiguration(); // Load discord.yml
+        }
     }
 
     private void registerPlaceholders() {
@@ -285,6 +293,10 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     @Override
     public Placeholder getPlaceholder() {
         return this.placeholder;
+    }
+
+    public DiscordWebhookService getDiscordWebhookService() {
+        return this.discordWebhookService;
     }
 
     private void addListener(Listener listener) {

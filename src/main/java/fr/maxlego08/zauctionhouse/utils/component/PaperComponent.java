@@ -154,4 +154,9 @@ public class PaperComponent implements ComponentMessage {
     public String getItemStackDisplayName(ItemStack itemStack) {
         return MiniMessage.miniMessage().serialize(Objects.requireNonNull(itemStack.getItemMeta().displayName()));
     }
+
+    @Override
+    public String stripColor(String message) {
+        return PlainTextComponentSerializer.plainText().serialize(this.MINI_MESSAGE.deserialize(colorMiniMessage(message)));
+    }
 }
