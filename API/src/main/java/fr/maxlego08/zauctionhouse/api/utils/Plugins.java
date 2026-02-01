@@ -27,7 +27,13 @@ public enum Plugins {
     NEXTGENS("NextGens"),
     MYTHICMOBS("MythicMobs"),
 	ZMENUPLUS("zMenuPlus"),
-    BREWERYX("BreweryX")
+    BREWERYX("BreweryX"),
+    MMOITEMS("MMOItems"),
+    CRUCIBLE("MythicCrucible"),
+    DENIZEN("Denizen"),
+    ADVANCEDITEMS("AdvancedItems"),
+    CUSTOMCRAFTING("CustomCrafting"),
+    ECOITEMS("EcoItems")
     ;
 
 	private final String name;

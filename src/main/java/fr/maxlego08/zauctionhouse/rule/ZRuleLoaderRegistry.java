@@ -5,9 +5,17 @@ import fr.maxlego08.zauctionhouse.api.rules.Rule;
 import fr.maxlego08.zauctionhouse.api.rules.RuleConfigHelper;
 import fr.maxlego08.zauctionhouse.api.rules.loader.RuleLoader;
 import fr.maxlego08.zauctionhouse.api.rules.loader.RuleLoaderRegistry;
+import fr.maxlego08.zauctionhouse.hooks.craftengine.CraftEngineRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.denizen.DenizenRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.executableblocks.ExecutableBlocksRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.executableitems.ExecutableItemsRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.headdatabase.HeadDatabaseRuleLoader;
 import fr.maxlego08.zauctionhouse.hooks.itemsadder.ItemsAdderRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.mmoitems.MMOItemsRuleLoader;
 import fr.maxlego08.zauctionhouse.hooks.nexo.NexoRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.nova.NovaRuleLoader;
 import fr.maxlego08.zauctionhouse.hooks.oraxen.OraxenRuleLoader;
+import fr.maxlego08.zauctionhouse.hooks.slimefun.SlimefunRuleLoader;
 import fr.maxlego08.zauctionhouse.rule.loaders.*;
 
 import java.util.*;
@@ -61,6 +69,70 @@ public class ZRuleLoaderRegistry implements RuleLoaderRegistry {
      */
     public void registerNexoLoader() {
         register(new NexoRuleLoader());
+    }
+
+    /**
+     * Registers the MMOItems rule loader.
+     * Should only be called if MMOItems plugin is present.
+     */
+    public void registerMMOItemsLoader() {
+        register(new MMOItemsRuleLoader());
+    }
+
+    /**
+     * Registers the ExecutableItems rule loader.
+     * Should only be called if ExecutableItems plugin is present.
+     */
+    public void registerExecutableItemsLoader() {
+        register(new ExecutableItemsRuleLoader());
+    }
+
+    /**
+     * Registers the Slimefun rule loader.
+     * Should only be called if Slimefun plugin is present.
+     */
+    public void registerSlimefunLoader() {
+        register(new SlimefunRuleLoader());
+    }
+
+    /**
+     * Registers the HeadDatabase rule loader.
+     * Should only be called if HeadDatabase plugin is present.
+     */
+    public void registerHeadDatabaseLoader() {
+        register(new HeadDatabaseRuleLoader());
+    }
+
+    /**
+     * Registers the Nova rule loader.
+     * Should only be called if Nova plugin is present.
+     */
+    public void registerNovaLoader() {
+        register(new NovaRuleLoader());
+    }
+
+    /**
+     * Registers the Denizen rule loader.
+     * Should only be called if Denizen plugin is present.
+     */
+    public void registerDenizenLoader() {
+        register(new DenizenRuleLoader());
+    }
+
+    /**
+     * Registers the CraftEngine rule loader.
+     * Should only be called if CraftEngine plugin is present.
+     */
+    public void registerCraftEngineLoader() {
+        register(new CraftEngineRuleLoader());
+    }
+
+    /**
+     * Registers the ExecutableBlocks rule loader.
+     * Should only be called if ExecutableBlocks plugin is present.
+     */
+    public void registerExecutableBlocksLoader() {
+        register(new ExecutableBlocksRuleLoader());
     }
 
     @Override

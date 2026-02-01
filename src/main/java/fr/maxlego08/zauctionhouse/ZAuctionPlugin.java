@@ -166,6 +166,46 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
             this.ruleLoaderRegistry.registerNexoLoader();
             this.getLogger().info("Nexo rule loader registered.");
         }
+
+        if (isEnable(Plugins.MMOITEMS)) {
+            this.ruleLoaderRegistry.registerMMOItemsLoader();
+            this.getLogger().info("MMOItems rule loader registered.");
+        }
+
+        if (isEnable(Plugins.EXECUTABLE_ITEMS)) {
+            this.ruleLoaderRegistry.registerExecutableItemsLoader();
+            this.getLogger().info("ExecutableItems rule loader registered.");
+        }
+
+        if (isEnable(Plugins.SLIMEFUN)) {
+            this.ruleLoaderRegistry.registerSlimefunLoader();
+            this.getLogger().info("Slimefun rule loader registered.");
+        }
+
+        if (isEnable(Plugins.HEADDATABASE)) {
+            this.ruleLoaderRegistry.registerHeadDatabaseLoader();
+            this.getLogger().info("HeadDatabase rule loader registered.");
+        }
+
+        if (isEnable(Plugins.NOVA)) {
+            this.ruleLoaderRegistry.registerNovaLoader();
+            this.getLogger().info("Nova rule loader registered.");
+        }
+
+        if (isEnable(Plugins.DENIZEN)) {
+            this.ruleLoaderRegistry.registerDenizenLoader();
+            this.getLogger().info("Denizen rule loader registered.");
+        }
+
+        if (isEnable(Plugins.CRAFTENGINE)) {
+            this.ruleLoaderRegistry.registerCraftEngineLoader();
+            this.getLogger().info("CraftEngine rule loader registered.");
+        }
+
+        if (isEnable(Plugins.EXECUTABLE_BLOCKS)) {
+            this.ruleLoaderRegistry.registerExecutableBlocksLoader();
+            this.getLogger().info("ExecutableBlocks rule loader registered.");
+        }
     }
 
     @Override

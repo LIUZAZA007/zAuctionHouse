@@ -1186,28 +1186,23 @@ weapons:
 
 ### 9.2 Phase 2 : Intégrations (Sprint 2)
 
-- [ ] **Items Custom**
+- [x] **Items Custom**
   - [x] `ItemsAdderRule`
   - [x] `OraxenRule`
   - [x] `Nexo`
-  - [ ] Détection auto plugins présents
+  - [x] Détection auto plugins présents
 
-- [ ] **GUI Integration**
-  - [ ] Button ZAUCTIONHOUSE_CATEGORY
-  - [ ] Placeholder %category_count%
-  - [ ] Menu categories.yml template
-
-- [ ] **Cache système**
-  - [ ] TTL configurable
-  - [ ] Invalidation on-change
-  - [ ] Métriques performance
+- [x] **GUI Integration**
+  - [x] Button ZAUCTIONHOUSE_CATEGORY
+  - [x] Placeholder %category_count%
+  - [x] Menu categories.yml template
 
 ### 9.3 Phase 3 : Avancé (Sprint 3)
 
-- [ ] **Catégories dynamiques**
-  - [ ] @all (tous items)
-  - [ ] @recent (24h)
-  - [ ] @ending-soon (1h)
+- [x] **Catégories dynamiques**
+  - [x] @all (tous items)
+  - [x] @recent (24h)
+  - [x] @ending-soon (1h)
 
 - [ ] **Fonctionnalités avancées**
   - [ ] Héritage `extends`
