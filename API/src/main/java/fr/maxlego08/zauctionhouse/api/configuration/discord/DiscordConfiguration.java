@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.discord;
+package fr.maxlego08.zauctionhouse.api.configuration.discord;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public record DiscordConfiguration(boolean enabled, String serverName, WebhookConfiguration sellWebhook,
-                                   WebhookConfiguration purchaseWebhook) {
+public record DiscordConfiguration(boolean enabled, String serverName, String itemImageUrl,
+                                   boolean extractDominantColor, String defaultColor,
+                                   WebhookConfiguration sellWebhook, WebhookConfiguration purchaseWebhook) {
 
     public static DiscordConfiguration of(AuctionPlugin plugin) {
         File file = new File(plugin.getDataFolder(), "discord.yml");
@@ -21,11 +22,14 @@ public record DiscordConfiguration(boolean enabled, String serverName, WebhookCo
 
         boolean enabled = config.getBoolean("enabled", false);
         String serverName = config.getString("server-name", "My Server");
+        String itemImageUrl = config.getString("item-image-url", "https://img.groupez.dev/minecraft/%item_material%.png");
+        boolean extractDominantColor = config.getBoolean("extract-dominant-color", true);
+        String defaultColor = config.getString("default-color", "#5865F2");
 
         WebhookConfiguration sellWebhook = WebhookConfiguration.of(config, "webhooks.sell");
         WebhookConfiguration purchaseWebhook = WebhookConfiguration.of(config, "webhooks.purchase");
 
-        return new DiscordConfiguration(enabled, serverName, sellWebhook, purchaseWebhook);
+        return new DiscordConfiguration(enabled, serverName, itemImageUrl, extractDominantColor, defaultColor, sellWebhook, purchaseWebhook);
     }
 
     public record WebhookConfiguration(boolean enabled, String url, String username, String avatarUrl, String content, EmbedConfiguration embed) {

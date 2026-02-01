@@ -6,6 +6,17 @@ enabled: false
 # Server name used in placeholders
 server-name: "My Server"
 
+# Image URL pattern for fetching item images (used for dominant color extraction)
+# Placeholders: %item_material% (lowercase), %ITEM_MATERIAL% (uppercase)
+# The dominant color can be used with the %item_dominant_color% placeholder
+item-image-url: "https://img.groupez.dev/minecraft/%item_material%.png"
+
+# Enable dominant color extraction (requires fetching images, may add latency)
+extract-dominant-color: false
+
+# Default color to use if extraction fails
+default-color: "#5865F2"
+
 webhooks:
   sell:
     enabled: false
@@ -41,7 +52,7 @@ webhooks:
         url: ""
         icon-url: "https://mc-heads.net/avatar/%seller_uuid%"
       thumbnail:
-        url: "https://img.groupez.dev/minecraft/%item_material%.png"
+        url: "%item_image_url%"
       image:
         url: ""
       timestamp: true
@@ -80,16 +91,19 @@ webhooks:
         url: ""
         icon-url: "https://mc-heads.net/avatar/%buyer_uuid%"
       thumbnail:
-        url: ""
+        url: "%item_image_url%"
       image:
         url: ""
       timestamp: true
 
 # Available placeholders:
-# Item: %item_id%, %item_material%, %item_display%, %item_amount%, %item_lore%, %item_enchantments%, %item_custom_model_data%
+# Item: %item_id%, %item_material%, %item_display%, %item_amount%, %item_lore%, %item_enchantments%, %item_custom_model_data%, %item_dominant_color%, %item_image_url%
 # Seller: %seller_name%, %seller_uuid%
 # Buyer: %buyer_name%, %buyer_uuid%
 # Price: %price%, %formatted_price%, %economy_name%, %economy_display_name%
 # Time: %created_at%, %expires_at%, %remaining_time%, %timestamp%
 # Server: %server_name%
 # Categories: %category_names%, %category_count%
+#
+# Note: %item_dominant_color% extracts the dominant color from the item image (requires extract-dominant-color: true)
+# You can use it for the embed color: color: "%item_dominant_color%"

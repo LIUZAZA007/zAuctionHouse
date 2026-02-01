@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.discord;
+package fr.maxlego08.zauctionhouse.api.configuration.discord;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.List;
 
 public class DiscordEmbed {
 
+    private final List<Field> fields = new ArrayList<>();
     private String title;
     private String description;
     private int color;
-    private final List<Field> fields = new ArrayList<>();
     private Footer footer;
     private Author author;
     private Thumbnail thumbnail;
@@ -73,7 +73,7 @@ public class DiscordEmbed {
         if (footer != null && footer.text != null && !footer.text.isEmpty()) {
             StringBuilder footerJson = new StringBuilder("\"footer\":{\"text\":" + escapeJson(footer.text));
             if (footer.iconUrl != null && !footer.iconUrl.isEmpty()) {
-                footerJson.append(",\"icon_url\":" + escapeJson(footer.iconUrl));
+                footerJson.append(",\"icon_url\":").append(escapeJson(footer.iconUrl));
             }
             footerJson.append("}");
             parts.add(footerJson.toString());
@@ -82,10 +82,10 @@ public class DiscordEmbed {
         if (author != null && author.name != null && !author.name.isEmpty()) {
             StringBuilder authorJson = new StringBuilder("\"author\":{\"name\":" + escapeJson(author.name));
             if (author.url != null && !author.url.isEmpty()) {
-                authorJson.append(",\"url\":" + escapeJson(author.url));
+                authorJson.append(",\"url\":").append(escapeJson(author.url));
             }
             if (author.iconUrl != null && !author.iconUrl.isEmpty()) {
-                authorJson.append(",\"icon_url\":" + escapeJson(author.iconUrl));
+                authorJson.append(",\"icon_url\":").append(escapeJson(author.iconUrl));
             }
             authorJson.append("}");
             parts.add(authorJson.toString());

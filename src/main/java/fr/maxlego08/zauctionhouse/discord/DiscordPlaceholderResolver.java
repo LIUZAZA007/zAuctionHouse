@@ -18,8 +18,10 @@ import java.util.stream.Collectors;
 public class DiscordPlaceholderResolver {
 
     private final Map<String, Supplier<String>> placeholders = new HashMap<>();
+    private String cachedImageUrl;
+    private String cachedDominantColor;
 
-    public DiscordPlaceholderResolver(String serverName, AuctionItem auctionItem, Player seller, Player buyer) {
+    public DiscordPlaceholderResolver(String serverName, AuctionItem auctionItem, Player seller, Player buyer, String itemImageUrlPattern, boolean extractDominantColor, String defaultColor, ColorExtractor colorExtractor) {
         registerItemPlaceholders(auctionItem);
         registerSellerPlaceholders(auctionItem, seller);
         registerBuyerPlaceholders(auctionItem, buyer);
@@ -27,8 +29,16 @@ public class DiscordPlaceholderResolver {
         registerTimePlaceholders(auctionItem);
         registerServerPlaceholders(serverName);
         registerCategoryPlaceholders(auctionItem);
+        registerImagePlaceholders(auctionItem, itemImageUrlPattern, extractDominantColor, defaultColor, colorExtractor);
     }
 
+    /**
+     * Registers placeholders related to the auction item.
+     * The method registers placeholders for the item ID, material, amount, display name, lore, enchantments, custom model data.
+     * If the auction item's item stack is null, the placeholders are replaced with default values.
+     *
+     * @param auctionItem the auction item to register placeholders for
+     */
     private void registerItemPlaceholders(AuctionItem auctionItem) {
         placeholders.put("%item_id%", () -> String.valueOf(auctionItem.getId()));
 
@@ -73,6 +83,14 @@ public class DiscordPlaceholderResolver {
         }
     }
 
+    /**
+     * Registers placeholders related to the seller of the auction item.
+     * The method registers placeholders for the seller's name and UUID.
+     * If the seller is null, the placeholders are replaced with default values.
+     *
+     * @param auctionItem the auction item to register placeholders for
+     * @param seller      the seller of the auction item, or null if unknown
+     */
     private void registerSellerPlaceholders(AuctionItem auctionItem, Player seller) {
         if (seller != null) {
             placeholders.put("%seller_name%", seller::getName);
@@ -86,6 +104,14 @@ public class DiscordPlaceholderResolver {
         }
     }
 
+    /**
+     * Registers placeholders related to the buyer of the auction item.
+     * The method registers placeholders for the buyer's name and UUID.
+     * If the buyer is null, the placeholders are replaced with default values.
+     *
+     * @param auctionItem the auction item to register placeholders for
+     * @param buyer       the buyer of the auction item, or null if unknown
+     */
     private void registerBuyerPlaceholders(AuctionItem auctionItem, Player buyer) {
         if (buyer != null) {
             placeholders.put("%buyer_name%", buyer::getName);
@@ -98,6 +124,13 @@ public class DiscordPlaceholderResolver {
         }
     }
 
+    /**
+     * Registers placeholders related to the auction item's price.
+     * The method registers placeholders for the price, formatted price, economy name and economy display name.
+     * If the auction item's economy is null, the placeholders are replaced with default values.
+     *
+     * @param auctionItem the auction item to register placeholders for
+     */
     private void registerPricePlaceholders(AuctionItem auctionItem) {
         placeholders.put("%price%", () -> auctionItem.getPrice().toPlainString());
         placeholders.put("%formatted_price%", auctionItem::getFormattedPrice);
@@ -112,6 +145,13 @@ public class DiscordPlaceholderResolver {
         }
     }
 
+    /**
+     * Registers placeholders related to the auction item's timestamps.
+     * The method registers placeholders for the created at timestamp, expires at timestamp, remaining time and the current timestamp.
+     * If the auction item's created at timestamp is null, the placeholder is replaced with an empty string.
+     *
+     * @param auctionItem the auction item to register placeholders for
+     */
     private void registerTimePlaceholders(AuctionItem auctionItem) {
         placeholders.put("%created_at%", () -> {
             var createdAt = auctionItem.getCreatedAt();
@@ -123,10 +163,20 @@ public class DiscordPlaceholderResolver {
         placeholders.put("%timestamp%", () -> Instant.now().toString());
     }
 
+    /**
+     * Registers placeholders related to the server name.
+     *
+     * @param serverName the name of the server to register placeholders for
+     */
     private void registerServerPlaceholders(String serverName) {
         placeholders.put("%server_name%", () -> serverName);
     }
 
+    /**
+     * Registers placeholders related to the auction item's categories.
+     *
+     * @param auctionItem the auction item to register placeholders for
+     */
     private void registerCategoryPlaceholders(AuctionItem auctionItem) {
         placeholders.put("%category_names%", () -> {
             var categories = auctionItem.getCategories();
@@ -142,10 +192,49 @@ public class DiscordPlaceholderResolver {
         });
     }
 
-    public String resolve(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
+    /**
+     * Registers placeholders related to the item image.
+     *
+     * @param auctionItem          the auction item to register placeholders for
+     * @param itemImageUrlPattern  the pattern to use for building the item image URL
+     * @param extractDominantColor whether to extract the dominant color from the item image
+     * @param defaultColor         the default color to use if the dominant color extraction fails
+     * @param colorExtractor       the color extractor to use for extracting the dominant color
+     */
+    private void registerImagePlaceholders(AuctionItem auctionItem, String itemImageUrlPattern, boolean extractDominantColor, String defaultColor, ColorExtractor colorExtractor) {
+        // Build the image URL from the pattern
+        ItemStack itemStack = auctionItem.getItemStack();
+        String material = itemStack != null ? itemStack.getType().name() : "UNKNOWN";
+
+        if (itemImageUrlPattern != null && !itemImageUrlPattern.isEmpty()) {
+            cachedImageUrl = itemImageUrlPattern.replace("%item_material%", material).replace("%ITEM_MATERIAL%", material);
+        } else {
+            cachedImageUrl = "";
         }
+
+        placeholders.put("%item_image_url%", () -> cachedImageUrl);
+
+        if (extractDominantColor && colorExtractor != null && !cachedImageUrl.isEmpty()) {
+            // Use material-based caching
+            cachedDominantColor = colorExtractor.getColorForMaterial(material, cachedImageUrl);
+        } else {
+            cachedDominantColor = defaultColor;
+        }
+
+        placeholders.put("%item_dominant_color%", () -> cachedDominantColor);
+    }
+
+    /**
+     * Resolves placeholders in a given text.
+     * The method goes through all the registered placeholders and replaces the placeholder with the corresponding value.
+     * If the value is null, the placeholder is replaced with an empty string.
+     *
+     * @param text the text to resolve placeholders in
+     * @return the resolved text
+     */
+    public String resolve(String text) {
+
+        if (text == null || text.isEmpty()) return text;
 
         String result = text;
         for (Map.Entry<String, Supplier<String>> entry : placeholders.entrySet()) {
@@ -158,6 +247,15 @@ public class DiscordPlaceholderResolver {
         return result;
     }
 
+    /**
+     * Formats an enchantment key into a human-readable string.
+     * The method splits the key by underscores and capitalizes the first letter of each part.
+     * The formatted parts are then concatenated with a space separator.
+     * If a part is empty, it is ignored.
+     *
+     * @param enchantment the enchantment to format
+     * @return the formatted enchantment key
+     */
     private String formatEnchantment(Enchantment enchantment) {
         String key = enchantment.getKey().getKey();
         String[] parts = key.split("_");
