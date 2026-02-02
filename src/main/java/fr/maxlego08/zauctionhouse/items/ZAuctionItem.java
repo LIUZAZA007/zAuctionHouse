@@ -38,17 +38,18 @@ public class ZAuctionItem extends ZItem implements AuctionItem {
 
     @Override
     public ItemStack buildItemStack(Player player, List<String> lore) {
+        return this.performanceDebug.measureWithContext("item.BuildItemStack", () -> {
+            var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
 
-        var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
+            var itemStack = getItemStack(player);
+            var itemMeta = itemStack.getItemMeta();
 
-        var itemStack = getItemStack(player);
-        var itemMeta = itemStack.getItemMeta();
+            Placeholders placeholders = createPlaceholders(player);
 
-        Placeholders placeholders = createPlaceholders(player);
-
-        meta.updateLore(itemMeta, lore.stream().map(placeholders::parse).toList(), LoreType.APPEND);
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
+            meta.updateLore(itemMeta, lore.stream().map(placeholders::parse).toList(), LoreType.APPEND);
+            itemStack.setItemMeta(itemMeta);
+            return itemStack;
+        }, () -> "for=" + player.getName() + ", itemId=" + this.id);
     }
 
     private ItemStack getItemStack(Player player) {

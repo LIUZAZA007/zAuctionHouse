@@ -31,6 +31,7 @@ import fr.maxlego08.zauctionhouse.api.utils.IntArrayList;
 import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
+import fr.maxlego08.zauctionhouse.utils.cache.SortedItemsCache;
 import fr.maxlego08.zauctionhouse.utils.cache.ZPlayerCache;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,6 +54,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     private final Map<UUID, IntList> idsListedByOwner = new HashMap<>();
     private final Map<UUID, IntList> idsExpiredByOwner = new HashMap<>();
     private final Map<UUID, IntList> idsPurchasedByBuyer = new HashMap<>();
+    private final SortedItemsCache sortedItemsCache;
 
     public ZAuctionManager(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -65,6 +67,9 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         for (StorageType value : StorageType.values()) {
             this.storageItemsById.put(value, new HashMap<>());
         }
+
+        // Initialize sorted items cache for LISTED items
+        this.sortedItemsCache = new SortedItemsCache(plugin, () -> this.storageItemsById.get(StorageType.LISTED).values());
     }
 
     @Override
@@ -93,6 +98,22 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
     public AuctionPlugin getPlugin() {
         return plugin;
+    }
+
+    /**
+     * Returns the sorted items cache for performance optimization.
+     */
+    public SortedItemsCache getSortedItemsCache() {
+        return sortedItemsCache;
+    }
+
+    /**
+     * Rebuilds the sorted items cache asynchronously.
+     * Should be called after bulk item operations (e.g., loading from database).
+     */
+    @Override
+    public void rebuildSortedItemsCache() {
+        this.sortedItemsCache.rebuildAsync();
     }
 
     @Override
@@ -138,6 +159,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
         if (storageType == StorageType.LISTED) {
             this.plugin.getCategoryManager().invalidateCategoryCountCache();
+            this.sortedItemsCache.invalidate();
         }
     }
 
@@ -157,24 +179,23 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
             if (storageType == StorageType.LISTED) {
                 this.plugin.getCategoryManager().invalidateCategoryCountCache();
+                this.sortedItemsCache.invalidate();
             }
         }
     }
 
     @Override
     public List<Item> getItemsListedForSale(Player player) {
+        long startTime = performanceDebug.start();
+
         var cache = getCache(player);
         var sort = cache.get(PlayerCacheKey.ITEM_SORT, this.plugin.getConfiguration().getSort().defaultSort());
         var category = cache.get(PlayerCacheKey.CURRENT_CATEGORY, (Category) null);
 
-        Predicate<Item> predicate = item -> item.getStatus() == ItemStatus.AVAILABLE;
-        
-        if (category != null) {
-            predicate = predicate.and(item -> item.hasCategory(category));
-        }
+        // Use the global sorted items cache for O(1) access
+        IntList ids = cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> sortedItemsCache.getSortedIds(category, sort));
 
-        Predicate<Item> finalPredicate = predicate;
-        IntList ids = cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> getItemIds(StorageType.LISTED, finalPredicate, sort.getComparator()));
+        performanceDebug.end("getItemsListedForSale", startTime, "sort=" + sort + ", category=" + (category != null ? category.getId() : "all") + ", items=" + ids.size());
         return resolveItems(StorageType.LISTED, ids);
     }
 

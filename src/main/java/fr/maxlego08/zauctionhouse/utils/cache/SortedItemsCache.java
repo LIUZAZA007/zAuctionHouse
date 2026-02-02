@@ -1,0 +1,306 @@
+package fr.maxlego08.zauctionhouse.utils.cache;
+
+import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.category.Category;
+import fr.maxlego08.zauctionhouse.api.item.Item;
+import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
+import fr.maxlego08.zauctionhouse.api.item.SortItem;
+import fr.maxlego08.zauctionhouse.api.utils.IntArrayList;
+import fr.maxlego08.zauctionhouse.api.utils.IntList;
+import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
+
+/**
+ * High-performance cache for sorted item lists.
+ * <p>
+ * Maintains pre-sorted lists for all sort types and category combinations,
+ * providing O(1) access for pagination instead of O(n log n) sorting on each request.
+ * <p>
+ * Thread-safe implementation using read-write locks to allow concurrent reads
+ * while ensuring consistency during cache rebuilds.
+ */
+public class SortedItemsCache {
+
+    private final AuctionPlugin plugin;
+    private final PerformanceDebug performanceDebug;
+    private final Supplier<Collection<Item>> itemsSupplier;
+
+    // Cache for all items sorted by each SortItem type
+    private final Map<SortItem, IntList> sortedAllItems = new ConcurrentHashMap<>();
+
+    // Cache for items filtered by category, then sorted
+    // Key format: "categoryId:sortItem"
+    private final Map<String, IntList> sortedByCategoryItems = new ConcurrentHashMap<>();
+
+    // Lock for rebuilding the cache
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    // Flag indicating the cache needs to be rebuilt
+    private final AtomicBoolean dirty = new AtomicBoolean(true);
+
+    // Timestamp of last rebuild for debugging
+    private volatile long lastRebuildTime = 0;
+
+    public SortedItemsCache(AuctionPlugin plugin, Supplier<Collection<Item>> itemsSupplier) {
+        this.plugin = plugin;
+        this.performanceDebug = new PerformanceDebug(plugin);
+        this.itemsSupplier = itemsSupplier;
+    }
+
+    /**
+     * Gets the sorted list of item IDs for all available items.
+     *
+     * @param sortItem the sort order
+     * @return list of item IDs in sorted order
+     */
+    public IntList getSortedIds(SortItem sortItem) {
+        ensureCacheValid();
+
+        lock.readLock().lock();
+        try {
+            IntList cached = sortedAllItems.get(sortItem);
+            return cached != null ? cached : new IntArrayList();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Gets the sorted list of item IDs filtered by category.
+     *
+     * @param category the category to filter by (null for all items)
+     * @param sortItem the sort order
+     * @return list of item IDs in sorted order
+     */
+    public IntList getSortedIds(Category category, SortItem sortItem) {
+        if (category == null) {
+            return getSortedIds(sortItem);
+        }
+
+        ensureCacheValid();
+
+        String cacheKey = buildCacheKey(category.getId(), sortItem);
+
+        lock.readLock().lock();
+        try {
+            IntList cached = sortedByCategoryItems.get(cacheKey);
+            return cached != null ? cached : new IntArrayList();
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Gets a paginated sublist of sorted item IDs.
+     *
+     * @param sortItem the sort order
+     * @param offset   starting index
+     * @param limit    maximum number of items to return
+     * @return sublist of item IDs
+     */
+    public IntList getPage(SortItem sortItem, int offset, int limit) {
+        IntList allIds = getSortedIds(sortItem);
+        return getSubList(allIds, offset, limit);
+    }
+
+    /**
+     * Gets a paginated sublist of sorted item IDs filtered by category.
+     *
+     * @param category the category to filter by
+     * @param sortItem the sort order
+     * @param offset   starting index
+     * @param limit    maximum number of items to return
+     * @return sublist of item IDs
+     */
+    public IntList getPage(Category category, SortItem sortItem, int offset, int limit) {
+        IntList allIds = getSortedIds(category, sortItem);
+        return getSubList(allIds, offset, limit);
+    }
+
+    /**
+     * Invalidates the entire cache. The cache will be rebuilt on next access.
+     */
+    public void invalidate() {
+        dirty.set(true);
+    }
+
+    /**
+     * Forces an immediate synchronous cache rebuild.
+     * Use sparingly as this blocks the calling thread.
+     */
+    public void rebuild() {
+        rebuildCache();
+    }
+
+    /**
+     * Schedules an asynchronous cache rebuild.
+     */
+    public void rebuildAsync() {
+        plugin.getScheduler().runAsync(w -> rebuildCache());
+    }
+
+    /**
+     * Returns the total number of cached items for the given sort type.
+     */
+    public int getTotalCount(SortItem sortItem) {
+        ensureCacheValid();
+        lock.readLock().lock();
+        try {
+            IntList cached = sortedAllItems.get(sortItem);
+            return cached != null ? cached.size() : 0;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the total number of cached items for the given category and sort type.
+     */
+    public int getTotalCount(Category category, SortItem sortItem) {
+        if (category == null) {
+            return getTotalCount(sortItem);
+        }
+
+        ensureCacheValid();
+        String cacheKey = buildCacheKey(category.getId(), sortItem);
+
+        lock.readLock().lock();
+        try {
+            IntList cached = sortedByCategoryItems.get(cacheKey);
+            return cached != null ? cached.size() : 0;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns the timestamp of the last cache rebuild.
+     */
+    public long getLastRebuildTime() {
+        return lastRebuildTime;
+    }
+
+    /**
+     * Returns whether the cache is currently dirty (needs rebuild).
+     */
+    public boolean isDirty() {
+        return dirty.get();
+    }
+
+    private void ensureCacheValid() {
+        if (dirty.get()) {
+            rebuildCache();
+        }
+    }
+
+    private void rebuildCache() {
+        long startTime = performanceDebug.start();
+
+        lock.writeLock().lock();
+        try {
+            // Double-check after acquiring lock
+            if (!dirty.get()) {
+                performanceDebug.end("SortedItemsCache.rebuild", startTime, "skipped (already rebuilt)");
+                return;
+            }
+
+            // Get all items
+            Collection<Item> allItems = itemsSupplier.get();
+
+            // Filter to available items only
+            List<Item> availableItems = new ArrayList<>();
+            for (Item item : allItems) {
+                if (item.getStatus() == ItemStatus.AVAILABLE && !item.isExpired()) {
+                    availableItems.add(item);
+                }
+            }
+
+            // Clear existing cache
+            sortedAllItems.clear();
+            sortedByCategoryItems.clear();
+
+            // Build sorted lists for all items
+            for (SortItem sortItem : SortItem.values()) {
+                List<Item> sorted = new ArrayList<>(availableItems);
+                sorted.sort(sortItem.getComparator());
+
+                IntList ids = new IntArrayList(sorted.size());
+                for (Item item : sorted) {
+                    ids.add(item.getId());
+                }
+                sortedAllItems.put(sortItem, ids);
+            }
+
+            // Build sorted lists by category
+            // First, collect all unique categories from items
+            Set<String> categoryIds = new HashSet<>();
+            for (Item item : availableItems) {
+                Set<Category> categories = item.getCategories();
+                if (categories != null) {
+                    for (Category category : categories) {
+                        categoryIds.add(category.getId());
+                    }
+                }
+            }
+
+            // For each category, build sorted lists
+            for (String categoryId : categoryIds) {
+                List<Item> categoryItems = new ArrayList<>();
+                for (Item item : availableItems) {
+                    if (item.hasCategory(categoryId)) {
+                        categoryItems.add(item);
+                    }
+                }
+
+                for (SortItem sortItem : SortItem.values()) {
+                    List<Item> sorted = new ArrayList<>(categoryItems);
+                    sorted.sort(sortItem.getComparator());
+
+                    IntList ids = new IntArrayList(sorted.size());
+                    for (Item item : sorted) {
+                        ids.add(item.getId());
+                    }
+                    sortedByCategoryItems.put(buildCacheKey(categoryId, sortItem), ids);
+                }
+            }
+
+            dirty.set(false);
+            lastRebuildTime = System.currentTimeMillis();
+
+            performanceDebug.end("SortedItemsCache.rebuild", startTime,
+                    "items=" + availableItems.size() + ", categories=" + categoryIds.size());
+
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    private String buildCacheKey(String categoryId, SortItem sortItem) {
+        return categoryId + ":" + sortItem.name();
+    }
+
+    private IntList getSubList(IntList source, int offset, int limit) {
+        if (source == null || source.isEmpty()) {
+            return new IntArrayList();
+        }
+
+        int size = source.size();
+        if (offset >= size) {
+            return new IntArrayList();
+        }
+
+        int fromIndex = Math.max(0, offset);
+        int toIndex = Math.min(size, offset + limit);
+
+        IntList result = new IntArrayList(toIndex - fromIndex);
+        for (int i = fromIndex; i < toIndex; i++) {
+            result.add(source.getInt(i));
+        }
+        return result;
+    }
+}

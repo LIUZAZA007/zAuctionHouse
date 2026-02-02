@@ -175,7 +175,7 @@ public class CommandAuctionAdminGenerate extends VCommand {
                         int itemId = itemRepository.create(data.sellerUUID, ItemType.AUCTION, data.price, data.expiredAt, defaultEconomy);
                         var auctionItem = auctionItemRepository.create(data.sellerUUID, data.sellerName, itemId, data.price, data.expiredAt, List.of(itemStack), defaultEconomy);
 
-                        plugin.getCategoryManager().applyCategories(auctionItem);
+                        this.plugin.getCategoryManager().applyCategories(auctionItem);
                         auctionManager.addItem(StorageType.LISTED, auctionItem);
 
                         int current = created.incrementAndGet();

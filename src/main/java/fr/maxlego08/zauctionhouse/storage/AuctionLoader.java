@@ -110,6 +110,11 @@ public class AuctionLoader {
 
         performanceDebug.end("loadItems.total", totalStartTime, "players=" + players.size() + ", items=" + amount + ", auctionItems=" + auctionItems.size());
         this.logger.info("Loaded " + amount + " items successfully (" + auctionItems.size() + " total)");
+
+        // Rebuild the sorted items cache after bulk loading
+        long cacheStartTime = performanceDebug.start();
+        auctionManager.rebuildSortedItemsCache();
+        performanceDebug.end("loadItems.rebuildSortedItemsCache", cacheStartTime, "scheduled async rebuild");
     }
 
     public AuctionItem createAuctionItem(ItemDTO dto, String sellerName, List<AuctionItemDTO> currentAuctionItems, AuctionEconomy auctionEconomy) {

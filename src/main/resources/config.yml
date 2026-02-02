@@ -13,7 +13,6 @@
 #
 ################################################################################################################################
 
-date-format: dd/MM/yyyy HH:mm:ss
 # Enables detailed logs and error messages in the console.
 # If you need support, make sure to activate this option and check your console logs.
 enable-debug: false
@@ -26,6 +25,27 @@ enable-debug: false
 # - Cache operations
 # Useful for diagnosing performance issues with large auction houses.
 enable-performance-debug: false
+
+# Performance debug filter configuration
+# Allows you to whitelist or blacklist specific operation names
+performance-debug:
+  filter:
+    # Filter mode: DISABLED (log all), WHITELIST (only log listed), BLACKLIST (log all except listed)
+    mode: DISABLED
+    # List of operation names to filter
+    # Supports wildcard suffix (*) for prefix matching, e.g., "loadItems.*" matches all loadItems operations
+    # Available operations:
+    # - loadItems.loadPlayers, loadItems.loadItemsFromDB, loadItems.loadAuctionItemsFromDB
+    # - loadItems.processItems, loadItems.total, loadItems.rebuildSortedItemsCache
+    # - getItemsListedForSale, resolveItems[SALE], getItemIds[SALE]
+    # - applyCategories, computeCategoryCount[categoryId]
+    # - SortedItemsCache.rebuild, item.BuildItemStack, item.CreatePlaceholders
+    # - openInventory.<file name>
+    operations:
+      - "loadItems.*"
+      - "SortedItemsCache.*"
+
+date-format: dd/MM/yyyy HH:mm:ss
 
 #
 # - SQLITE

@@ -303,4 +303,10 @@ public interface AuctionManager {
      * @param ignoredPlayer optional player who should not receive the update (e.g., action initiator)
      */
     void updateListedItems(Item item, boolean added, Player ignoredPlayer);
+
+    /**
+     * Rebuilds the sorted items cache asynchronously.
+     * Should be called after bulk item operations (e.g., loading from database).
+     */
+    void rebuildSortedItemsCache();
 }

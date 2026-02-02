@@ -6,6 +6,7 @@ import fr.maxlego08.zauctionhouse.api.category.Category;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
+import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ public abstract class ZItem implements Item {
     protected final BigDecimal price;
     protected final AuctionEconomy auctionEconomy;
     protected final Date createdAt;
+    protected final PerformanceDebug performanceDebug;
 
     protected Date expiredAt;
     protected ItemStatus itemStatus = ItemStatus.AVAILABLE;
@@ -40,6 +42,7 @@ public abstract class ZItem implements Item {
         this.auctionEconomy = auctionEconomy;
         this.createdAt = createdAt;
         this.expiredAt = expiredAt;
+        this.performanceDebug = new PerformanceDebug(plugin);
     }
 
     @Override
@@ -89,15 +92,17 @@ public abstract class ZItem implements Item {
 
     @Override
     public Placeholders createPlaceholders(Player player) {
-        Placeholders placeholders = new Placeholders();
-        placeholders.register("economy-name", this.auctionEconomy.getName());
-        placeholders.register("economy-display-name", this.auctionEconomy.getDisplayName());
-        placeholders.register("seller", this.getSellerName());
-        placeholders.register("status", this.createStatus(player));
-        placeholders.register("price", getFormattedPrice());
-        placeholders.register("time-remaining", this.getRemainingTime());
-        placeholders.register("formatted-expire-date", this.getFormattedExpireDate());
-        return placeholders;
+        return this.performanceDebug.measureWithContext("item.CreatePlaceholders", () -> {
+            Placeholders placeholders = new Placeholders();
+            placeholders.register("economy-name", this.auctionEconomy.getName());
+            placeholders.register("economy-display-name", this.auctionEconomy.getDisplayName());
+            placeholders.register("seller", this.getSellerName());
+            placeholders.register("status", this.createStatus(player));
+            placeholders.register("price", getFormattedPrice());
+            placeholders.register("time-remaining", this.getRemainingTime());
+            placeholders.register("formatted-expire-date", this.getFormattedExpireDate());
+            return placeholders;
+        }, () -> "for=" + player.getName() + ", itemId=" + this.id);
     }
 
     @Override

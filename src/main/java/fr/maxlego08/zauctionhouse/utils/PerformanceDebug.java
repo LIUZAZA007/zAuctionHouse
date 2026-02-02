@@ -71,10 +71,10 @@ public class PerformanceDebug {
     /**
      * Measures and logs the execution time of a supplier operation with additional context.
      *
-     * @param operationName name of the operation being measured
-     * @param supplier      the operation to measure
+     * @param operationName   name of the operation being measured
+     * @param supplier        the operation to measure
      * @param contextSupplier supplier for additional context (called after operation completes)
-     * @param <T>           the return type
+     * @param <T>             the return type
      * @return the result of the supplier
      */
     public <T> T measureWithContext(String operationName, Supplier<T> supplier, Supplier<String> contextSupplier) {
@@ -127,6 +127,11 @@ public class PerformanceDebug {
     }
 
     private void logPerformance(String operationName, long startTime, long endTime, String context) {
+        // Check if this operation should be logged based on filter configuration
+        if (!plugin.getConfiguration().getPerformanceDebug().shouldLog(operationName)) {
+            return;
+        }
+
         double durationMs = (endTime - startTime) / 1_000_000.0;
 
         StringBuilder message = new StringBuilder();

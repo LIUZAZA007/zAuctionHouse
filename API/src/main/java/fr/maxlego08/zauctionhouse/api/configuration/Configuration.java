@@ -6,6 +6,7 @@ import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfigurat
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemDisplayConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.PerformanceDebugConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.PermissionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.SortConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.SpecialItemsConfiguration;
@@ -74,6 +75,8 @@ public interface Configuration extends ConfigurationFile {
     SpecialItemsConfiguration getSpecialItems();
 
     ItemDisplayConfiguration getItemDisplay();
+
+    PerformanceDebugConfiguration getPerformanceDebug();
 
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
 }

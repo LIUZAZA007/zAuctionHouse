@@ -28,6 +28,7 @@ import fr.maxlego08.zauctionhouse.buttons.sell.SellCancelButton;
 import fr.maxlego08.zauctionhouse.buttons.sell.SellSlotButton;
 import fr.maxlego08.zauctionhouse.loader.buttons.CategoryButtonLoader;
 import fr.maxlego08.zauctionhouse.loader.buttons.SortLoader;
+import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -40,6 +41,7 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
     private final PatternManager patternManager;
     private final ButtonManager buttonManager;
     private final InventoryManager inventoryManager;
+    private final PerformanceDebug performanceDebug;
 
     public ZInventoriesLoader(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -47,6 +49,7 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
         this.buttonManager = getProvider(ButtonManager.class);
         this.inventoryManager = getProvider(InventoryManager.class);
         this.patternManager = getProvider(PatternManager.class);
+        this.performanceDebug = new PerformanceDebug(plugin);
     }
 
     private <T> T getProvider(Class<T> classz) {
@@ -147,28 +150,11 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
     }
 
     private void createPatternFiles() {
-        copyFiles("patterns",
-                "decoration",
-                "pagination",
-                "back"
-        );
+        copyFiles("patterns", "decoration", "pagination", "back");
     }
 
     private void createInventoriesFile() {
-        copyFiles("inventories",
-                "auction",
-                "expired-items",
-                "owned-items",
-                "purchased-items",
-                "admin-owned-items",
-                "admin-expired-items",
-                "admin-purchased-items",
-                "remove-confirm",
-                "purchase-confirm",
-                "auction-item",
-                "sell-inventory",
-                "categories"
-        );
+        copyFiles("inventories", "auction", "expired-items", "owned-items", "purchased-items", "admin-owned-items", "admin-expired-items", "admin-purchased-items", "remove-confirm", "purchase-confirm", "auction-item", "sell-inventory", "categories");
     }
 
     private void copyFiles(String path, String... files) {
@@ -194,6 +180,8 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
 
     @Override
     public void openInventory(Player player, Inventories inventories, int page) {
+        long start = this.performanceDebug.start();
+
         var optional = this.inventoryManager.getInventory(this.plugin, inventories.getFileName());
         if (optional.isEmpty()) {
             this.plugin.getLogger().severe("Unable to open inventory " + inventories.getFileName() + ", inventory not found");
@@ -203,5 +191,7 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
 
         var inventory = optional.get();
         this.inventoryManager.openInventoryWithOldInventories(player, inventory, page);
+
+        this.performanceDebug.end("openInventory." + inventories.getFileName(), start, "for=" + player.getName() + ", page=" + page);
     }
 }
