@@ -143,6 +143,28 @@ public interface AuctionManager {
     List<Item> getItemsListedForSale(Player player);
 
     /**
+     * Retrieves the IDs of items currently listed for sale, respecting the player's current
+     * sort order and category filter. This is more efficient than {@link #getItemsListedForSale(Player)}
+     * when only IDs are needed, as it avoids resolving full item objects.
+     *
+     * @param player player whose sort/category preferences should be applied
+     * @return list of item IDs matching the player's current view settings
+     */
+    IntList getItemIdsListedForSale(Player player);
+
+    /**
+     * Resolves a specific page of items from a list of IDs. This enables efficient pagination
+     * by only resolving the items that will actually be displayed.
+     *
+     * @param storageType the storage type to resolve items from
+     * @param allIds      complete list of item IDs (typically from cache)
+     * @param page        zero-based page index
+     * @param pageSize    number of items per page
+     * @return list of resolved items for the requested page
+     */
+    List<Item> resolveItemsForPage(StorageType storageType, IntList allIds, int page, int pageSize);
+
+    /**
      * Retrieves expired listings that belong to the specified player so they can reclaim them.
      *
      * @param player player owner of the expired items

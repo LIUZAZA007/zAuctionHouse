@@ -8,7 +8,9 @@ import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
+import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
+import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.utils.Permission;
 import org.bukkit.entity.Player;
@@ -35,20 +37,30 @@ public class ListedItemsButton extends PaginateButton {
     public void onRender(Player player, InventoryEngine inventoryEngine) {
 
         var manager = this.plugin.getAuctionManager();
-        var items = manager.getItemsListedForSale(player);
 
-        paginate(items, inventoryEngine, (slot, item) -> {
+        // 1. Get IDs from cache (O(1) access)
+        IntList itemIds = manager.getItemIdsListedForSale(player);
+
+        // 2. Resolve ONLY items for the current page
+        int page = inventoryEngine.getPage() - 1; // zMenu pages start at 1
+        var slots = new ArrayList<>(getSlots());
+        List<Item> pageItems = manager.resolveItemsForPage(StorageType.LISTED, itemIds, page, slots.size());
+
+        // 3. Display items directly
+        for (int i = 0; i < pageItems.size(); i++) {
+            Item item = pageItems.get(i);
+            int slot = slots.get(i);
             var itemStack = item.buildItemStack(player);
             var button = inventoryEngine.addItem(slot, itemStack);
-            if (button == null) return;
-
-            button.setClick(createClick(player, inventoryEngine, slot, item, itemStack));
-        });
+            if (button != null) {
+                button.setClick(createClick(player, inventoryEngine, slot, item, itemStack));
+            }
+        }
     }
 
     @Override
     public int getPaginationSize(@NonNull Player player) {
-        return this.plugin.getAuctionManager().getItemsListedForSale(player).size();
+        return this.plugin.getAuctionManager().getItemIdsListedForSale(player).size();
     }
 
     /**
@@ -208,15 +220,15 @@ public class ListedItemsButton extends PaginateButton {
         // Get the current page of the inventory
         int page = inventoryEngine.getPage();
 
-        // Get the list of items in the inventory
-        var items = manager.getItemsListedForSale(player);
+        // Get the IDs from cache (O(1) access)
+        IntList itemIds = manager.getItemIdsListedForSale(player);
 
         // Get the slots in the inventory
         var slots = new ArrayList<>(getSlots());
         if (slots.isEmpty() || slots.size() == 1) return;
 
-        // Find the index of the item in the list of items
-        int itemIndex = items.indexOf(item);
+        // Find the index of the item ID in the list
+        int itemIndex = findIndexOf(itemIds, item.getId());
         if (itemIndex == -1) return;
 
         // Calculate the start and end index of the items on the current page
@@ -229,12 +241,49 @@ public class ListedItemsButton extends PaginateButton {
 
         // If the item is being removed, shift all items after it down by one slot
         if (!isAdded) {
-            processRemove(items, endIndex, itemIndex, startIndex, slots, inventoryEngine, player);
+            // Resolve item at endIndex if needed (for filling the gap)
+            Item itemToAddAtEnd = null;
+            if (endIndex < itemIds.size()) {
+                int endItemId = itemIds.getInt(endIndex);
+                List<Item> resolved = manager.resolveItems(StorageType.LISTED, createSingleItemList(endItemId));
+                if (!resolved.isEmpty()) {
+                    itemToAddAtEnd = resolved.getFirst();
+                }
+            }
+            processRemove(itemToAddAtEnd, itemIndex, startIndex, slots, inventoryEngine, player);
         }
         // If the item is being added, shift all items after it up by one slot
         else {
             processAdd(item, itemIndex, startIndex, slots, inventoryEngine, player);
         }
+    }
+
+    /**
+     * Find the index of an item ID in an IntList.
+     *
+     * @param ids    the list of IDs to search
+     * @param itemId the item ID to find
+     * @return the index of the item ID, or -1 if not found
+     */
+    private int findIndexOf(IntList ids, int itemId) {
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.getInt(i) == itemId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Create an IntList with a single item ID.
+     *
+     * @param itemId the item ID
+     * @return an IntList containing the single ID
+     */
+    private IntList createSingleItemList(int itemId) {
+        IntList list = new fr.maxlego08.zauctionhouse.api.utils.IntArrayList(1);
+        list.add(itemId);
+        return list;
     }
 
     /**
@@ -282,31 +331,20 @@ public class ListedItemsButton extends PaginateButton {
     /**
      * Remove an item from a player's inventory.
      * This method will also shift all items after the removed item down by one slot.
-     * If the removed item was at the end of the page.
-     * The last item on the next page will be moved to the end of the current page.
+     * If there is an item to add at the end (from the next page), it will be added.
      *
-     * @param items           the list of items to remove the item from
-     * @param endIndex        the index of the last item on the page
+     * @param itemToAddAtEnd  the item to add at the end of the page (or null if none)
      * @param itemIndex       the index of the item to remove
      * @param startIndex      the index of the first item on the page
      * @param slots           the list of slots in the inventory
      * @param inventoryEngine the inventory engine to use
      * @param player          the player whose inventory to update
      */
-    private void processRemove(List<Item> items, int endIndex, int itemIndex, int startIndex, List<Integer> slots, InventoryEngine inventoryEngine, Player player) {
+    private void processRemove(Item itemToAddAtEnd, int itemIndex, int startIndex, List<Integer> slots, InventoryEngine inventoryEngine, Player player) {
 
         // Get the current inventory and the items stored in it
         var spigotInventory = inventoryEngine.getSpigotInventory();
         var inventoryItems = inventoryEngine.getItems();
-
-        // Check if there is an item at the end of the page that needs to be moved
-        Item itemToAddAtEnd = null;
-        if (endIndex < items.size()) {
-            itemToAddAtEnd = items.get(endIndex);
-        }
-
-        // Remove the item at the specified index
-        items.remove(itemIndex);
 
         // Get the GUI index of the removed item
         int removedGuiIndex = itemIndex - startIndex;

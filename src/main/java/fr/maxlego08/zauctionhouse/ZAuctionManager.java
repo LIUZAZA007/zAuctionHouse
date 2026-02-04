@@ -21,14 +21,14 @@ import fr.maxlego08.zauctionhouse.api.services.AuctionExpireService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionPurchaseService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionRemoveService;
 import fr.maxlego08.zauctionhouse.api.services.AuctionSellService;
+import fr.maxlego08.zauctionhouse.api.utils.IntArrayList;
+import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.buttons.list.ListedItemsButton;
 import fr.maxlego08.zauctionhouse.discord.DiscordWebhookService;
 import fr.maxlego08.zauctionhouse.services.ExpireService;
 import fr.maxlego08.zauctionhouse.services.PurchaseService;
 import fr.maxlego08.zauctionhouse.services.RemoveService;
 import fr.maxlego08.zauctionhouse.services.SellService;
-import fr.maxlego08.zauctionhouse.api.utils.IntArrayList;
-import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
 import fr.maxlego08.zauctionhouse.utils.cache.SortedItemsCache;
@@ -80,11 +80,44 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     @Override
     public void openMainAuction(Player player, int page) {
         var inventoriesLoader = this.plugin.getInventoriesLoader();
-        if (this.plugin.getServer().isPrimaryThread()) {
+        var cache = getCache(player);
+
+        // Check if player's cache is already ready (fast path)
+        boolean playerCacheReady = cache.has(PlayerCacheKey.ITEMS_LISTED);
+        boolean globalCacheReady = !sortedItemsCache.isDirty();
+
+        if (playerCacheReady && globalCacheReady) {
             inventoriesLoader.openInventory(player, Inventories.AUCTION, page);
         } else {
-            this.plugin.getScheduler().runNextTick(w -> inventoriesLoader.openInventory(player, Inventories.AUCTION, page));
+            // Cache needs preparation - do it async then open on main thread
+            prepareCacheAsync(player).thenRun(() -> {
+                this.plugin.getScheduler().runNextTick(w -> {
+                    if (player.isOnline()) {
+                        inventoriesLoader.openInventory(player, Inventories.AUCTION, page);
+                    }
+                });
+            });
         }
+    }
+
+    /**
+     * Prepares the cache asynchronously for the given player.
+     * This includes ensuring the global sorted items cache is valid
+     * and computing the player's item list cache.
+     *
+     * @param player the player to prepare the cache for
+     * @return CompletableFuture that completes when the cache is ready
+     */
+    public CompletableFuture<Void> prepareCacheAsync(Player player) {
+        return sortedItemsCache.ensureCacheValidAsync().thenRun(() -> {
+            // Now compute the player's cache (this is fast after global cache is ready)
+            var cache = getCache(player);
+            var sort = cache.get(PlayerCacheKey.ITEM_SORT, this.plugin.getConfiguration().getSort().defaultSort());
+            var category = cache.get(PlayerCacheKey.CURRENT_CATEGORY, (Category) null);
+
+            // Pre-compute the player's items list
+            cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> sortedItemsCache.getSortedIds(category, sort));
+        });
     }
 
     @Override
@@ -188,6 +221,16 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     public List<Item> getItemsListedForSale(Player player) {
         long startTime = performanceDebug.start();
 
+        IntList ids = getItemIdsListedForSale(player);
+
+        performanceDebug.end("getItemsListedForSale", startTime, "items=" + ids.size());
+        return resolveItems(StorageType.LISTED, ids);
+    }
+
+    @Override
+    public IntList getItemIdsListedForSale(Player player) {
+        long startTime = performanceDebug.start();
+
         var cache = getCache(player);
         var sort = cache.get(PlayerCacheKey.ITEM_SORT, this.plugin.getConfiguration().getSort().defaultSort());
         var category = cache.get(PlayerCacheKey.CURRENT_CATEGORY, (Category) null);
@@ -195,8 +238,8 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         // Use the global sorted items cache for O(1) access
         IntList ids = cache.getOrCompute(PlayerCacheKey.ITEMS_LISTED, () -> sortedItemsCache.getSortedIds(category, sort));
 
-        performanceDebug.end("getItemsListedForSale", startTime, "sort=" + sort + ", category=" + (category != null ? category.getId() : "all") + ", items=" + ids.size());
-        return resolveItems(StorageType.LISTED, ids);
+        performanceDebug.end("getItemIdsListedForSale", startTime, "sort=" + sort + ", category=" + (category != null ? category.getId() : "all") + ", ids=" + ids.size());
+        return ids;
     }
 
     @Override
@@ -256,6 +299,35 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         }
 
         performanceDebug.end("resolveItems[" + storageType + "]", startTime, "requested=" + ids.size() + ", resolved=" + resolved.size());
+        return resolved;
+    }
+
+    @Override
+    public List<Item> resolveItemsForPage(StorageType storageType, IntList allIds, int page, int pageSize) {
+        long startTime = performanceDebug.start();
+
+        if (allIds == null || allIds.isEmpty()) {
+            performanceDebug.end("resolveItemsForPage[" + storageType + "]", startTime, "empty ids");
+            return List.of();
+        }
+
+        int start = page * pageSize;
+        if (start >= allIds.size()) {
+            performanceDebug.end("resolveItemsForPage[" + storageType + "]", startTime, "page out of range");
+            return List.of();
+        }
+
+        int end = Math.min(start + pageSize, allIds.size());
+
+        // Create a subset of IDs for this page
+        IntList pageIds = new IntArrayList(end - start);
+        for (int i = start; i < end; i++) {
+            pageIds.add(allIds.getInt(i));
+        }
+
+        List<Item> resolved = resolveItems(storageType, pageIds);
+
+        performanceDebug.end("resolveItemsForPage[" + storageType + "]", startTime, "page=" + page + ", pageSize=" + pageSize + ", resolved=" + resolved.size() + "/" + allIds.size());
         return resolved;
     }
 

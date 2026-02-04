@@ -21,3 +21,4 @@ It’s going to be amazing… or there will be bugs everywhere. Your call. 😄
 - [ ] Système d'item favoris configurable
 - [ ] Système pour afficher le nombre de vente effectué lors de la déconnexion et combien d'argent gagné (inventaire
   histoire de vente hors ligne ?)
+- [ ] Une commande pour ouvrir une certaine page ``/ah page <page>``

@@ -78,7 +78,19 @@ public enum Message {
     ADMIN_GENERATE_PROGRESS("<gray>Progress: <white>%current%<gray>/<white>%total%<gray> items created..."),
     ADMIN_GENERATE_COMPLETE("<success>Successfully generated <white>%amount%<success> auction items in <white>%time%ms<success>."),
     ADMIN_GENERATE_NO_MATERIALS("<error>No valid materials found in categories. Make sure you have categories other than 'misc' configured."),
-    ADMIN_GENERATE_INVALID_AMOUNT("<error>Invalid amount. Please specify a number between <white>1<error> and <white>100000<error>.");
+    ADMIN_GENERATE_INVALID_AMOUNT("<error>Invalid amount. Please specify a number between <white>1<error> and <white>100000<error>."),
+
+    COMMAND_DESCRIPTION_AUCTION_ADMIN_CACHE("Manage player cache"),
+    ADMIN_CACHE_SHOW_HEADER("<primary>Cache for <white>%player%<primary>:"),
+    ADMIN_CACHE_SHOW_ENTRY("<gray>  %key% <dark_gray>» <white>%value%"),
+    ADMIN_CACHE_SHOW_EMPTY("<gray>  No cache entries found."),
+    ADMIN_CACHE_CLEARED("<success>Cleared cache key <white>%key%<success> for <white>%player%<success>."),
+    ADMIN_CACHE_CLEARED_ALL("<success>Cleared all cache for <white>%player%<success>."),
+    ADMIN_CACHE_SET("<success>Set <white>%key%<success> to <white>%value%<success> for <white>%player%<success>."),
+    ADMIN_CACHE_INVALID_KEY("<error>Invalid cache key <white>%key%<error>. Use tab completion for valid keys."),
+    ADMIN_CACHE_INVALID_VALUE("<error>Invalid value <white>%value%<error> for key <white>%key%<error>."),
+    ADMIN_CACHE_KEY_NOT_SETTABLE("<error>Cache key <white>%key%<error> cannot be set from command."),
+    ADMIN_CACHE_PLAYER_NOT_ONLINE("<error>Player <white>%player%<error> is not online.");
 
     private AuctionPlugin plugin;
     private List<AuctionMessage> messages = new ArrayList<>();

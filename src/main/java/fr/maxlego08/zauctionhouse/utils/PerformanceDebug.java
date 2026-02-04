@@ -136,7 +136,13 @@ public class PerformanceDebug {
 
         StringBuilder message = new StringBuilder();
         message.append("[Performance] ").append(operationName);
-        message.append(" took ").append(String.format("%.3f", durationMs)).append("ms");
+
+        if (durationMs >= 1000) {
+            double durationSec = durationMs / 1000.0;
+            message.append(" took ").append(String.format("%.3f", durationSec)).append("s");
+        } else {
+            message.append(" took ").append(String.format("%.3f", durationMs)).append("ms");
+        }
 
         if (context != null && !context.isEmpty()) {
             message.append(" (").append(context).append(")");

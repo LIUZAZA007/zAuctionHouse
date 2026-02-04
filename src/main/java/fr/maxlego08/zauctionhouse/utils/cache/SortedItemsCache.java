@@ -10,8 +10,10 @@ import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
@@ -42,6 +44,9 @@ public class SortedItemsCache {
 
     // Flag indicating the cache needs to be rebuilt
     private final AtomicBoolean dirty = new AtomicBoolean(true);
+
+    // Reference to ongoing async rebuild (null if none in progress)
+    private final AtomicReference<CompletableFuture<Void>> ongoingRebuild = new AtomicReference<>(null);
 
     // Timestamp of last rebuild for debugging
     private volatile long lastRebuildTime = 0;
@@ -190,6 +195,50 @@ public class SortedItemsCache {
      */
     public boolean isDirty() {
         return dirty.get();
+    }
+
+    /**
+     * Ensures the cache is valid asynchronously.
+     * Returns a CompletableFuture that completes when the cache is ready.
+     * If the cache is already valid, returns an already-completed future.
+     * If a rebuild is already in progress, returns the existing future.
+     *
+     * @return CompletableFuture that completes when cache is valid
+     */
+    public CompletableFuture<Void> ensureCacheValidAsync() {
+        // If cache is already valid, return completed future
+        if (!dirty.get()) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        // Check if there's already a rebuild in progress
+        CompletableFuture<Void> existing = ongoingRebuild.get();
+        if (existing != null && !existing.isDone()) {
+            return existing;
+        }
+
+        // Create new rebuild future
+        CompletableFuture<Void> newFuture = new CompletableFuture<>();
+
+        // Try to set as the ongoing rebuild (atomic)
+        if (ongoingRebuild.compareAndSet(existing, newFuture)) {
+            // We won the race, start the async rebuild
+            plugin.getScheduler().runAsync(w -> {
+                try {
+                    rebuildCache();
+                    newFuture.complete(null);
+                } catch (Exception e) {
+                    newFuture.completeExceptionally(e);
+                } finally {
+                    ongoingRebuild.compareAndSet(newFuture, null);
+                }
+            });
+            return newFuture;
+        } else {
+            // Another thread started rebuild, use their future
+            CompletableFuture<Void> otherFuture = ongoingRebuild.get();
+            return otherFuture != null ? otherFuture : CompletableFuture.completedFuture(null);
+        }
     }
 
     private void ensureCacheValid() {
