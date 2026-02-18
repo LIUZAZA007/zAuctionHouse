@@ -1,10 +1,6 @@
 package fr.maxlego08.zauctionhouse.storage;
 
-import fr.maxlego08.sarah.DatabaseConfiguration;
-import fr.maxlego08.sarah.DatabaseConnection;
-import fr.maxlego08.sarah.HikariDatabaseConnection;
-import fr.maxlego08.sarah.MigrationManager;
-import fr.maxlego08.sarah.SqliteConnection;
+import fr.maxlego08.sarah.*;
 import fr.maxlego08.sarah.database.DatabaseType;
 import fr.maxlego08.sarah.logger.JULogger;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
@@ -16,11 +12,7 @@ import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.log.LogType;
 import fr.maxlego08.zauctionhouse.api.storage.Repository;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
-import fr.maxlego08.zauctionhouse.storage.migrations.CreateAuctionItemMigration;
-import fr.maxlego08.zauctionhouse.storage.migrations.CreateItemMigration;
-import fr.maxlego08.zauctionhouse.storage.migrations.CreateLogsMigration;
-import fr.maxlego08.zauctionhouse.storage.migrations.CreatePlayerMigration;
-import fr.maxlego08.zauctionhouse.storage.migrations.CreateTransactionsMigration;
+import fr.maxlego08.zauctionhouse.storage.migrations.*;
 import fr.maxlego08.zauctionhouse.storage.repository.Repositories;
 import fr.maxlego08.zauctionhouse.storage.repository.repositeries.AuctionItemRepository;
 import fr.maxlego08.zauctionhouse.storage.repository.repositeries.ItemRepository;
@@ -198,5 +190,8 @@ public class ZStorageManager implements StorageManager {
         });
     }
 
-
+    @Override
+    public CompletableFuture<UUID> findUniqueId(String playerName) {
+        return CompletableFuture.supplyAsync(() -> this.with(PlayerRepository.class).selectByName(playerName));
+    }
 }

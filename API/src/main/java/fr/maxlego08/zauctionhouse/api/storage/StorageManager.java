@@ -117,4 +117,6 @@ public interface StorageManager {
      * @return future containing the item when found or {@code null} otherwise
      */
     CompletableFuture<Item> selectItem(int id);
+
+    CompletableFuture<UUID> findUniqueId(String playerName);
 }

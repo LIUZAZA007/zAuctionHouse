@@ -13,6 +13,7 @@ public enum Inventories {
     ADMIN_EXPIRED_ITEMS("admin-expired-items"),
     ADMIN_PURCHASED_ITEMS("admin-purchased-items"),
     ADMIN_OWNED_ITEMS("admin-owned-items"),
+    ADMIN_HISTORY_MAIN("admin-history-main"),
 
     ;
 

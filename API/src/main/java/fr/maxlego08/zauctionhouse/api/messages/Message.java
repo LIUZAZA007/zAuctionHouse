@@ -53,6 +53,7 @@ public enum Message {
     ADMIN_TARGET_REQUIRED("<error>You must specify a valid target player."),
     ADMIN_TARGET_NOT_FOUND("<error>Unable to find the player <white>%target%<error>."),
     ADMIN_OPEN_INVENTORY("<success>Opening %type% items for <white>%target%<success>."),
+    ADMIN_OPEN_HISTORY("<success>Opening history for <white>%target%<success>."),
     ADMIN_ITEM_REMOVED("<success>You removed <white>%items%<success> from <white>%target%<success>."),
     ADMIN_ITEM_ADDED("<success>You added <white>%items%<success> to <white>%target%<success> in <white>%type%<success>."),
 

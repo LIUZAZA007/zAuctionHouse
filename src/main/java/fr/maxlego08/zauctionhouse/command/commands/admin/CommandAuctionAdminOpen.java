@@ -9,7 +9,6 @@ import fr.maxlego08.zauctionhouse.command.VCommand;
 import fr.maxlego08.zauctionhouse.utils.commands.CommandType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -35,25 +34,27 @@ public class CommandAuctionAdminOpen extends VCommand {
             return CommandType.SYNTAX_ERROR;
         }
 
-        OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
-        if (target.getName() == null) {
-            this.auctionManager.message(this.player, Message.ADMIN_TARGET_NOT_FOUND, "%target%", targetName);
-            return CommandType.DEFAULT;
-        }
+        plugin.getStorageManager().findUniqueId(targetName).thenAccept(uuid -> {
 
-        String type = argAsString(1, "listed");
-        Inventories inventories = switch (type.toLowerCase(Locale.ENGLISH)) {
-            case "expired" -> Inventories.ADMIN_EXPIRED_ITEMS;
-            case "purchased" -> Inventories.ADMIN_PURCHASED_ITEMS;
-            default -> Inventories.ADMIN_OWNED_ITEMS;
-        };
+            if (uuid == null) {
+                this.auctionManager.message(this.player, Message.ADMIN_TARGET_NOT_FOUND, "%target%", targetName);
+                return;
+            }
 
-        var cache = this.auctionManager.getCache(this.player);
-        cache.set(PlayerCacheKey.ADMIN_TARGET, target.getUniqueId());
-        cache.set(PlayerCacheKey.ADMIN_TARGET_NAME, target.getName());
+            String type = argAsString(1, "listed");
+            Inventories inventories = switch (type.toLowerCase(Locale.ENGLISH)) {
+                case "expired" -> Inventories.ADMIN_EXPIRED_ITEMS;
+                case "purchased" -> Inventories.ADMIN_PURCHASED_ITEMS;
+                default -> Inventories.ADMIN_OWNED_ITEMS;
+            };
 
-        this.plugin.getInventoriesLoader().openInventory(this.player, inventories);
-        this.auctionManager.message(this.player, Message.ADMIN_OPEN_INVENTORY, "%target%", target.getName(), "%type%", type);
+            var cache = this.auctionManager.getCache(this.player);
+            cache.set(PlayerCacheKey.ADMIN_TARGET, uuid);
+            cache.set(PlayerCacheKey.ADMIN_TARGET_NAME, targetName);
+
+            this.plugin.getScheduler().runNextTick(w -> this.plugin.getInventoriesLoader().openInventory(this.player, inventories));
+            this.auctionManager.message(this.player, Message.ADMIN_OPEN_INVENTORY, "%target%", targetName, "%type%", type);
+        });
         return CommandType.SUCCESS;
     }
 }
