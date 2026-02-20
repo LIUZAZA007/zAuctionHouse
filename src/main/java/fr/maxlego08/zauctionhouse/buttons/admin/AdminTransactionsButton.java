@@ -100,7 +100,7 @@ public class AdminTransactionsButton extends PaginateButton {
 
     private void showLoadingItem(InventoryEngine engine, Player player) {
         var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
-        ItemStack loadingItem = new ItemStack(Material.HOPPER);
+        ItemStack loadingItem = new ItemStack(Material.BARRIER);
         var itemMeta = loadingItem.getItemMeta();
         meta.updateDisplayName(itemMeta, "#FFD700Loading transactions...", null);
         loadingItem.setItemMeta(itemMeta);
