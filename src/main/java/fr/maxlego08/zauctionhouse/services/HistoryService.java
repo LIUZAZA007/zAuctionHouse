@@ -1,7 +1,6 @@
 package fr.maxlego08.zauctionhouse.services;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
-import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.history.ItemLog;
 import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
@@ -109,22 +108,7 @@ public class HistoryService extends AuctionService implements AuctionHistoryServ
 
     @Override
     public void openHistoryInventory(Player player, int page) {
-        var cache = this.plugin.getAuctionManager().getCache(player);
-
-        // Check if history is already loaded
-        if (cache.has(PlayerCacheKey.HISTORY_DATA)) {
-            this.plugin.getInventoriesLoader().openInventory(player, Inventories.HISTORY, page);
-        } else {
-            // Load history asynchronously
-            getSalesHistory(player.getUniqueId()).thenAccept(history -> {
-                cache.set(PlayerCacheKey.HISTORY_DATA, history);
-                this.plugin.getScheduler().runNextTick(task -> {
-                    if (player.isOnline()) {
-                        this.plugin.getInventoriesLoader().openInventory(player, Inventories.HISTORY, page);
-                    }
-                });
-            });
-        }
+        this.plugin.getInventoriesLoader().openInventory(player, Inventories.HISTORY, page);
     }
 
     private String formatTotalEarned(List<LogDTO> sales, BigDecimal total) {

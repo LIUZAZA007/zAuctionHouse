@@ -221,7 +221,11 @@ public class ZStorageManager extends ItemLoaderUtils implements StorageManager {
     @Override
     public List<Item> selectItems(List<Integer> integers) {
 
+        if (integers.isEmpty()) return new ArrayList<>();
+
         var items = with(ItemRepository.class).select(integers.stream().map(String::valueOf).toList());
+        if (items.isEmpty()) return new ArrayList<>();
+
         var uuids = items.stream().map(e -> List.of(e.seller_unique_id(), e.buyer_unique_id())).flatMap(List::stream).filter(Objects::nonNull).map(UUID::toString).distinct().toList();
         var playerNames = selectPlayers(uuids);
 
