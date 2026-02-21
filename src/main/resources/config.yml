@@ -304,6 +304,27 @@ item-lore:
     - "<white>☆ #92ffffPrice#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffDate#8c8c8c: #969696%date%"
 
+  admin-log-item:
+    - ""
+    - "<white>⚡ #92ffffType#8c8c8c: #2CCED2%type%"
+    - "<white>⌂ #92ffffPlayer#8c8c8c: #2CCED2%player%"
+    - "<white>⌂ #92ffffTarget#8c8c8c: #2CCED2%target%"
+    - "<white>☆ #92ffffPrice#8c8c8c: #2CCED2%price%"
+    - "<white>⌚ #92ffffDate#8c8c8c: #969696%date%"
+    - ""
+    - "#8c8c8c• #2CCED2ʟᴇғᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜᴇ ɪᴛᴇᴍ"
+
+  admin-log-multiple-item:
+    - ""
+    - "<white>⚡ #92ffffType#8c8c8c: #2CCED2%type%"
+    - "<white>⌂ #92ffffPlayer#8c8c8c: #2CCED2%player%"
+    - "<white>⌂ #92ffffTarget#8c8c8c: #2CCED2%target%"
+    - "<white>☆ #92ffffPrice#8c8c8c: #2CCED2%price%"
+    - "<white>⌚ #92ffffDate#8c8c8c: #969696%date%"
+    - ""
+    - "#8c8c8c• #2CCED2ʟᴇғᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜᴇ ɪᴛᴇᴍ"
+    - "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ sᴇᴇ ᴀʟʟ ɪᴛᴇᴍs"
+
   status:
     seller: "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
     buyer: "#8c8c8c• #2CCED2ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"

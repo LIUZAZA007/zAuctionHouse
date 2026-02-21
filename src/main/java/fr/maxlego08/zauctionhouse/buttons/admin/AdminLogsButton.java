@@ -3,25 +3,39 @@ package fr.maxlego08.zauctionhouse.buttons.admin;
 import fr.maxlego08.menu.api.button.PaginateButton;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.LoreType;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCache;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.filter.DateFilter;
+import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
+import fr.maxlego08.zauctionhouse.api.log.AdminLogItem;
 import fr.maxlego08.zauctionhouse.api.log.LogType;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.storage.dto.LogDTO;
+import fr.maxlego08.zauctionhouse.api.utils.Base64ItemStack;
 import fr.maxlego08.zauctionhouse.storage.repository.repositeries.LogRepository;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Button that displays admin logs with pagination.
+ * Shows the actual item from the log and allows:
+ * - Left click to retrieve the item
+ * - Right click to view all items (if multiple)
+ */
 public class AdminLogsButton extends PaginateButton {
 
     private final AuctionPlugin plugin;
@@ -58,14 +72,26 @@ public class AdminLogsButton extends PaginateButton {
 
         List<LogDTO> filtered = applyFilters(cache, logs);
 
+        var configuration = this.plugin.getConfiguration();
+        var dateFormat = configuration.getDateFormat();
+        var loreConfig = configuration.getItemLore().adminLogLore();
+        var loreMultipleConfig = configuration.getItemLore().adminLogMultipleLore();
+
         paginate(filtered, inventoryEngine, (slot, log) -> {
-            ItemStack itemStack = buildLogItemStack(log);
-            inventoryEngine.addItem(slot, itemStack);
+            AdminLogItem adminLogItem = createAdminLogItem(log);
+            boolean hasMultipleItems = adminLogItem.hasMultipleItems();
+            List<String> lore = hasMultipleItems ? loreMultipleConfig : loreConfig;
+
+            ItemStack displayItem = createDisplayItem(adminLogItem, dateFormat, lore);
+            var button = inventoryEngine.addItem(slot, displayItem);
+            if (button != null) {
+                button.setClick(event -> handleClick(player, event.getClick(), adminLogItem));
+            }
         });
     }
 
     @Override
-    public int getPaginationSize(Player player) {
+    public int getPaginationSize(@NonNull Player player) {
         var cache = this.plugin.getAuctionManager().getCache(player);
         List<LogDTO> logs = cache.get(PlayerCacheKey.ADMIN_LOGS_DATA);
         if (logs == null) return 0;
@@ -99,12 +125,7 @@ public class AdminLogsButton extends PaginateButton {
     }
 
     private void showLoadingItem(InventoryEngine engine, Player player) {
-        var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
-        ItemStack loadingItem = new ItemStack(Material.BARRIER);
-        var itemMeta = loadingItem.getItemMeta();
-        meta.updateDisplayName(itemMeta, "#FFD700Loading logs...", null);
-        loadingItem.setItemMeta(itemMeta);
-
+        ItemStack loadingItem = getCustomItemStack(player, false, new Placeholders());
         for (Integer slot : getSlots()) {
             engine.addItem(slot, loadingItem);
         }
@@ -120,43 +141,118 @@ public class AdminLogsButton extends PaginateButton {
                 .toList();
     }
 
-    private ItemStack buildLogItemStack(LogDTO log) {
-        Material material = getMaterialForLogType(log.log_type().name());
-        var configuration = this.plugin.getConfiguration();
-        var dateFormat = configuration.getDateFormat();
+    /**
+     * Creates an AdminLogItem by deserializing the item stacks from the log.
+     */
+    private AdminLogItem createAdminLogItem(LogDTO log) {
+        List<ItemStack> itemStacks = new ArrayList<>();
 
-        ItemStack itemStack = new ItemStack(material);
-        var itemMeta = itemStack.getItemMeta();
+        if (log.itemstack() != null && !log.itemstack().isEmpty()) {
+            try {
+                ItemStack decoded = Base64ItemStack.decode(log.itemstack());
+                if (decoded != null) {
+                    itemStacks.add(decoded);
+                }
+            } catch (Exception e) {
+                this.plugin.getLogger().warning("Failed to decode itemstack for log " + log.id() + ": " + e.getMessage());
+            }
+        }
+
+        return new AdminLogItem(log, itemStacks);
+    }
+
+    /**
+     * Creates the display item for a log entry.
+     */
+    private ItemStack createDisplayItem(AdminLogItem adminLogItem, SimpleDateFormat dateFormat, List<String> loreConfig) {
+        LogDTO log = adminLogItem.log();
+        ItemStack itemStack;
+
+        // Use the actual item if available, otherwise use a fallback material
+        ItemStack firstItem = adminLogItem.getFirstItem();
+        if (firstItem != null) {
+            itemStack = firstItem.clone();
+        } else {
+            itemStack = new ItemStack(getMaterialForLogType(log.log_type()));
+        }
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) return itemStack;
+
+        var placeholders = new Placeholders();
+        placeholders.register("type", log.log_type().name());
+        placeholders.register("player", getPlayerName(log.player_unique_id()));
+        placeholders.register("target", log.target_unique_id() != null ? getPlayerName(log.target_unique_id()) : "N/A");
+        placeholders.register("price", formatPrice(log));
+        placeholders.register("date", dateFormat.format(log.created_at()));
+        placeholders.register("item_id", String.valueOf(log.item_id()));
 
         var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
+        meta.updateLore(itemMeta, loreConfig.stream().map(placeholders::parse).toList(), LoreType.APPEND);
 
-        meta.updateDisplayName(itemMeta, "#2CCED2<bold>" + log.log_type().name(), null);
-
-        List<String> lore = new ArrayList<>();
-        lore.add("#8c8c8c• #92ffffType: #2CCED2" + log.log_type().name());
-        lore.add("#8c8c8c• #92ffffItem ID: #2CCED2" + log.item_id());
-        lore.add("#8c8c8c• #92ffffPlayer: #2CCED2" + getPlayerName(log.player_unique_id()));
-        if (log.target_unique_id() != null) {
-            lore.add("#8c8c8c• #92ffffTarget: #2CCED2" + getPlayerName(log.target_unique_id()));
-        }
-        lore.add("#8c8c8c• #92ffffPrice: #2CCED2" + log.price() + (log.economy_name() != null ? " " + log.economy_name() : ""));
-        lore.add("#8c8c8c• #92ffffDate: #2CCED2" + dateFormat.format(log.created_at()));
-
-        meta.updateLore(itemMeta, lore, LoreType.REPLACE);
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;
     }
 
-    private Material getMaterialForLogType(String logType) {
+    /**
+     * Handles click events on log items.
+     */
+    private void handleClick(Player player, ClickType clickType, AdminLogItem adminLogItem) {
+        var cache = this.plugin.getAuctionManager().getCache(player);
+
+        if (clickType == ClickType.LEFT || clickType == ClickType.SHIFT_LEFT) {
+            // Left click - retrieve the item
+            giveItemsToPlayer(player, adminLogItem);
+        } else if (clickType == ClickType.RIGHT || clickType == ClickType.SHIFT_RIGHT) {
+            // Right click - view all items if multiple
+            if (adminLogItem.hasMultipleItems()) {
+                cache.set(PlayerCacheKey.ADMIN_LOG_SELECTED, adminLogItem);
+                cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
+                this.plugin.getInventoriesLoader().openInventory(player, Inventories.AUCTION_ITEM);
+            } else {
+                // If single item, just retrieve it
+                giveItemsToPlayer(player, adminLogItem);
+            }
+        }
+    }
+
+    /**
+     * Gives the items from a log entry to the player.
+     */
+    private void giveItemsToPlayer(Player player, AdminLogItem adminLogItem) {
+        List<ItemStack> items = adminLogItem.itemStacks();
+        if (items == null || items.isEmpty()) {
+            this.plugin.getAuctionManager().message(player, Message.ADMIN_NO_ITEM_TO_RETRIEVE);
+            return;
+        }
+
+        for (ItemStack itemStack : items) {
+            if (itemStack != null) {
+                player.getInventory().addItem(itemStack.clone()).forEach((slot, dropItemStack) ->
+                        player.getWorld().dropItem(player.getLocation(), dropItemStack));
+            }
+        }
+
+        this.plugin.getAuctionManager().message(player, Message.ADMIN_ITEM_RETRIEVED);
+    }
+
+    private String formatPrice(LogDTO log) {
+        String price = log.price() != null ? log.price().toPlainString() : "0";
+        if (log.economy_name() != null && !log.economy_name().isEmpty()) {
+            return price + " " + log.economy_name();
+        }
+        return price;
+    }
+
+    private Material getMaterialForLogType(LogType logType) {
         return switch (logType) {
-            case "SALE" -> Material.GOLD_INGOT;
-            case "PURCHASE" -> Material.EMERALD;
-            case "REMOVE_LISTED" -> Material.BARRIER;
-            case "REMOVE_OWNED" -> Material.CHEST;
-            case "REMOVE_EXPIRED" -> Material.CLOCK;
-            case "REMOVE_PURCHASED" -> Material.HOPPER;
-            default -> Material.PAPER;
+            case SALE -> Material.GOLD_INGOT;
+            case PURCHASE -> Material.EMERALD;
+            case REMOVE_LISTED -> Material.BARRIER;
+            case REMOVE_OWNED -> Material.CHEST;
+            case REMOVE_EXPIRED -> Material.CLOCK;
+            case REMOVE_PURCHASED -> Material.HOPPER;
         };
     }
 

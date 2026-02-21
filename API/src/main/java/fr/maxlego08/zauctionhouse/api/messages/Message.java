@@ -58,6 +58,8 @@ public enum Message {
     ADMIN_OPEN_HISTORY("<success>Opening history for <white>%target%<success>."),
     ADMIN_ITEM_REMOVED("<success>You removed <white>%items%<success> from <white>%target%<success>."),
     ADMIN_ITEM_ADDED("<success>You added <white>%items%<success> to <white>%target%<success> in <white>%type%<success>."),
+    ADMIN_ITEM_RETRIEVED("<success>Item(s) retrieved successfully."),
+    ADMIN_NO_ITEM_TO_RETRIEVE("<error>No item to retrieve from this log entry."),
 
     RELOAD_SUCCESS("<success>You just reloaded the plugin !"),
 

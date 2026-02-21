@@ -6,6 +6,7 @@ import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.filter.DateFilter;
 import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.SortItem;
+import fr.maxlego08.zauctionhouse.api.log.AdminLogItem;
 import fr.maxlego08.zauctionhouse.api.log.LogType;
 import fr.maxlego08.zauctionhouse.api.storage.dto.LogDTO;
 import fr.maxlego08.zauctionhouse.api.storage.dto.TransactionDTO;
@@ -42,6 +43,7 @@ public enum PlayerCacheKey {
     ADMIN_LOGS_LOADING(new TypeToken<Boolean>() {}, () -> false),
     ADMIN_LOGS_TYPE_FILTER(new TypeToken<LogType>() {}, () -> null),
     ADMIN_LOGS_DATE_FILTER(new TypeToken<DateFilter>() {}, () -> DateFilter.ALL),
+    ADMIN_LOG_SELECTED(new TypeToken<AdminLogItem>() {}, () -> null),
 
     // Admin Transactions
     ADMIN_TRANSACTIONS_DATA(new TypeToken<List<TransactionDTO>>() {}, ArrayList::new),
