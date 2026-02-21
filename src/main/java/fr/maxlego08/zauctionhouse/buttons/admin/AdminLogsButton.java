@@ -179,8 +179,9 @@ public class AdminLogsButton extends PaginateButton {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta == null) return itemStack;
 
+        var itemLoreConfig = this.plugin.getConfiguration().getItemLore();
         var placeholders = new Placeholders();
-        placeholders.register("type", log.log_type().name());
+        placeholders.register("type", itemLoreConfig.getLogTypeName(log.log_type()));
         placeholders.register("player", getPlayerName(log.player_unique_id()));
         placeholders.register("target", log.target_unique_id() != null ? getPlayerName(log.target_unique_id()) : "N/A");
         placeholders.register("price", formatPrice(log));

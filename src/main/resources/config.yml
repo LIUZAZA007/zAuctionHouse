@@ -331,6 +331,14 @@ item-lore:
     right-seller: "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʀᴇᴛʀɪᴇᴠᴇ ᴛʜɪs ɪᴛᴇᴍ"
     right-buyer: "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ʙᴜʏ ᴛʜɪs ɪᴛᴇᴍ"
 
+  log-type-names:
+    SALE: "Item Listed"
+    PURCHASE: "Item Purchased"
+    REMOVE_LISTED: "Removed from Listing"
+    REMOVE_OWNED: "Retrieved Own Item"
+    REMOVE_EXPIRED: "Retrieved Expired"
+    REMOVE_PURCHASED: "Retrieved Purchase"
+
 # Permet de définir l'item qui sera affiché si pour un item en vente il y a plusieurs items
 special-items:
   auction-item:
