@@ -30,9 +30,9 @@ items:
 
   sort:
     type: ZAUCTIONHOUSE_HISTORY_SORT
-    slot: 4
-    enable-text: "#2CCED2> %sorting%"
-    disable-text: "#8c8c8c%sorting%"
+    slot: 51
+    enable-text: ' #F27438➜ %sorting%'
+    disable-text: ' #76CDCD➜ %sorting%'
     sorts:
       - DATE_DESC
       - DATE_ASC
@@ -51,7 +51,7 @@ items:
       material: HOPPER
       name: "#2CCED2<bold>sᴏʀᴛ"
       lore:
-        - ""
+        - "#92ffffAvailable sort types:"
         - "%DATE_DESC%"
         - "%DATE_ASC%"
         - "%PRICE_DESC%"
@@ -59,5 +59,4 @@ items:
         - "%BUYER_ASC%"
         - "%BUYER_DESC%"
         - ""
-        - "#8c8c8c• #2CCED2ʟᴇғᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ᴄʏᴄʟᴇ ғᴏʀᴡᴀʀᴅ"
-        - "#8c8c8c• #2CCED2ʀɪɢʜᴛ ᴄʟɪᴄᴋ #92ffffᴛᴏ ᴄʏᴄʟᴇ ʙᴀᴄᴋᴡᴀʀᴅ"
+        - "#8c8c8c• #2CCED2Click #92ffffto change the sort type"
