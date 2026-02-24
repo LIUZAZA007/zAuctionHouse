@@ -1,10 +1,10 @@
 package fr.maxlego08.zauctionhouse.buttons.admin;
 
-import fr.maxlego08.menu.api.button.PaginateButton;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.LoreType;
 import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.button.LoadingButton;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCache;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.filter.DateFilter;
@@ -30,18 +30,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * Button that displays admin logs with pagination.
- * Shows the actual item from the log and allows:
- * - Left click to retrieve the item
- * - Right click to view all items (if multiple)
- */
-public class AdminLogsButton extends PaginateButton {
+public class AdminLogsButton extends LoadingButton {
 
-    private final AuctionPlugin plugin;
-
-    public AdminLogsButton(Plugin plugin) {
-        this.plugin = (AuctionPlugin) plugin;
+    public AdminLogsButton(Plugin plugin, int loadingSlot) {
+        super((AuctionPlugin) plugin, loadingSlot);
     }
 
     @Override
@@ -71,6 +63,11 @@ public class AdminLogsButton extends PaginateButton {
         if (logs == null) logs = new ArrayList<>();
 
         List<LogDTO> filtered = applyFilters(cache, logs);
+
+        if (filtered.isEmpty()) {
+            inventoryEngine.buildButton(this.getElseButton(), new Placeholders());
+            return;
+        }
 
         var configuration = this.plugin.getConfiguration();
         var dateFormat = configuration.getDateFormat();
@@ -124,21 +121,15 @@ public class AdminLogsButton extends PaginateButton {
         });
     }
 
-    private void showLoadingItem(InventoryEngine engine, Player player) {
-        ItemStack loadingItem = getCustomItemStack(player, false, new Placeholders());
-        for (Integer slot : getSlots()) {
-            engine.addItem(slot, loadingItem);
-        }
+    private void showLoadingItem(InventoryEngine inventoryEngine, Player player) {
+        inventoryEngine.addItem(this.loadingSlot, getCustomItemStack(player, false, new Placeholders()));
     }
 
     private List<LogDTO> applyFilters(PlayerCache cache, List<LogDTO> logs) {
         LogType typeFilter = cache.get(PlayerCacheKey.ADMIN_LOGS_TYPE_FILTER);
         DateFilter dateFilter = cache.get(PlayerCacheKey.ADMIN_LOGS_DATE_FILTER, DateFilter.ALL);
 
-        return logs.stream()
-                .filter(log -> typeFilter == null || log.log_type() == typeFilter)
-                .filter(log -> dateFilter.matches(log.created_at()))
-                .toList();
+        return logs.stream().filter(log -> typeFilter == null || log.log_type() == typeFilter).filter(log -> dateFilter.matches(log.created_at())).toList();
     }
 
     /**
@@ -230,8 +221,7 @@ public class AdminLogsButton extends PaginateButton {
 
         for (ItemStack itemStack : items) {
             if (itemStack != null) {
-                player.getInventory().addItem(itemStack.clone()).forEach((slot, dropItemStack) ->
-                        player.getWorld().dropItem(player.getLocation(), dropItemStack));
+                player.getInventory().addItem(itemStack.clone()).forEach((slot, dropItemStack) -> player.getWorld().dropItem(player.getLocation(), dropItemStack));
             }
         }
 

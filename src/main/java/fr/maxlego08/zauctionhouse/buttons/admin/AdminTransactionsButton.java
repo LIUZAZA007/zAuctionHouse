@@ -1,9 +1,10 @@
 package fr.maxlego08.zauctionhouse.buttons.admin;
 
-import fr.maxlego08.menu.api.button.PaginateButton;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.LoreType;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.button.LoadingButton;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCache;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.filter.DateFilter;
@@ -15,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +24,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class AdminTransactionsButton extends PaginateButton {
+public class AdminTransactionsButton extends LoadingButton {
 
-    private final AuctionPlugin plugin;
-
-    public AdminTransactionsButton(Plugin plugin) {
-        this.plugin = (AuctionPlugin) plugin;
+    public AdminTransactionsButton(Plugin plugin, int loadingSlot) {
+        super((AuctionPlugin) plugin, loadingSlot);
     }
 
     @Override
@@ -58,6 +58,11 @@ public class AdminTransactionsButton extends PaginateButton {
 
         List<TransactionDTO> filtered = applyFilters(cache, transactions);
 
+        if (filtered.isEmpty()) {
+            inventoryEngine.buildButton(this.getElseButton(), new Placeholders());
+            return;
+        }
+
         paginate(filtered, inventoryEngine, (slot, transaction) -> {
             ItemStack itemStack = buildTransactionItemStack(transaction);
             inventoryEngine.addItem(slot, itemStack);
@@ -65,7 +70,7 @@ public class AdminTransactionsButton extends PaginateButton {
     }
 
     @Override
-    public int getPaginationSize(Player player) {
+    public int getPaginationSize(@NonNull Player player) {
         var cache = this.plugin.getAuctionManager().getCache(player);
         List<TransactionDTO> transactions = cache.get(PlayerCacheKey.ADMIN_TRANSACTIONS_DATA);
         if (transactions == null) return 0;
@@ -98,26 +103,15 @@ public class AdminTransactionsButton extends PaginateButton {
         });
     }
 
-    private void showLoadingItem(InventoryEngine engine, Player player) {
-        var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
-        ItemStack loadingItem = new ItemStack(Material.BARRIER);
-        var itemMeta = loadingItem.getItemMeta();
-        meta.updateDisplayName(itemMeta, "#FFD700Loading transactions...", null);
-        loadingItem.setItemMeta(itemMeta);
-
-        for (Integer slot : getSlots()) {
-            engine.addItem(slot, loadingItem);
-        }
+    private void showLoadingItem(InventoryEngine inventoryEngine, Player player) {
+        inventoryEngine.addItem(this.loadingSlot, getCustomItemStack(player, false, new Placeholders()));
     }
 
     private List<TransactionDTO> applyFilters(PlayerCache cache, List<TransactionDTO> transactions) {
         TransactionStatus statusFilter = cache.get(PlayerCacheKey.ADMIN_TRANSACTIONS_STATUS_FILTER);
         DateFilter dateFilter = cache.get(PlayerCacheKey.ADMIN_TRANSACTIONS_DATE_FILTER, DateFilter.ALL);
 
-        return transactions.stream()
-                .filter(tx -> statusFilter == null || tx.status() == statusFilter)
-                .filter(tx -> dateFilter.matches(tx.created_at()))
-                .toList();
+        return transactions.stream().filter(tx -> statusFilter == null || tx.status() == statusFilter).filter(tx -> dateFilter.matches(tx.created_at())).toList();
     }
 
     private ItemStack buildTransactionItemStack(TransactionDTO transaction) {

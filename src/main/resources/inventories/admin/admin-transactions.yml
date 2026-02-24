@@ -9,38 +9,74 @@ patterns:
 items:
   items:
     type: ZAUCTIONHOUSE_ADMIN_TRANSACTIONS
+    loading-slot: 22
     slots:
       - 9-17
       - 18-26
       - 27-35
       - 36-44
+    item:
+      material: BARRIER
+      name: "&cLoading..."
     else:
       slots:
         - 22
       item:
         material: BARRIER
-        name: '&c&nNo Transactions Found'
+        name: '&c&nNo Sales Found'
+        lore:
+          - ''
+          - '&7You have not sold any items yet.'
 
   filter-status:
     type: ZAUCTIONHOUSE_ADMIN_TRANSACTIONS_FILTER_STATUS
     slot: 47
+    enable-text: ' #F27438➜ %status%'
+    disable-text: ' #76CDCD➜ %status%'
+    all-statuses-name: "All"
+    statuses:
+      - PENDING
+      - RETRIEVED
+    status-names:
+      PENDING: "Pending"
+      RETRIEVED: "Retrieved"
     item:
       material: HOPPER
       name: '#2CCED2<bold>ғɪʟᴛᴇʀ ʙʏ sᴛᴀᴛᴜs'
       lore:
-        - '#92ffffCurrent: #2CCED2%current-status%'
+        - '#92ffffAvailable statuses:'
+        - '%ALL%'
+        - '%PENDING%'
+        - '%RETRIEVED%'
         - ''
-        - '#8c8c8c• #2CCED2Left Click #92ffffto cycle forward'
-        - '#8c8c8c• #2CCED2Right Click #92ffffto cycle backward'
+        - '#8c8c8c• #2CCED2Click #92ffffto change the filter status'
 
   filter-date:
     type: ZAUCTIONHOUSE_ADMIN_TRANSACTIONS_FILTER_DATE
     slot: 51
+    enable-text: ' #F27438➜ %date%'
+    disable-text: ' #76CDCD➜ %date%'
+    filters:
+      - ALL
+      - TODAY
+      - THIS_WEEK
+      - THIS_MONTH
+      - THIS_YEAR
+    filter-names:
+      ALL: "All Time"
+      TODAY: "Today"
+      THIS_WEEK: "This Week"
+      THIS_MONTH: "This Month"
+      THIS_YEAR: "This Year"
     item:
       material: CLOCK
       name: '#2CCED2<bold>ғɪʟᴛᴇʀ ʙʏ ᴅᴀᴛᴇ'
       lore:
-        - '#92ffffCurrent: #2CCED2%current-date%'
+        - '#92ffffAvailable filters:'
+        - '%ALL%'
+        - '%TODAY%'
+        - '%THIS_WEEK%'
+        - '%THIS_MONTH%'
+        - '%THIS_YEAR%'
         - ''
-        - '#8c8c8c• #2CCED2Left Click #92ffffto cycle forward'
-        - '#8c8c8c• #2CCED2Right Click #92ffffto cycle backward'
+        - '#8c8c8c• #2CCED2Click #92ffffto change the date filter'

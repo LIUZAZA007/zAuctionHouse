@@ -9,38 +9,86 @@ patterns:
 items:
   items:
     type: ZAUCTIONHOUSE_ADMIN_LOGS
+    loading-slot: 22
     slots:
       - 9-17
       - 18-26
       - 27-35
       - 36-44
+    item:
+      material: BARRIER
+      name: "&cLoading..."
     else:
       slots:
         - 22
       item:
         material: BARRIER
-        name: '&c&nNo Logs Found'
+        name: '&c&nNo Sales Found'
+        lore:
+          - ''
+          - '&7You have not sold any items yet.'
 
   filter-type:
     type: ZAUCTIONHOUSE_ADMIN_LOGS_FILTER_TYPE
     slot: 47
+    enable-text: ' #F27438➜ %type%'
+    disable-text: ' #76CDCD➜ %type%'
+    all-types-name: "All"
+    types:
+      - SALE
+      - PURCHASE
+      - REMOVE_LISTED
+      - REMOVE_OWNED
+      - REMOVE_EXPIRED
+      - REMOVE_PURCHASED
+    type-names:
+      SALE: "Sale"
+      PURCHASE: "Purchase"
+      REMOVE_LISTED: "Remove Listed"
+      REMOVE_OWNED: "Remove Owned"
+      REMOVE_EXPIRED: "Remove Expired"
+      REMOVE_PURCHASED: "Remove Purchased"
     item:
       material: HOPPER
       name: '#2CCED2<bold>ғɪʟᴛᴇʀ ʙʏ ᴛʏᴘᴇ'
       lore:
-        - '#92ffffCurrent: #2CCED2%current-type%'
+        - '#92ffffAvailable types:'
+        - '%ALL%'
+        - '%SALE%'
+        - '%PURCHASE%'
+        - '%REMOVE_LISTED%'
+        - '%REMOVE_OWNED%'
+        - '%REMOVE_EXPIRED%'
+        - '%REMOVE_PURCHASED%'
         - ''
-        - '#8c8c8c• #2CCED2Left Click #92ffffto cycle forward'
-        - '#8c8c8c• #2CCED2Right Click #92ffffto cycle backward'
+        - '#8c8c8c• #2CCED2Click #92ffffto change the filter type'
 
   filter-date:
     type: ZAUCTIONHOUSE_ADMIN_LOGS_FILTER_DATE
     slot: 51
+    enable-text: ' #F27438➜ %date%'
+    disable-text: ' #76CDCD➜ %date%'
+    filters:
+      - ALL
+      - TODAY
+      - THIS_WEEK
+      - THIS_MONTH
+      - THIS_YEAR
+    filter-names:
+      ALL: "All Time"
+      TODAY: "Today"
+      THIS_WEEK: "This Week"
+      THIS_MONTH: "This Month"
+      THIS_YEAR: "This Year"
     item:
       material: CLOCK
       name: '#2CCED2<bold>ғɪʟᴛᴇʀ ʙʏ ᴅᴀᴛᴇ'
       lore:
-        - '#92ffffCurrent: #2CCED2%current-date%'
+        - '#92ffffAvailable filters:'
+        - '%ALL%'
+        - '%TODAY%'
+        - '%THIS_WEEK%'
+        - '%THIS_MONTH%'
+        - '%THIS_YEAR%'
         - ''
-        - '#8c8c8c• #2CCED2Left Click #92ffffto cycle forward'
-        - '#8c8c8c• #2CCED2Right Click #92ffffto cycle backward'
+        - '#8c8c8c• #2CCED2Click #92ffffto change the date filter'

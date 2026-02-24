@@ -9,16 +9,29 @@ import fr.maxlego08.zauctionhouse.api.transaction.TransactionStatus;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
+
+import java.util.List;
+import java.util.Map;
 
 public class TransactionStatusFilterButton extends Button {
 
     private final AuctionPlugin plugin;
+    private final String enableText;
+    private final String disableText;
+    private final List<TransactionStatus> statuses;
+    private final Map<TransactionStatus, String> statusNames;
+    private final String allStatusesName;
 
-    public TransactionStatusFilterButton(Plugin plugin) {
-        this.plugin = (AuctionPlugin) plugin;
+    public TransactionStatusFilterButton(AuctionPlugin plugin, String enableText, String disableText,
+                                         List<TransactionStatus> statuses, Map<TransactionStatus, String> statusNames, String allStatusesName) {
+        this.plugin = plugin;
+        this.enableText = enableText;
+        this.disableText = disableText;
+        this.statuses = statuses;
+        this.statusNames = statusNames;
+        this.allStatusesName = allStatusesName;
     }
 
     @Override
@@ -31,8 +44,16 @@ public class TransactionStatusFilterButton extends Button {
         var cache = this.plugin.getAuctionManager().getCache(player);
         TransactionStatus currentFilter = cache.get(PlayerCacheKey.ADMIN_TRANSACTIONS_STATUS_FILTER);
 
-        String displayName = currentFilter == null ? "All" : currentFilter.name();
-        placeholders.register("current-status", displayName);
+        // Register placeholder for ALL option
+        String allStatus = (currentFilter == null ? enableText : disableText).replace("%status%", allStatusesName);
+        placeholders.register("ALL", allStatus);
+
+        // Register placeholders for each status
+        for (TransactionStatus status : statuses) {
+            String displayName = statusNames.getOrDefault(status, status.getDefaultDisplayName());
+            String statusText = (status == currentFilter ? enableText : disableText).replace("%status%", displayName);
+            placeholders.register(status.name(), statusText);
+        }
 
         return this.getItemStack().build(player, false, placeholders);
     }
@@ -52,17 +73,24 @@ public class TransactionStatusFilterButton extends Button {
     }
 
     private TransactionStatus getNextFilter(TransactionStatus current, boolean reverse) {
-        TransactionStatus[] values = TransactionStatus.values();
+        // Build full list with null (ALL) at the beginning
+        int totalSize = statuses.size() + 1; // +1 for ALL option
 
+        int currentIndex;
         if (current == null) {
-            return reverse ? values[values.length - 1] : values[0];
+            currentIndex = 0; // ALL is at index 0
+        } else {
+            int statusIndex = statuses.indexOf(current);
+            currentIndex = statusIndex == -1 ? 0 : statusIndex + 1;
         }
 
-        int index = current.ordinal();
-        if (reverse) {
-            return index == 0 ? null : values[index - 1];
+        int direction = reverse ? -1 : 1;
+        int nextIndex = (currentIndex + direction + totalSize) % totalSize;
+
+        if (nextIndex == 0) {
+            return null; // ALL
         } else {
-            return index == values.length - 1 ? null : values[index + 1];
+            return statuses.get(nextIndex - 1);
         }
     }
 }

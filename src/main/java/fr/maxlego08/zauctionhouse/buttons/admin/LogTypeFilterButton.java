@@ -9,16 +9,29 @@ import fr.maxlego08.zauctionhouse.api.log.LogType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
+
+import java.util.List;
+import java.util.Map;
 
 public class LogTypeFilterButton extends Button {
 
     private final AuctionPlugin plugin;
+    private final String enableText;
+    private final String disableText;
+    private final List<LogType> logTypes;
+    private final Map<LogType, String> typeNames;
+    private final String allTypesName;
 
-    public LogTypeFilterButton(Plugin plugin) {
-        this.plugin = (AuctionPlugin) plugin;
+    public LogTypeFilterButton(AuctionPlugin plugin, String enableText, String disableText,
+                               List<LogType> logTypes, Map<LogType, String> typeNames, String allTypesName) {
+        this.plugin = plugin;
+        this.enableText = enableText;
+        this.disableText = disableText;
+        this.logTypes = logTypes;
+        this.typeNames = typeNames;
+        this.allTypesName = allTypesName;
     }
 
     @Override
@@ -31,8 +44,16 @@ public class LogTypeFilterButton extends Button {
         var cache = this.plugin.getAuctionManager().getCache(player);
         LogType currentFilter = cache.get(PlayerCacheKey.ADMIN_LOGS_TYPE_FILTER);
 
-        String displayName = currentFilter == null ? "All" : currentFilter.name();
-        placeholders.register("current-type", displayName);
+        // Register placeholder for ALL option
+        String allStatus = (currentFilter == null ? enableText : disableText).replace("%type%", allTypesName);
+        placeholders.register("ALL", allStatus);
+
+        // Register placeholders for each log type
+        for (LogType logType : logTypes) {
+            String displayName = typeNames.getOrDefault(logType, logType.getDefaultDisplayName());
+            String status = (logType == currentFilter ? enableText : disableText).replace("%type%", displayName);
+            placeholders.register(logType.name(), status);
+        }
 
         return this.getItemStack().build(player, false, placeholders);
     }
@@ -52,17 +73,24 @@ public class LogTypeFilterButton extends Button {
     }
 
     private LogType getNextFilter(LogType current, boolean reverse) {
-        LogType[] values = LogType.values();
+        // Build full list with null (ALL) at the beginning
+        int totalSize = logTypes.size() + 1; // +1 for ALL option
 
+        int currentIndex;
         if (current == null) {
-            return reverse ? values[values.length - 1] : values[0];
+            currentIndex = 0; // ALL is at index 0
+        } else {
+            int typeIndex = logTypes.indexOf(current);
+            currentIndex = typeIndex == -1 ? 0 : typeIndex + 1;
         }
 
-        int index = current.ordinal();
-        if (reverse) {
-            return index == 0 ? null : values[index - 1];
+        int direction = reverse ? -1 : 1;
+        int nextIndex = (currentIndex + direction + totalSize) % totalSize;
+
+        if (nextIndex == 0) {
+            return null; // ALL
         } else {
-            return index == values.length - 1 ? null : values[index + 1];
+            return logTypes.get(nextIndex - 1);
         }
     }
 }
