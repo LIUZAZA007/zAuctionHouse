@@ -90,6 +90,14 @@ public class IntArrayList implements IntList {
         return false;
     }
 
+    @Override
+    public IntList clone() {
+        IntArrayList copy = new IntArrayList(size);
+        copy.size = this.size;
+        System.arraycopy(this.data, 0, copy.data, 0, this.size);
+        return copy;
+    }
+
     @NonNull
     @Override
     public Iterator<Integer> iterator() {

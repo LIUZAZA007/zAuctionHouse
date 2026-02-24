@@ -58,4 +58,11 @@ public interface IntList extends Iterable<Integer> {
      * @return {@code true} if the value is found
      */
     boolean contains(int value);
+
+    /**
+     * Creates and returns a copy of this list.
+     *
+     * @return a clone of this list
+     */
+    IntList clone();
 }

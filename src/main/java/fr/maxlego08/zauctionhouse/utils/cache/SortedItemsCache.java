@@ -68,7 +68,7 @@ public class SortedItemsCache {
 
         lock.readLock().lock();
         try {
-            IntList cached = sortedAllItems.get(sortItem);
+            IntList cached = sortedAllItems.get(sortItem).clone();
             return cached != null ? cached : new IntArrayList();
         } finally {
             lock.readLock().unlock();

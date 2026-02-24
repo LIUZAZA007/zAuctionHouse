@@ -2,6 +2,7 @@ package fr.maxlego08.zauctionhouse.buttons.confirm;
 
 import fr.maxlego08.menu.api.engine.InventoryEngine;
 import fr.maxlego08.menu.api.utils.Placeholders;
+import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.item.Item;
@@ -18,15 +19,7 @@ public class ConfirmRemoveListedButton extends ConfirmHelper {
     }
 
     @Override
-    public void onClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders) {
-        super.onClick(player, event, inventory, slot, placeholders);
-
-        var manager = this.plugin.getAuctionManager();
-        Item item = manager.getCache(player).get(PlayerCacheKey.ITEM_SHOW);
-        if (item == null) {
-            manager.openMainAuction(player);
-            return;
-        }
+    protected void onPostClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders, AuctionManager manager, Item item) {
         manager.getRemoveService().removeListedItem(player, item);
     }
 }

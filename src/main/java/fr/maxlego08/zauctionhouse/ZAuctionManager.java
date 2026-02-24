@@ -778,7 +778,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
                     if (buttons.isEmpty()) continue;
 
                     var listedItemsButton = buttons.getFirst();
-                    // listedItemsButton.updateInventory(onlinePlayer, inventoryEngine, item, added, this);
+                    listedItemsButton.updateInventory(onlinePlayer, inventoryEngine, item, added, this);
                 }
 
                 if (!added) removeFromCache(onlinePlayer, item);

@@ -3,6 +3,8 @@ package fr.maxlego08.zauctionhouse.buttons.confirm;
 import fr.maxlego08.menu.api.Inventory;
 import fr.maxlego08.menu.api.button.Button;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.api.utils.Placeholders;
+import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.item.Item;
@@ -39,9 +41,9 @@ public abstract class ConfirmHelper extends Button {
             item.setStatus(this.next);
             this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, this.previous, this.next);
 
+            manager.clearPlayersCache(PlayerCacheKey.ITEMS_LISTED);
+            manager.updateListedItems(item, true, player);
         }
-        manager.clearPlayersCache(PlayerCacheKey.ITEMS_LISTED);
-        manager.updateListedItems(item, true, player);
     }
 
     @Override
@@ -57,5 +59,22 @@ public abstract class ConfirmHelper extends Button {
         this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, this.previous, this.next);
 
         manager.clearPlayerCache(player, PlayerCacheKey.ITEMS_LISTED);
+        manager.updateListedItems(item, true, player);
     }
+
+    @Override
+    public void onClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders) {
+        super.onClick(player, event, inventory, slot, placeholders);
+
+        var manager = this.plugin.getAuctionManager();
+        Item item = manager.getCache(player).get(PlayerCacheKey.ITEM_SHOW);
+        if (item == null) {
+            manager.openMainAuction(player);
+            return;
+        }
+
+        onPostClick(player, event, inventory, slot, placeholders, manager, item);
+    }
+
+    protected abstract void onPostClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders, AuctionManager manager, Item item);
 }
