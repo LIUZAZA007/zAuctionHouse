@@ -201,7 +201,7 @@ public class AdminLogsButton extends LoadingButton {
             if (adminLogItem.hasMultipleItems()) {
                 cache.set(PlayerCacheKey.ADMIN_LOG_SELECTED, adminLogItem);
                 cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
-                this.plugin.getInventoriesLoader().openInventory(player, Inventories.AUCTION_ITEM);
+                this.plugin.getInventoriesLoader().openInventory(player, Inventories.PURCHASE_INVENTORY_CONFIRM);
             } else {
                 // If single item, just retrieve it
                 giveItemsToPlayer(player, adminLogItem);

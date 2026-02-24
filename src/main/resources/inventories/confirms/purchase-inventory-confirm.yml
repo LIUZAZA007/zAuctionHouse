@@ -1,9 +1,18 @@
-name: "#0c1719Do you really want to do that?"
-size: 27
+name: "#0c1719Purchase these items ?"
+size: 54
+
+patterns:
+  - 'zauctionhouse-decoration'
+
 items:
 
+  auction-items:
+    type: ZAUCTIONHOUSE_AUCTION_ITEMS
+    slots:
+      - 9-44
+
   confirm:
-    type: ZAUCTIONHOUSE_CONFIRM_PURCHASE
+    type: ZAUCTIONHOUSE_CONFIRM_REMOVE_LISTED
     item:
       material: GREEN_STAINED_GLASS_PANE
       name: "#2CCED2<bold>ᴘᴜʀᴄʜᴀsᴇ"
@@ -12,9 +21,7 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto purchase"
     slots:
-      - 0-2
-      - 9-11
-      - 18-20
+      - 46-48
 
   deny:
     type: BACK
@@ -26,20 +33,4 @@ items:
         - ""
         - "#8c8c8c• #2CCED2Click #92ffffto go back"
     slots:
-      - 6-8
-      - 15-17
-      - 24-26
-
-  decoration:
-    item:
-      material: LIGHT_BLUE_STAINED_GLASS_PANE
-      name: "#2CCED2"
-    slots:
-      - 3-5
-      - 12
-      - 14
-      - 21-23
-
-  show:
-    type: ZAUCTIONHOUSE_SHOW
-    slot: 13
+      - 50-52

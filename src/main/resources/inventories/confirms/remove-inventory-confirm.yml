@@ -1,0 +1,35 @@
+name: "#0c1719Remove these items ?"
+size: 54
+patterns:
+  - 'zauctionhouse-decoration'
+
+items:
+
+  auction-items:
+    type: ZAUCTIONHOUSE_AUCTION_ITEMS
+    slots:
+      - 9-44
+
+  confirm:
+    type: ZAUCTIONHOUSE_CONFIRM_PURCHASE
+    item:
+      material: GREEN_STAINED_GLASS_PANE
+      name: "#2CCED2<bold>ʀᴇᴍᴏᴠᴇ"
+      lore:
+        - "#92ffffRemove this item."
+        - ""
+        - "#8c8c8c• #2CCED2Click #92ffffto remove"
+    slots:
+      - 46-48
+
+  deny:
+    type: BACK
+    item:
+      material: RED_STAINED_GLASS_PANE
+      name: "#2CCED2<bold>ʙᴀᴄᴋ"
+      lore:
+        - "#92ffffGo back."
+        - ""
+        - "#8c8c8c• #2CCED2Click #92ffffto go back"
+    slots:
+      - 50-52

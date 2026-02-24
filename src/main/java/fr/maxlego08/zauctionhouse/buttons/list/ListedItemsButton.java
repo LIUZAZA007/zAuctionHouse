@@ -10,8 +10,8 @@ import fr.maxlego08.zauctionhouse.api.item.Item;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
 import fr.maxlego08.zauctionhouse.api.item.StorageType;
 import fr.maxlego08.zauctionhouse.api.item.items.AuctionItem;
-import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
+import fr.maxlego08.zauctionhouse.api.utils.IntList;
 import fr.maxlego08.zauctionhouse.api.utils.Permission;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -99,17 +99,10 @@ public class ListedItemsButton extends PaginateButton {
 
             if (item.getSellerUniqueId().equals(player.getUniqueId())) {
 
-                var isMultipleAuctionItem = item instanceof AuctionItem auctionItem && auctionItem.getItemStacks().size() > 1;
-                if (event.getClick() == ClickType.LEFT && isMultipleAuctionItem) {
-                    var cache = manager.getCache(player);
-                    cache.set(PlayerCacheKey.ITEM_SHOW, item);
-                    cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
-                    this.plugin.getInventoriesLoader().openInventory(player, Inventories.AUCTION_ITEM);
-                    return;
-                }
-
                 // Remove item
                 if (this.plugin.getConfiguration().getActions().listed().openConfirmInventory()) {
+
+                    var isMultipleAuctionItem = item instanceof AuctionItem auctionItem && auctionItem.getItemStacks().size() > 1;
 
                     var cache = manager.getCache(player);
                     cache.set(PlayerCacheKey.ITEM_SHOW, item);
@@ -119,15 +112,16 @@ public class ListedItemsButton extends PaginateButton {
                     this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_REMOVE_CONFIRM);
                     manager.updateListedItems(item, false, null);
 
-                    this.plugin.getInventoriesLoader().openInventory(player, Inventories.REMOVE_CONFIRM);
+                    this.plugin.getInventoriesLoader().openInventory(player, isMultipleAuctionItem ? Inventories.REMOVE_INVENTORY_CONFIRM : Inventories.REMOVE_CONFIRM);
                 } else {
+
                     manager.getRemoveService().removeListedItem(player, item);
                 }
             } else {
 
                 // Purchase items
                 var isMultipleAuctionItem = item instanceof AuctionItem auctionItem && auctionItem.getItemStacks().size() > 1;
-                var inventories = event.getClick() == ClickType.LEFT && isMultipleAuctionItem ? Inventories.AUCTION_ITEM : Inventories.PURCHASE_CONFIRM;
+                var inventories = isMultipleAuctionItem ? Inventories.PURCHASE_INVENTORY_CONFIRM : Inventories.PURCHASE_CONFIRM;
 
                 processPurchase(player, inventoryEngine, slot, item, itemStack, inventories);
             }

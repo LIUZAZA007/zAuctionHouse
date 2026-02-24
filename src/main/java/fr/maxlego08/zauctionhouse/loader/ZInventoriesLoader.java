@@ -177,10 +177,18 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
     }
 
     private void createInventoriesFile() {
-        copyFiles("inventories", "auction", "expired-items", "owned-items", "purchased-items", "history",//
-                "admin/admin-owned-items", "admin/admin-expired-items", "admin/admin-purchased-items", "admin/admin-history-main", //
-                "admin/admin-logs", "admin/admin-transactions", //
-                "remove-confirm", "purchase-confirm", "auction-item", "sell-inventory", "categories");
+        copyFiles(
+                "inventories", "auction", "expired-items", "owned-items",//
+                "sell-inventory", "categories", "purchased-items", "history", //
+
+                // Admin
+                "admin/admin-owned-items", "admin/admin-expired-items", "admin/admin-purchased-items", //
+                "admin/admin-logs", "admin/admin-transactions", "admin/admin-history-main", //
+
+                // Confirm
+                "confirms/remove-confirm", "confirms/purchase-confirm", //
+                "confirms/purchase-inventory-confirm", "confirms/remove-inventory-confirm" //
+        );
     }
 
     private void copyFiles(String path, String... files) {
