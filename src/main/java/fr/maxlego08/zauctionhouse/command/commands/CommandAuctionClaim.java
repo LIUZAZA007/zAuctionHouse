@@ -13,7 +13,7 @@ public class CommandAuctionClaim extends VCommand {
 
         this.setPermission(Permission.ZAUCTIONHOUSE_USE);
         this.setDescription(Message.COMMAND_DESCRIPTION_AUCTION_CLAIM);
-        this.addSubCommand("claim", "c");
+        this.addSubCommand(plugin.getConfiguration().loadCommandAliases("commands.claim."));
         this.setConsoleCanUse(false);
     }
 

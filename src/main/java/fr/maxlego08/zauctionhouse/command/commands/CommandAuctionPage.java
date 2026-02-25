@@ -13,9 +13,18 @@ public class CommandAuctionPage extends VCommand {
 
         this.setPermission(Permission.ZAUCTIONHOUSE_USE);
         this.setDescription(Message.COMMAND_DESCRIPTION_AUCTION_PAGE);
-        this.addSubCommand("page", "p");
-        this.addRequireArg("page");
         this.setConsoleCanUse(false);
+
+        var commandConfig = plugin.getConfiguration().loadSimpleCommandConfiguration("commands.page.");
+        this.addSubCommand(commandConfig.aliases());
+
+        for (var argument : commandConfig.arguments()) {
+            if (argument.required()) {
+                this.addRequireArg(argument.displayName(), (sender, args) -> argument.autoCompletion());
+            } else {
+                this.addOptionalArg(argument.displayName(), (sender, args) -> argument.autoCompletion());
+            }
+        }
     }
 
     @Override

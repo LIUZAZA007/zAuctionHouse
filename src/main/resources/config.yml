@@ -146,6 +146,29 @@ commands: # Commande principale, /zauctionhouse
         auto-completion:
           - vault
 
+  # Command /ah claim
+  claim:
+    aliases:
+      - claim
+      - c
+      - recuperer
+
+  # Command /ah page <page>
+  page:
+    aliases:
+      - page
+      - p
+    arguments:
+      - name: page
+        display-name: page
+        required: true
+        auto-completion:
+          - '1'
+          - '2'
+          - '3'
+          - '5'
+          - '10'
+
   inventories:
 
     # Command /ah owned

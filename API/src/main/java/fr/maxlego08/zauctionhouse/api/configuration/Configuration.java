@@ -2,6 +2,7 @@ package fr.maxlego08.zauctionhouse.api.configuration;
 
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.InventoryCommandConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.commands.SimpleCommandConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ActionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.AutoClaimConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
@@ -88,4 +89,8 @@ public interface Configuration extends ConfigurationFile {
     List<InventoryCommandConfiguration> getInventoryCommands();
 
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
+
+    List<String> loadCommandAliases(String path);
+
+    SimpleCommandConfiguration loadSimpleCommandConfiguration(String path);
 }

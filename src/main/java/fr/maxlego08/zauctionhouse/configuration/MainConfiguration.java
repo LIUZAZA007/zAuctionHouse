@@ -6,6 +6,8 @@ import fr.maxlego08.zauctionhouse.api.configuration.Configuration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandArgumentConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.CommandConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.InventoryCommandConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.commands.SimpleArgumentConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.commands.SimpleCommandConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ActionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.AutoClaimConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ExpirationConfiguration;
@@ -241,5 +243,36 @@ public class MainConfiguration extends YamlLoader implements Configuration {
         }
 
         return new CommandConfiguration<>(aliases, arguments);
+    }
+
+    @Override
+    public List<String> loadCommandAliases(String path) {
+        return plugin.getConfig().getStringList(path + "aliases");
+    }
+
+    @Override
+    public SimpleCommandConfiguration loadSimpleCommandConfiguration(String path) {
+        var config = plugin.getConfig();
+
+        var aliases = config.getStringList(path + "aliases");
+        var arguments = new ArrayList<SimpleArgumentConfiguration>();
+
+        for (Map<?, ?> map : config.getMapList(path + "arguments")) {
+            TypedMapAccessor accessor = new TypedMapAccessor((Map<String, Object>) map);
+
+            var name = accessor.getString("name");
+            if (name == null) {
+                this.plugin.getLogger().severe("Missing name for " + path);
+                continue;
+            }
+
+            var displayName = accessor.getString("display-name", name);
+            var required = accessor.getBoolean("required", false);
+            var autoCompletion = accessor.getList("auto-completion").stream().map(String::valueOf).toList();
+
+            arguments.add(new SimpleArgumentConfiguration(name, displayName, required, autoCompletion));
+        }
+
+        return new SimpleCommandConfiguration(aliases, arguments);
     }
 }
