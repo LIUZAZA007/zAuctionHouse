@@ -19,7 +19,16 @@ It’s going to be amazing… or there will be bugs everywhere. Your call. 😄
   l'inventaire lors d'un clic, sinon, mise à jour uniquement de l'item)
 - [ ] Système de vente d'item admin comme sur fairysky
 - [ ] Système d'item favoris configurable
-- [ ] Système pour afficher le nombre de vente effectué lors de la déconnexion et combien d'argent gagné (inventaire
+- [x] Système pour afficher le nombre de vente effectué lors de la déconnexion et combien d'argent gagné (inventaire
   histoire de vente hors ligne ?)
 - [ ] Une commande pour ouvrir une certaine page ``/ah page <page>``
 - [ ] Avoir la raison de pourquoi l'item n'est plus en vente (parce que acheté, supprimé, ou expiré)
+- [ ] Pouvoir définir des custom modals id ou namespace pour les images d'items custom
+
+# zAuctionHouse Discord
+
+- [ ] Envoyer des notifications en message privé lorsqu'un item est vendu
+- [ ] Envoyer des notifications lorsqu'un item est mis en vente 
+- [ ] Pouvoir ajouter des filtres sur les items mis en vente pour recevoir une notification en message privée
+- [ ] Pouvoir acheter directement depuis discord un item (avec un bouton "acheter"), cela est uniquement possible avec l'inventaire des items achetés
+- [ ] 

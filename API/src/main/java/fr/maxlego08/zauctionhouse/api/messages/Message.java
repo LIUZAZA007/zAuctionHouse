@@ -39,6 +39,7 @@ public enum Message {
     COMMAND_DESCRIPTION_AUCTION_ADMIN_CACHE_SHOW("Show player cache"),
     COMMAND_DESCRIPTION_AUCTION_CLAIM("Claim pending money from sales"),
     COMMAND_DESCRIPTION_AUCTION_HISTORY("View your sales history"),
+    COMMAND_DESCRIPTION_AUCTION_PAGE("Open auction house at a specific page"),
 
     SELL_ERROR_AIR("<error>Are you stupid ? You can’t sell air !"),
     SELL_ERROR_CHANGE("<error>The item in your hand has changed, sale cancelled."),

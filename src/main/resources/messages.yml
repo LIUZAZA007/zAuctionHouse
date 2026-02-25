@@ -26,6 +26,7 @@ command-description-auction-admin-cache-clear: "Clear player cache"
 command-description-auction-admin-cache-show: "Show player cache"
 command-description-auction-claim: "Claim pending money from sales"
 command-description-auction-history: "View your sales history"
+command-description-auction-page: "Open auction house at a specific page"
 
 sell-error-air: "<error>Are you stupid ? You can't sell air !"
 sell-error-change: "<error>The item in your hand has changed, sale cancelled."
