@@ -100,7 +100,7 @@ public class SellService extends ZUtils implements AuctionSellService {
         cache.set(PlayerCacheKey.SELL_AMOUNT, 1);
         cache.remove(PlayerCacheKey.SELL_ITEMS);
 
-        this.plugin.getInventoriesLoader().openInventory(player, Inventories.SELL_COMMAND_INVENTORY);
+        this.plugin.getInventoriesLoader().openInventory(player, Inventories.SELL_INVENTORY);
     }
 
     /**

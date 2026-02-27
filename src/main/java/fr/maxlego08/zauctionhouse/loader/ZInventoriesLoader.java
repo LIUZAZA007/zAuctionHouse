@@ -172,7 +172,7 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
     private void createInventoriesFile() {
         copyFiles(
                 "inventories", "auction", "expired-items", "owned-items",//
-                "sell-command-inventory", "categories", "purchased-items", "history", //
+                "sell-inventory", "categories", "purchased-items", "history", //
 
                 // Admin
                 "admin/admin-owned-items", "admin/admin-expired-items", "admin/admin-purchased-items", //
