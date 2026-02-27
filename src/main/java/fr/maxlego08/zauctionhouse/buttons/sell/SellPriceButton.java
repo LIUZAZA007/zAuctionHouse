@@ -14,13 +14,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.math.BigDecimal;
 
-/**
- * Button to increase or decrease the sell price.
- * Configurable amounts for left click, right click, and shift clicks.
- */
 public class SellPriceButton extends Button {
 
     private final AuctionPlugin plugin;
@@ -38,7 +35,7 @@ public class SellPriceButton extends Button {
     }
 
     @Override
-    public void onClick(Player player, InventoryClickEvent event, InventoryEngine inventory, int slot, Placeholders placeholders) {
+    public void onClick(@NonNull Player player, @NonNull InventoryClickEvent event, @NonNull InventoryEngine inventory, int slot, @NonNull Placeholders placeholders) {
         super.onClick(player, event, inventory, slot, placeholders);
 
         var manager = this.plugin.getAuctionManager();
@@ -49,13 +46,11 @@ public class SellPriceButton extends Button {
         BigDecimal amount = getAmountForClick(event.getClick());
         BigDecimal newPrice = currentPrice.add(amount);
 
-        // Ensure price doesn't go below minimum
         BigDecimal minPrice = economy.getMinPrice(ItemType.AUCTION);
         if (newPrice.compareTo(minPrice) < 0) {
             newPrice = minPrice;
         }
 
-        // Ensure price doesn't exceed maximum
         BigDecimal maxPrice = economy.getMaxPrice(ItemType.AUCTION);
         if (newPrice.compareTo(maxPrice) > 0) {
             newPrice = maxPrice;
@@ -67,7 +62,6 @@ public class SellPriceButton extends Button {
 
     private BigDecimal getAmountForClick(ClickType clickType) {
         return switch (clickType) {
-            case LEFT -> leftClickAmount;
             case RIGHT -> rightClickAmount;
             case SHIFT_LEFT -> shiftLeftClickAmount;
             case SHIFT_RIGHT -> shiftRightClickAmount;
@@ -95,9 +89,6 @@ public class SellPriceButton extends Button {
     }
 
     private String formatAmount(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) >= 0) {
-            return "+" + amount.stripTrailingZeros().toPlainString();
-        }
-        return amount.stripTrailingZeros().toPlainString();
+        return (amount.compareTo(BigDecimal.ZERO) >= 0 ? "+" : "") + amount.stripTrailingZeros().toPlainString();
     }
 }

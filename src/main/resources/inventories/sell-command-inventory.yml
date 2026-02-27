@@ -5,10 +5,6 @@ patterns:
   - 'zauctionhouse-decoration'
 
 items:
-  info:
-    slot: 4
-    item:
-      material: NETHER_STAR
 
   show-item:
     type: ZAUCTIONHOUSE_SELL_SHOW_ITEM

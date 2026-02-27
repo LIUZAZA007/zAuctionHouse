@@ -15,11 +15,5 @@ public interface AuctionSellService {
 
     void openSellInventory(Player player, BigDecimal price, long expiredAt, AuctionEconomy auctionEconomy);
 
-    /**
-     * Opens the sell command inventory where the player can select items,
-     * choose economy, and set the price before confirming the sale.
-     *
-     * @param player the player opening the inventory
-     */
-    void openSellCommandInventory(Player player);
+    void openSellCommandInventory(Player player, BigDecimal price, AuctionEconomy auctionEconomy);
 }

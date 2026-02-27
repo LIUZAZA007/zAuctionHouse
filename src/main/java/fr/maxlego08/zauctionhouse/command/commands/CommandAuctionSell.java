@@ -1,7 +1,6 @@
 package fr.maxlego08.zauctionhouse.command.commands;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
-import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
 import fr.maxlego08.zauctionhouse.api.configuration.commands.arguments.CommandSellArguments;
 import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.event.events.sell.AuctionPreSellEvent;
@@ -66,11 +65,7 @@ public class CommandAuctionSell extends VCommandArgument<CommandSellArguments> {
 
         if (plugin.getConfiguration().isSellInventoryEnabled()) {
 
-            var cache = plugin.getAuctionManager().getCache(player);
-            cache.set(PlayerCacheKey.SELL_PRICE, price);
-            cache.set(PlayerCacheKey.SELL_ECONOMY, auctionEconomy);
-
-            auctionManager.getSellService().openSellCommandInventory(player);
+            auctionManager.getSellService().openSellCommandInventory(player, price, auctionEconomy);
             return CommandType.SUCCESS;
         }
 

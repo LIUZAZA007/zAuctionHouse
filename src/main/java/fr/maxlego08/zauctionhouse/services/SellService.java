@@ -95,23 +95,19 @@ public class SellService extends ZUtils implements AuctionSellService {
     }
 
     @Override
-    public void openSellCommandInventory(Player player) {
+    public void openSellCommandInventory(Player player, BigDecimal price, AuctionEconomy auctionEconomy) {
         var cache = this.manager.getCache(player);
         var configuration = this.plugin.getConfiguration();
         var economyManager = this.plugin.getEconomyManager();
 
-        // Set default values
-        AuctionEconomy defaultEconomy = economyManager.getDefaultEconomy(ItemType.AUCTION);
-        BigDecimal defaultPrice = defaultEconomy.getMinPrice(ItemType.AUCTION);
-
         long expiration = configuration.getSellExpiration().getExpiration(player);
         long expiredAt = expiration > 0 ? System.currentTimeMillis() + (expiration * 1000) : 0;
 
-        cache.set(PlayerCacheKey.SELL_PRICE, defaultPrice);
-        cache.set(PlayerCacheKey.SELL_ECONOMY, defaultEconomy);
+        cache.set(PlayerCacheKey.SELL_PRICE, price);
+        cache.set(PlayerCacheKey.SELL_ECONOMY, auctionEconomy);
         cache.set(PlayerCacheKey.SELL_EXPIRED_AT, expiredAt);
         cache.set(PlayerCacheKey.SELL_AMOUNT, 1);
-        cache.remove(PlayerCacheKey.SELL_ITEMS); // Clear any previous selection
+        cache.remove(PlayerCacheKey.SELL_ITEMS);
 
         this.plugin.getInventoriesLoader().openInventory(player, Inventories.SELL_COMMAND_INVENTORY);
     }
