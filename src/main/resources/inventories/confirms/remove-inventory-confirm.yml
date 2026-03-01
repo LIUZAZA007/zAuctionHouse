@@ -33,3 +33,15 @@ items:
         - "#8c8c8c• #2CCED2Click #92ffffto go back"
     slots:
       - 50-52
+
+  # View shulker content (only visible if item contains shulkers)
+  shulker:
+    type: ZAUCTIONHOUSE_SHULKER_OPEN
+    slot: 49
+    item:
+      material: SHULKER_BOX
+      name: "#2CCED2<bold>ᴠɪᴇᴡ sʜᴜʟᴋᴇʀ ᴄᴏɴᴛᴇɴᴛ"
+      lore:
+        - "#92ffffView the content of shulker boxes."
+        - ""
+        - "#8c8c8c• #2CCED2Click #92ffffto view content"

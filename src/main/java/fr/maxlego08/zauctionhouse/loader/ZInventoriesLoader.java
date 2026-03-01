@@ -17,15 +17,17 @@ import fr.maxlego08.zauctionhouse.buttons.confirm.ConfirmPurchaseButton;
 import fr.maxlego08.zauctionhouse.buttons.confirm.ConfirmRemoveListedButton;
 import fr.maxlego08.zauctionhouse.buttons.history.HistoryItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.inventory.ExpiredInventoryButton;
-import fr.maxlego08.zauctionhouse.buttons.inventory.SellingInventoryButton;
 import fr.maxlego08.zauctionhouse.buttons.inventory.PurchasedInventoryButton;
+import fr.maxlego08.zauctionhouse.buttons.inventory.SellingInventoryButton;
 import fr.maxlego08.zauctionhouse.buttons.list.ExpiredItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.ListedItemsButton;
-import fr.maxlego08.zauctionhouse.buttons.list.SellingItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.PurchasedItemsButton;
+import fr.maxlego08.zauctionhouse.buttons.list.SellingItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.sell.SellCancelButton;
 import fr.maxlego08.zauctionhouse.buttons.sell.SellConfirmButton;
 import fr.maxlego08.zauctionhouse.buttons.sell.SellEconomyButton;
+import fr.maxlego08.zauctionhouse.buttons.shulker.ShulkerInfoButton;
+import fr.maxlego08.zauctionhouse.buttons.shulker.ShulkerOpenButton;
 import fr.maxlego08.zauctionhouse.loader.buttons.*;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
@@ -149,6 +151,12 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
 
         this.buttonManager.register(new SortLoader(this.plugin, this.inventoryManager));
         this.buttonManager.register(new CategoryButtonLoader(this.plugin));
+
+        // Shulker
+        this.buttonManager.register(new NoneLoader(this.plugin, ShulkerOpenButton.class, "ZAUCTIONHOUSE_SHULKER_OPEN"));
+        this.buttonManager.register(new ShulkerContentLoader(this.plugin));
+        this.buttonManager.register(new NoneLoader(this.plugin, ShulkerInfoButton.class, "ZAUCTIONHOUSE_SHULKER_INFO"));
+        this.buttonManager.register(new ShulkerNavigationLoader(this.plugin));
     }
 
     @Override
@@ -182,7 +190,10 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
 
                 // Confirm
                 "confirms/remove-confirm", "confirms/purchase-confirm", //
-                "confirms/purchase-inventory-confirm", "confirms/remove-inventory-confirm" //
+                "confirms/purchase-inventory-confirm", "confirms/remove-inventory-confirm", //
+
+                // Shulker
+                "shulker-content" //
         );
     }
 

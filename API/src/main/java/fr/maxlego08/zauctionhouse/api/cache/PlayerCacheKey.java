@@ -60,7 +60,11 @@ public enum PlayerCacheKey {
     // Sales History
     HISTORY_DATA(new TypeToken<List<LogDTO>>() {}, ArrayList::new),
     HISTORY_LOADING(new TypeToken<Boolean>() {}, () -> false),
-    HISTORY_SORT(new TypeToken<HistorySortType>() {}, () -> HistorySortType.DATE_DESC)
+    HISTORY_SORT(new TypeToken<HistorySortType>() {}, () -> HistorySortType.DATE_DESC),
+
+    // Shulker Content Viewer
+    SHULKER_INDEX(new TypeToken<Integer>() {}, () -> 0),
+    SHULKER_ITEMS(new TypeToken<List<org.bukkit.inventory.ItemStack>>() {}, ArrayList::new)
     ;
 
     private final TypeToken<?> type;

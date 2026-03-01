@@ -18,6 +18,7 @@ public enum Inventories {
     ADMIN_LOGS("admin-logs"),
     ADMIN_TRANSACTIONS("admin-transactions"),
     HISTORY("history"),
+    SHULKER_CONTENT("shulker-content"),
 
     ;
 
