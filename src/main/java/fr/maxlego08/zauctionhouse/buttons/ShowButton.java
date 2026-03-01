@@ -22,6 +22,6 @@ public class ShowButton extends Button {
     @Override
     public @Nullable ItemStack getCustomItemStack(@NotNull Player player, boolean useCache, @NotNull Placeholders placeholders) {
         Item item = this.plugin.getAuctionManager().getCache(player).get(PlayerCacheKey.ITEM_SHOW);
-        return item.buildItemStack(player);
+        return item == null ? super.getCustomItemStack(player, useCache, placeholders) : item.buildItemStack(player);
     }
 }

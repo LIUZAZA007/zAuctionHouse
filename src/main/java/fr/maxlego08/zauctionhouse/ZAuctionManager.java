@@ -791,12 +791,6 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             var cache = this.caches.get(player);
             IntList items = cache.get(PlayerCacheKey.ITEMS_LISTED);
             items.rem(item.getId());
-
-            // Also clear ITEM_SHOW if it references the removed item
-            Item cachedItem = cache.get(PlayerCacheKey.ITEM_SHOW);
-            if (cachedItem != null && cachedItem.getId() == item.getId()) {
-                cache.remove(PlayerCacheKey.ITEM_SHOW);
-            }
         }
     }
 

@@ -23,7 +23,9 @@ import fr.maxlego08.zauctionhouse.buttons.list.ExpiredItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.ListedItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.OwnedItemsButton;
 import fr.maxlego08.zauctionhouse.buttons.list.PurchasedItemsButton;
-import fr.maxlego08.zauctionhouse.buttons.sell.*;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellCancelButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellConfirmButton;
+import fr.maxlego08.zauctionhouse.buttons.sell.SellEconomyButton;
 import fr.maxlego08.zauctionhouse.loader.buttons.*;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import fr.maxlego08.zauctionhouse.utils.ZUtils;
@@ -217,7 +219,11 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
         }
 
         var inventory = optional.get();
-        this.inventoryManager.openInventoryWithOldInventories(player, inventory, page);
+        if (this.plugin.getScheduler().isGlobalTickThread()) {
+            this.inventoryManager.openInventoryWithOldInventories(player, inventory, page);
+        } else {
+            this.plugin.getScheduler().runNextTick(w -> this.inventoryManager.openInventoryWithOldInventories(player, inventory, page));
+        }
 
         this.performanceDebug.end("openInventory." + inventories.getFileName(), start, "for=" + player.getName() + ", page=" + page);
     }
