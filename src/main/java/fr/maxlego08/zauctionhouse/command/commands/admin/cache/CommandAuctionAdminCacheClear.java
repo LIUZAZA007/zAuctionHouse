@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class CommandAuctionAdminCacheClear extends VCommand {
@@ -20,10 +21,15 @@ public class CommandAuctionAdminCacheClear extends VCommand {
 
         this.setPermission(Permission.ZAUCTIONHOUSE_ADMIN);
         this.setDescription(Message.COMMAND_DESCRIPTION_AUCTION_ADMIN_CACHE_CLEAR);
-        this.setConsoleCanUse(false);
+        this.setConsoleCanUse(true);
 
         this.addSubCommand("clear");
-        this.addRequireArg("player", (sender, args) -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+        this.addRequireArg("player", (sender, args) -> {
+            List<String> suggestions = new ArrayList<>();
+            suggestions.add("*");
+            Bukkit.getOnlinePlayers().forEach(player -> suggestions.add(player.getName()));
+            return suggestions;
+        });
         this.addOptionalArg("key", (sender, args) -> {
             List<String> keys = new ArrayList<>();
             keys.add("all");
@@ -39,13 +45,40 @@ public class CommandAuctionAdminCacheClear extends VCommand {
             return CommandType.SYNTAX_ERROR;
         }
 
+        String keyName = argAsString(1);
+
+        // Handle wildcard for all online players
+        if (targetName.equals("*")) {
+            Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+            int count = onlinePlayers.size();
+
+            if (keyName == null || keyName.equalsIgnoreCase("all")) {
+                for (Player target : onlinePlayers) {
+                    this.auctionManager.clearPlayerCache(target, PlayerCacheKey.values());
+                }
+                message(this.plugin, this.sender, Message.ADMIN_CACHE_CLEARED_ALL_PLAYERS_ALL, "%count%", String.valueOf(count));
+            } else {
+                PlayerCacheKey key;
+                try {
+                    key = PlayerCacheKey.valueOf(keyName.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    message(this.plugin, this.sender, Message.ADMIN_CACHE_INVALID_KEY, "%key%", keyName);
+                    return CommandType.DEFAULT;
+                }
+                for (Player target : onlinePlayers) {
+                    this.auctionManager.clearPlayerCache(target, key);
+                }
+                message(this.plugin, this.sender, Message.ADMIN_CACHE_CLEARED_ALL_PLAYERS, "%key%", key.name(), "%count%", String.valueOf(count));
+            }
+            return CommandType.SUCCESS;
+        }
+
+        // Handle single player
         Player target = Bukkit.getPlayerExact(targetName);
         if (target == null) {
             message(this.plugin, this.sender, Message.ADMIN_CACHE_PLAYER_NOT_ONLINE, "%player%", targetName);
             return CommandType.DEFAULT;
         }
-
-        String keyName = argAsString(1);
 
         if (keyName == null || keyName.equalsIgnoreCase("all")) {
             this.auctionManager.clearPlayerCache(target, PlayerCacheKey.values());

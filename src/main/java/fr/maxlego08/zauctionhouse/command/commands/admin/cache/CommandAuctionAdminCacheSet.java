@@ -12,7 +12,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -25,10 +27,15 @@ public class CommandAuctionAdminCacheSet extends VCommand {
 
         this.setPermission(Permission.ZAUCTIONHOUSE_ADMIN);
         this.setDescription(Message.COMMAND_DESCRIPTION_AUCTION_ADMIN_CACHE_SET);
-        this.setConsoleCanUse(false);
+        this.setConsoleCanUse(true);
 
         this.addSubCommand("set");
-        this.addRequireArg("player", (sender, args) -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+        this.addRequireArg("player", (sender, args) -> {
+            List<String> suggestions = new ArrayList<>();
+            suggestions.add("*");
+            Bukkit.getOnlinePlayers().forEach(player -> suggestions.add(player.getName()));
+            return suggestions;
+        });
         this.addRequireArg("key", (sender, args) -> SETTABLE_KEYS.stream().map(PlayerCacheKey::name).sorted().toList());
         this.addRequireArg("value", (sender, args) -> {
             String keyArg = args.length >= 4 ? args[3] : null;
@@ -47,12 +54,6 @@ public class CommandAuctionAdminCacheSet extends VCommand {
         String targetName = argAsString(0);
         if (targetName == null) {
             return CommandType.SYNTAX_ERROR;
-        }
-
-        Player target = Bukkit.getPlayerExact(targetName);
-        if (target == null) {
-            message(this.plugin, this.sender, Message.ADMIN_CACHE_PLAYER_NOT_ONLINE, "%player%", targetName);
-            return CommandType.DEFAULT;
         }
 
         String keyName = argAsString(1);
@@ -83,6 +84,26 @@ public class CommandAuctionAdminCacheSet extends VCommand {
             parsedValue = parseValue(key, valueStr);
         } catch (Exception e) {
             message(this.plugin, this.sender, Message.ADMIN_CACHE_INVALID_VALUE, "%value%", valueStr, "%key%", key.name());
+            return CommandType.DEFAULT;
+        }
+
+        // Handle wildcard for all online players
+        if (targetName.equals("*")) {
+            Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+            int count = onlinePlayers.size();
+
+            for (Player target : onlinePlayers) {
+                PlayerCache cache = this.auctionManager.getCache(target);
+                cache.set(key, parsedValue);
+            }
+            message(this.plugin, this.sender, Message.ADMIN_CACHE_SET_ALL_PLAYERS, "%key%", key.name(), "%value%", valueStr, "%count%", String.valueOf(count));
+            return CommandType.SUCCESS;
+        }
+
+        // Handle single player
+        Player target = Bukkit.getPlayerExact(targetName);
+        if (target == null) {
+            message(this.plugin, this.sender, Message.ADMIN_CACHE_PLAYER_NOT_ONLINE, "%player%", targetName);
             return CommandType.DEFAULT;
         }
 
