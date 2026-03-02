@@ -20,9 +20,9 @@ import fr.maxlego08.zauctionhouse.api.utils.Plugins;
 import fr.maxlego08.zauctionhouse.category.ZCategoryManager;
 import fr.maxlego08.zauctionhouse.cluster.LocalAuctionClusterBridge;
 import fr.maxlego08.zauctionhouse.command.CommandManager;
-import fr.maxlego08.zauctionhouse.discord.DiscordWebhookService;
 import fr.maxlego08.zauctionhouse.command.commands.CommandAuction;
 import fr.maxlego08.zauctionhouse.configuration.MainConfiguration;
+import fr.maxlego08.zauctionhouse.discord.DiscordWebhookService;
 import fr.maxlego08.zauctionhouse.economy.ZEconomyManager;
 import fr.maxlego08.zauctionhouse.hooks.permissions.EmptyOfflinePermission;
 import fr.maxlego08.zauctionhouse.hooks.permissions.LuckPermsOfflinePermission;
@@ -36,19 +36,20 @@ import fr.maxlego08.zauctionhouse.placeholder.placeholders.PlayerPlaceholders;
 import fr.maxlego08.zauctionhouse.rule.ZItemRuleManager;
 import fr.maxlego08.zauctionhouse.rule.ZRuleLoaderRegistry;
 import fr.maxlego08.zauctionhouse.storage.ZStorageManager;
+import fr.maxlego08.zauctionhouse.utils.Metrics;
+import fr.maxlego08.zauctionhouse.utils.VersionChecker;
 import fr.maxlego08.zauctionhouse.utils.yaml.YamlUpdater;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -108,6 +109,11 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
         this.registerPlaceholders();
         this.registerHooks();
+
+        new Metrics(this, 5326);
+
+        VersionChecker versionChecker = new VersionChecker(this, 1);
+        versionChecker.useLastVersion();
 
         isEnabled = true;
         this.getLogger().info("zAuctionHouse has just been loaded successfully!");
