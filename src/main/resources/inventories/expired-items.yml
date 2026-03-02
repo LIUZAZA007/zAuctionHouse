@@ -9,14 +9,13 @@ patterns:
 items:
   items:
     type: ZAUCTIONHOUSE_EXPIRED_ITEMS
+    empty-slot: 22
     slots:
       - 9-17
       - 18-26
       - 27-35
       - 36-44
     else:
-      slots:
-        - 22
       item:
         material: BARRIER
         name: '#ff0000&nNo Items Found'

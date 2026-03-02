@@ -2,6 +2,7 @@ package fr.maxlego08.zauctionhouse.buttons.list;
 
 import fr.maxlego08.menu.api.button.PaginateButton;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.cache.PlayerCacheKey;
@@ -28,9 +29,11 @@ import java.util.logging.Level;
 public class ListedItemsButton extends PaginateButton {
 
     private final AuctionPlugin plugin;
+    private final int emptySlot;
 
-    public ListedItemsButton(Plugin plugin) {
+    public ListedItemsButton(Plugin plugin, int emptySlot) {
         this.plugin = (AuctionPlugin) plugin;
+        this.emptySlot = emptySlot;
     }
 
     @Override
@@ -40,6 +43,11 @@ public class ListedItemsButton extends PaginateButton {
 
         // 1. Get IDs from cache (O(1) access)
         IntList itemIds = manager.getItemIdsListedForSale(player);
+
+        if (itemIds.isEmpty()) {
+            inventoryEngine.addItem(this.emptySlot, getCustomItemStack(player, false, new Placeholders()));
+            return;
+        }
 
         // 2. Resolve ONLY items for the current page
         int page = inventoryEngine.getPage() - 1; // zMenu pages start at 1

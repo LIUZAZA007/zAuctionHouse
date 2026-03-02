@@ -110,10 +110,10 @@ public class ZInventoriesLoader extends ZUtils implements InventoriesLoader {
         this.buttonManager.unregisters(this.plugin);
 
         // Player
-        this.buttonManager.register(new NoneLoader(this.plugin, ListedItemsButton.class, "ZAUCTIONHOUSE_LISTED_ITEMS"));
-        this.buttonManager.register(new NoneLoader(this.plugin, ExpiredItemsButton.class, "ZAUCTIONHOUSE_EXPIRED_ITEMS"));
-        this.buttonManager.register(new NoneLoader(this.plugin, SellingItemsButton.class, "ZAUCTIONHOUSE_SELLING_ITEMS"));
-        this.buttonManager.register(new NoneLoader(this.plugin, PurchasedItemsButton.class, "ZAUCTIONHOUSE_PURCHASED_ITEMS"));
+        this.buttonManager.register(new EmptySlotLoader(this.plugin, ListedItemsButton.class, "ZAUCTIONHOUSE_LISTED_ITEMS"));
+        this.buttonManager.register(new EmptySlotLoader(this.plugin, ExpiredItemsButton.class, "ZAUCTIONHOUSE_EXPIRED_ITEMS"));
+        this.buttonManager.register(new EmptySlotLoader(this.plugin, SellingItemsButton.class, "ZAUCTIONHOUSE_SELLING_ITEMS"));
+        this.buttonManager.register(new EmptySlotLoader(this.plugin, PurchasedItemsButton.class, "ZAUCTIONHOUSE_PURCHASED_ITEMS"));
         this.buttonManager.register(new NoneLoader(this.plugin, AuctionItemsButton.class, "ZAUCTIONHOUSE_AUCTION_ITEMS"));
 
         this.buttonManager.register(new NoneLoader(this.plugin, ExpiredInventoryButton.class, "ZAUCTIONHOUSE_EXPIRED_INVENTORY"));

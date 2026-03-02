@@ -2,6 +2,7 @@ package fr.maxlego08.zauctionhouse.buttons.list;
 
 import fr.maxlego08.menu.api.button.PaginateButton;
 import fr.maxlego08.menu.api.engine.InventoryEngine;
+import fr.maxlego08.menu.api.utils.Placeholders;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.item.ItemStatus;
 import org.bukkit.entity.Player;
@@ -11,9 +12,11 @@ import org.jspecify.annotations.NonNull;
 public class SellingItemsButton extends PaginateButton {
 
     private final AuctionPlugin plugin;
+    private final int emptySlot;
 
-    public SellingItemsButton(Plugin plugin) {
+    public SellingItemsButton(Plugin plugin, int emptySlot) {
         this.plugin = (AuctionPlugin) plugin;
+        this.emptySlot = emptySlot;
     }
 
     @Override
@@ -21,6 +24,12 @@ public class SellingItemsButton extends PaginateButton {
 
         var manager = this.plugin.getAuctionManager();
         var items = manager.getPlayerSellingItems(player);
+
+        if (items.isEmpty()) {
+            inventoryEngine.addItem(this.emptySlot, getCustomItemStack(player, false, new Placeholders()));
+            return;
+        }
+
         var line = this.plugin.getConfiguration().getItemLore().sellingLore();
         var linePurchased = this.plugin.getConfiguration().getItemLore().beingPurchasedLore();
 
