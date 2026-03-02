@@ -1,4 +1,4 @@
-package fr.maxlego08.zauctionhouse.storage.repository.repositeries;
+package fr.maxlego08.zauctionhouse.storage.repository.repositories;
 
 import fr.maxlego08.sarah.DatabaseConnection;
 import fr.maxlego08.sarah.database.Schema;

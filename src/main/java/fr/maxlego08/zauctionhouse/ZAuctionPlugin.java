@@ -368,23 +368,18 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
                     outDir.mkdirs();
                 }
 
-                try {
-                    if (outFile.exists() && !replace) {
-                        getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
-                    } else {
-                        OutputStream out = Files.newOutputStream(outFile.toPath());
+                if (outFile.exists() && !replace) {
+                    getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                } else {
+                    try (OutputStream out = Files.newOutputStream(outFile.toPath()); in) {
                         byte[] buf = new byte[1024];
-
                         int len;
                         while ((len = in.read(buf)) > 0) {
                             out.write(buf, 0, len);
                         }
-
-                        out.close();
-                        in.close();
+                    } catch (IOException exception) {
+                        getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, exception);
                     }
-                } catch (IOException exception) {
-                    getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, exception);
                 }
 
             }

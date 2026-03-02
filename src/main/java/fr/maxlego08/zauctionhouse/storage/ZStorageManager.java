@@ -17,7 +17,7 @@ import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
 import fr.maxlego08.zauctionhouse.api.transaction.TransactionStatus;
 import fr.maxlego08.zauctionhouse.storage.migrations.*;
 import fr.maxlego08.zauctionhouse.storage.repository.Repositories;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.*;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.*;
 import fr.maxlego08.zauctionhouse.utils.ItemLoaderUtils;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 import org.bukkit.Bukkit;

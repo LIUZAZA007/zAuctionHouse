@@ -70,6 +70,21 @@ public interface AuctionEconomy {
     CompletableFuture<Boolean> has(OfflinePlayer offlinePlayer, BigDecimal price);
 
     /**
+     * Synchronously checks if the player has at least the specified amount of money.
+     * This method should only be used when the player is online and on the main thread.
+     * <p>
+     * Override this method in implementations that have native synchronous balance checks
+     * for better performance.
+     *
+     * @param player The online player to check the balance for.
+     * @param price  The amount of money to check for.
+     * @return true if the player has at least the specified amount, false otherwise.
+     */
+    default boolean hasSync(Player player, BigDecimal price) {
+        return has(player, price).join();
+    }
+
+    /**
      * Deposits the specified amount of money into the player's economy account.
      *
      * @param offlinePlayer The player to deposit money into.

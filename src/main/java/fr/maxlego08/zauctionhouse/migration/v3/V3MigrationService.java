@@ -14,7 +14,7 @@ import fr.maxlego08.zauctionhouse.migration.v3.items.V3Transaction;
 import fr.maxlego08.zauctionhouse.migration.v3.reader.V3DataReader;
 import fr.maxlego08.zauctionhouse.migration.v3.reader.V3JsonDataReader;
 import fr.maxlego08.zauctionhouse.migration.v3.reader.V3SqlDataReader;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.PlayerRepository;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.PlayerRepository;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;

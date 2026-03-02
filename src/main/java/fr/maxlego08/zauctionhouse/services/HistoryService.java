@@ -6,7 +6,7 @@ import fr.maxlego08.zauctionhouse.api.inventories.Inventories;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionHistoryService;
 import fr.maxlego08.zauctionhouse.api.storage.dto.LogDTO;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.LogRepository;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.LogRepository;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;

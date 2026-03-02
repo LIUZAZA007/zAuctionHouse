@@ -11,7 +11,7 @@ import fr.maxlego08.zauctionhouse.api.filter.DateFilter;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.storage.dto.TransactionDTO;
 import fr.maxlego08.zauctionhouse.api.transaction.TransactionStatus;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.TransactionRepository;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.TransactionRepository;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

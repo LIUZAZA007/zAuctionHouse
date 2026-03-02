@@ -5,8 +5,8 @@ import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
 import fr.maxlego08.zauctionhouse.api.economy.EconomyManager;
 import fr.maxlego08.zauctionhouse.api.storage.StorageManager;
 import fr.maxlego08.zauctionhouse.api.storage.dto.PlayerDTO;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.ItemRepository;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.PlayerRepository;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.ItemRepository;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.PlayerRepository;
 import fr.maxlego08.zauctionhouse.utils.ItemLoaderUtils;
 import fr.maxlego08.zauctionhouse.utils.PerformanceDebug;
 

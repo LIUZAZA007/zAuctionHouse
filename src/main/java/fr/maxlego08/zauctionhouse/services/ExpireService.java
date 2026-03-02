@@ -11,6 +11,7 @@ import fr.maxlego08.zauctionhouse.api.services.AuctionExpireService;
 import org.bukkit.OfflinePlayer;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -135,7 +136,7 @@ public class ExpireService implements AuctionExpireService {
             // Process offline sellers asynchronously then batch update
             if (!offlineSellerItems.isEmpty()) {
                 AtomicInteger remaining = new AtomicInteger(offlineSellerItems.size());
-                List<Item> processedItems = new ArrayList<>();
+                List<Item> processedItems = new CopyOnWriteArrayList<>();
 
                 for (Item item : offlineSellerItems) {
                     configuration.getExpireExpiration().getExpiration(this.plugin.getOfflinePermission(), item.getSeller())
@@ -148,18 +149,16 @@ public class ExpireService implements AuctionExpireService {
                                 long expiredAt = safeExpiration > 0 ? System.currentTimeMillis() + (safeExpiration * 1000) : 0;
                                 item.setExpiredAt(new Date(expiredAt));
 
-                                synchronized (processedItems) {
-                                    processedItems.add(item);
-                                    this.auctionManager.addItem(StorageType.EXPIRED, item);
+                                processedItems.add(item);
+                                this.auctionManager.addItem(StorageType.EXPIRED, item);
 
-                                    // When all items are processed, batch update
-                                    if (remaining.decrementAndGet() == 0) {
-                                        this.plugin.getScheduler().runNextTick(w -> {
-                                            Map<StorageType, List<Item>> batchUpdate = new EnumMap<>(StorageType.class);
-                                            batchUpdate.put(StorageType.EXPIRED, processedItems);
-                                            storageManager.updateItems(batchUpdate);
-                                        });
-                                    }
+                                // When all items are processed, batch update
+                                if (remaining.decrementAndGet() == 0) {
+                                    this.plugin.getScheduler().runNextTick(w -> {
+                                        Map<StorageType, List<Item>> batchUpdate = new EnumMap<>(StorageType.class);
+                                        batchUpdate.put(StorageType.EXPIRED, new ArrayList<>(processedItems));
+                                        storageManager.updateItems(batchUpdate);
+                                    });
                                 }
                             });
                 }

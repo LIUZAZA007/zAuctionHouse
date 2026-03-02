@@ -11,7 +11,7 @@ import fr.maxlego08.zauctionhouse.api.storage.dto.AuctionItemDTO;
 import fr.maxlego08.zauctionhouse.api.storage.dto.ItemDTO;
 import fr.maxlego08.zauctionhouse.api.utils.Base64ItemStack;
 import fr.maxlego08.zauctionhouse.items.ZAuctionItem;
-import fr.maxlego08.zauctionhouse.storage.repository.repositeries.AuctionItemRepository;
+import fr.maxlego08.zauctionhouse.storage.repository.repositories.AuctionItemRepository;
 
 import java.util.List;
 import java.util.Map;
