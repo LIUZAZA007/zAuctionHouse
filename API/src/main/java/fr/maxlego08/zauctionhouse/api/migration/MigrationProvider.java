@@ -81,7 +81,6 @@ public interface MigrationProvider {
 
     /**
      * Gets the configuration section name for this provider.
-     * The configuration will be read from "migration.<config-section>".
      *
      * @return The configuration section name
      */

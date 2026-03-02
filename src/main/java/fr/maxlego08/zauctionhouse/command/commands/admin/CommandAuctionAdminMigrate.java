@@ -16,14 +16,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-/**
- * Command to migrate data from other auction plugins to zAuctionHouse V4.
- * <p>
- * Usage: /ah admin migrate <source> [confirm]
- * <p>
- * Available sources are dynamically loaded from the {@link fr.maxlego08.zauctionhouse.api.migration.MigrationRegistry}.
- * External plugins can register their own migration providers.
- */
+
 public class CommandAuctionAdminMigrate extends VCommand {
 
     private static final String CONFIRM_ARG = "confirm";
