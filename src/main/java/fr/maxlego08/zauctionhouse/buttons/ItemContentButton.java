@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class AuctionItemsButton extends Button {
+public class ItemContentButton extends Button {
 
     private final AuctionPlugin plugin;
 
-    public AuctionItemsButton(Plugin plugin) {
+    public ItemContentButton(Plugin plugin) {
         this.plugin = (AuctionPlugin) plugin;
     }
 

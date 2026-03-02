@@ -5,8 +5,8 @@ patterns:
 
 items:
 
-  auction-items:
-    type: ZAUCTIONHOUSE_AUCTION_ITEMS
+  item-content:
+    type: ZAUCTIONHOUSE_ITEM_CONTENT
     slots:
       - 9-44
 
