@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.groupez.dev/zauctionhouse/banner.png" alt="zAuctionHouse Banner" width="800">
+  <img src="https://img.groupez.dev/zauctionhouse/v3/house.png" width="100" alt="zAuctionHouse Banner" width="800">
 </p>
 
 <h1 align="center">zAuctionHouse V4</h1>
@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.spigotmc.org/resources/zauctionhouse-1-8-1-21.81494/"><img src="https://img.shields.io/badge/Spigot-1.8--1.21-orange.svg" alt="Spigot"></a>
-  <a href="https://discord.groupez.dev/"><img src="https://img.shields.io/discord/music?label=Discord&logo=discord" alt="Discord"></a>
+  <a href="https://www.spigotmc.org/resources/zauctionhouse.63010/"><img src="https://img.shields.io/badge/Spigot-1.21-orange.svg" alt="Spigot"></a>
+  <a href="https://discord.groupez.dev/"><img src="https://img.shields.io/discord/511516467615760405?label=Discord&logo=discord" alt="Discord"></a>
   <a href="https://zauctionhouse.groupez.dev/"><img src="https://img.shields.io/badge/Docs-Wiki-blue.svg" alt="Documentation"></a>
   <img src="https://img.shields.io/badge/Java-21-red.svg" alt="Java 21">
   <img src="https://img.shields.io/badge/License-Premium-green.svg" alt="License">
@@ -19,7 +19,7 @@
 <p align="center">
   <a href="https://zauctionhouse.groupez.dev/">Documentation</a> •
   <a href="https://discord.groupez.dev/">Discord</a> •
-  <a href="https://www.spigotmc.org/resources/zauctionhouse-1-8-1-21.81494/">Spigot</a>
+  <a href="https://www.spigotmc.org/resources/zauctionhouse.63010/">Spigot</a>
 </p>
 
 ---
