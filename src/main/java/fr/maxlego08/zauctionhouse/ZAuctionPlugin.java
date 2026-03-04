@@ -46,6 +46,7 @@ import fr.maxlego08.zauctionhouse.utils.yaml.YamlUpdater;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -125,6 +126,8 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
         var documentation = new DocumentationGenerator(this);
         documentation.generate(this.commandManager.getCommands(), ((LocalPlaceholder) placeholder).getAutoPlaceholders());
+
+        getServer().getServicesManager().register(AuctionPlugin.class, this, this, ServicePriority.Highest);
 
         isEnabled = true;
         this.getLogger().info("zAuctionHouse has just been loaded successfully!");
