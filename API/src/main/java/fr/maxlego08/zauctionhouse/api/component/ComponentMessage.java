@@ -80,6 +80,12 @@ public interface ComponentMessage {
      */
     String getItemStackDisplayName(ItemStack itemStack);
 
+    /**
+     * Strips color codes from a message.
+     *
+     * @param message the message to strip colors from
+     * @return the message without color codes
+     */
     String stripColor(String message);
 }
 

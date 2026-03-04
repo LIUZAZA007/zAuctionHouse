@@ -46,44 +46,145 @@ public interface Configuration extends ConfigurationFile {
      */
     boolean isEnablePerformanceDebug();
 
+    /**
+     * Gets the name of this server instance.
+     * Used for cluster identification in multi-server setups.
+     *
+     * @return the server name
+     */
     String getServerName();
 
+    /**
+     * Gets the message color configurations for formatting messages.
+     *
+     * @return list of message colors
+     */
     List<MessageColor> getMessageColors();
 
+    /**
+     * Gets the number multiplication configuration for the sell command.
+     *
+     * @return the number multiplication configuration
+     */
     NumberMultiplicationConfiguration getNumberMultiplicationConfiguration();
 
+    /**
+     * Gets the expiration configuration for sell listings.
+     *
+     * @return the sell expiration configuration
+     */
     ExpirationConfiguration getSellExpiration();
 
+    /**
+     * Gets the expiration configuration for rent listings.
+     *
+     * @return the rent expiration configuration
+     */
     ExpirationConfiguration getRentExpiration();
 
+    /**
+     * Gets the expiration configuration for bid listings.
+     *
+     * @return the bid expiration configuration
+     */
     ExpirationConfiguration getBidExpiration();
 
+    /**
+     * Gets the expiration configuration for purchased items.
+     *
+     * @return the purchase expiration configuration
+     */
     ExpirationConfiguration getPurchaseExpiration();
 
+    /**
+     * Gets the expiration configuration for expired items.
+     *
+     * @return the expire expiration configuration
+     */
     ExpirationConfiguration getExpireExpiration();
 
+    /**
+     * Gets the item lore configuration for auction item display.
+     *
+     * @return the item lore configuration
+     */
     ItemLoreConfiguration getItemLore();
 
+    /**
+     * Gets the time formatting configuration.
+     *
+     * @return the time configuration
+     */
     TimeConfiguration getTime();
 
+    /**
+     * Gets the action configuration for click actions.
+     *
+     * @return the action configuration
+     */
     ActionConfiguration getActions();
 
+    /**
+     * Gets the date format used for displaying dates.
+     *
+     * @return the date format
+     */
     SimpleDateFormat getDateFormat();
 
+    /**
+     * Gets the sort configuration.
+     *
+     * @return the sort configuration
+     */
     SortConfiguration getSort();
 
+    /**
+     * Gets the permission configuration.
+     *
+     * @return the permission configuration
+     */
     PermissionConfiguration getPermission();
 
+    /**
+     * Gets the world configuration for world restrictions.
+     *
+     * @return the world configuration
+     */
     WorldConfiguration getWorld();
 
+    /**
+     * Gets the special items configuration.
+     *
+     * @return the special items configuration
+     */
     SpecialItemsConfiguration getSpecialItems();
 
+    /**
+     * Gets the item display configuration.
+     *
+     * @return the item display configuration
+     */
     ItemDisplayConfiguration getItemDisplay();
 
+    /**
+     * Gets the performance debug configuration.
+     *
+     * @return the performance debug configuration
+     */
     PerformanceDebugConfiguration getPerformanceDebug();
 
+    /**
+     * Gets the auto-claim configuration.
+     *
+     * @return the auto-claim configuration
+     */
     AutoClaimConfiguration getAutoClaimConfiguration();
 
+    /**
+     * Gets the sales notification configuration.
+     *
+     * @return the sales notification configuration
+     */
     SalesNotificationConfiguration getSalesNotificationConfiguration();
 
     /**
@@ -95,11 +196,36 @@ public interface Configuration extends ConfigurationFile {
      */
     boolean isSellInventoryEnabled();
 
+    /**
+     * Gets the list of inventory-based command configurations.
+     *
+     * @return list of inventory command configurations
+     */
     List<InventoryCommandConfiguration> getInventoryCommands();
 
+    /**
+     * Loads a command configuration from the specified path.
+     *
+     * @param path      the configuration path
+     * @param enumClass the enum class for command arguments
+     * @param <T>       the enum type
+     * @return the loaded command configuration
+     */
     <T extends Enum<T>> CommandConfiguration<T> loadCommandConfiguration(String path, Class<T> enumClass);
 
+    /**
+     * Loads command aliases from the specified path.
+     *
+     * @param path the configuration path
+     * @return list of command aliases
+     */
     List<String> loadCommandAliases(String path);
 
+    /**
+     * Loads a simple command configuration from the specified path.
+     *
+     * @param path the configuration path
+     * @return the loaded simple command configuration
+     */
     SimpleCommandConfiguration loadSimpleCommandConfiguration(String path);
 }

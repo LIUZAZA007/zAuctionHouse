@@ -313,6 +313,27 @@ admin-generate-no-materials: "<error>Aucun matériau valide trouvé dans les cat
 # Placeholders disponibles: aucun
 admin-generate-invalid-amount: "<error>Montant invalide. Veuillez spécifier un nombre entre <white>1<error> et <white>100000<error>."
 
+# Affiché lors du début de génération de faux joueurs.
+# Placeholders disponibles:
+#   %total% - Nombre total de joueurs à générer
+admin-generate-players-start: "<gray>Enregistrement de <white>%total%<gray> joueurs uniques..."
+
+# Mise à jour de la progression pendant la génération des joueurs.
+# Placeholders disponibles:
+#   %current% - Progression actuelle
+#   %total%   - Total de joueurs à générer
+admin-generate-players-progress: "<gray>Joueurs enregistrés: <white>%current%<gray>/<white>%total%<gray>..."
+
+# Affiché lorsque la génération de joueurs est terminée.
+# Placeholders disponibles:
+#   %amount% - Nombre de joueurs générés
+admin-generate-players-complete: "<success>Enregistrement réussi de <white>%amount%<success> joueurs uniques."
+
+# Affiché lors du début de génération de faux items.
+# Placeholders disponibles:
+#   %total% - Nombre total d'items à générer
+admin-generate-items-start: "<gray>Création de <white>%total%<gray> items d'enchères..."
+
 #=============================================================================
 # MESSAGES DE CACHE ADMIN
 #=============================================================================

@@ -8,6 +8,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Enumeration of all messages used by the auction house plugin.
+ * <p>
+ * Messages support color codes and placeholders, and can be configured
+ * to display in different formats (chat, action bar, title, boss bar, etc.).
+ */
 public enum Message {
 
     PREFIX("<primary>zAuctionHouse <secondary>• "),

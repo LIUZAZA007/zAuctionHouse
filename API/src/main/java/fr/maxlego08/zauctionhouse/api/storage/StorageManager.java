@@ -146,14 +146,43 @@ public interface StorageManager {
      */
     CompletableFuture<Item> selectItem(int id);
 
-
+    /**
+     * Finds a player's UUID by their username.
+     *
+     * @param playerName the player's username
+     * @return future containing the player's UUID, or {@code null} if not found
+     */
     CompletableFuture<UUID> findUniqueId(String playerName);
 
+    /**
+     * Gets a player's username by their UUID.
+     *
+     * @param uuid the player's UUID
+     * @return the player's username, or {@code null} if not found
+     */
     String getPlayerName(UUID uuid);
 
+    /**
+     * Retrieves the sales history for a player.
+     *
+     * @param playerUniqueId the player's UUID
+     * @return list of log entries for the player's sales
+     */
     List<LogDTO> selectSalesHistory(UUID playerUniqueId);
 
+    /**
+     * Retrieves multiple items by their IDs.
+     *
+     * @param integers list of item IDs to retrieve
+     * @return list of items found
+     */
     List<Item> selectItems(List<Integer> integers);
 
+    /**
+     * Retrieves player usernames for a list of UUIDs.
+     *
+     * @param uuids list of UUID strings
+     * @return map of UUID to username
+     */
     Map<UUID, String> selectPlayers(List<String> uuids);
 }

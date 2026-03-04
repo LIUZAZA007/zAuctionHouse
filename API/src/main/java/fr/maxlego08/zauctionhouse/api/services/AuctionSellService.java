@@ -7,6 +7,18 @@ import org.bukkit.inventory.ItemStack;
 import java.math.BigDecimal;
 import java.util.Map;
 
+/**
+ * Service responsible for listing items for sale in the auction house.
+ * <p>
+ * This service handles the complete selling flow including:
+ * <ul>
+ *     <li>Item validation against blacklist/whitelist rules</li>
+ *     <li>Tax calculation and deduction</li>
+ *     <li>Item removal from player inventory</li>
+ *     <li>Listing creation and persistence</li>
+ *     <li>Cluster notification for multi-server setups</li>
+ * </ul>
+ */
 public interface AuctionSellService {
 
     /**
@@ -28,5 +40,15 @@ public interface AuctionSellService {
      */
     void sellAuctionItems(Player player, BigDecimal price, long expiredAt, Map<Integer, ItemStack> slotItems, AuctionEconomy auctionEconomy);
 
+    /**
+     * Opens the sell command inventory for a player with pre-configured price and economy.
+     * <p>
+     * This inventory allows players to select items to sell and confirm the transaction.
+     * The price and economy are pre-filled based on command arguments.
+     *
+     * @param player         the player to open the inventory for
+     * @param price          the pre-configured price for the listing
+     * @param auctionEconomy the economy to use for the transaction
+     */
     void openSellCommandInventory(Player player, BigDecimal price, AuctionEconomy auctionEconomy);
 }

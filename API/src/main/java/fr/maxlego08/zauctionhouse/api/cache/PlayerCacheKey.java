@@ -22,6 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Defines all available cache keys for player-specific data.
+ * <p>
+ * Each key is associated with a type token for type safety and a fallback
+ * supplier that provides default values when the cache entry is missing.
+ */
 public enum PlayerCacheKey {
 
     ITEMS_LISTED(new TypeToken<IntList>() {}, IntArrayList::new),
@@ -79,14 +85,34 @@ public enum PlayerCacheKey {
         this.rawType = type.getRawType();
     }
 
+    /**
+     * Gets the type token for this cache key.
+     * <p>
+     * The type token preserves generic type information at runtime.
+     *
+     * @return the type token
+     */
     public TypeToken<?> getType() {
         return this.type;
     }
 
+    /**
+     * Gets the raw class type for this cache key.
+     *
+     * @return the raw class type
+     */
     public Class<?> getRawType() {
         return this.rawType;
     }
 
+    /**
+     * Gets the default fallback value for this cache key.
+     * <p>
+     * A new instance is created each time this method is called.
+     *
+     * @param <T> the expected type
+     * @return a new default value instance
+     */
     @SuppressWarnings("unchecked")
     public <T> T getFallback() {
         return (T) this.fallback.get();

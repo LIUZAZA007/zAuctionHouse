@@ -10,11 +10,21 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
+ * Utility class for encoding and decoding ItemStacks to/from Base64 strings.
+ * <p>
+ * Uses GZIP compression to minimize storage size.
+ *
  * @author sya-ri
- * Github: <a href="https://github.com/sya-ri/base64-itemstack/tree/master">https://github.com/sya-ri/base64-itemstack/tree/master</a>
+ * @see <a href="https://github.com/sya-ri/base64-itemstack/tree/master">GitHub Repository</a>
  */
 public class Base64ItemStack {
 
+    /**
+     * Encodes an ItemStack to a Base64-compressed string.
+     *
+     * @param item the ItemStack to encode
+     * @return the Base64-encoded string, or {@code null} if encoding fails
+     */
     public static String encode(ItemStack item) {
         Base64.Encoder encoder = Base64.getEncoder();
         try {
@@ -30,6 +40,12 @@ public class Base64ItemStack {
         }
     }
 
+    /**
+     * Decodes a Base64-compressed string back to an ItemStack.
+     *
+     * @param data the Base64-encoded string
+     * @return the decoded ItemStack, or {@code null} if decoding fails
+     */
     public static ItemStack decode(String data) {
         Base64.Decoder decoder = Base64.getDecoder();
         try {
