@@ -585,7 +585,7 @@ item-lore:
     - "<white>☆ #92ffffPrix#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffDate#8c8c8c: #969696%date%"
     - ""
-    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɢᴀᴜᴄʜᴇ #92ffffᴘᴏᴜʀ ʀᴇ́ᴄᴜᴘᴇ́ʀᴇʀ ʟ'ɪᴛᴇᴍ"
+    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɢᴀᴜᴄʜᴇ #92ffffᴘᴏᴜʀ ʀᴇᴄᴜᴘᴇʀᴇʀ ʟ'ɪᴛᴇᴍ"
 
   # Lore pour les items dans la vue des logs admin (items multiples)
   admin-log-multiple-item:
@@ -596,7 +596,7 @@ item-lore:
     - "<white>☆ #92ffffPrix#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffDate#8c8c8c: #969696%date%"
     - ""
-    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɢᴀᴜᴄʜᴇ #92ffffᴘᴏᴜʀ ʀᴇ́ᴄᴜᴘᴇ́ʀᴇʀ ʟ'ɪᴛᴇᴍ"
+    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɢᴀᴜᴄʜᴇ #92ffffᴘᴏᴜʀ ʀᴇᴄᴜᴘᴇʀᴇʀ ʟ'ɪᴛᴇᴍ"
     - "#8c8c8c• #2CCED2ᴄʟɪᴄ ᴅʀᴏɪᴛ #92ffffᴘᴏᴜʀ ᴠᴏɪʀ ᴛᴏᴜs ʟᴇs ɪᴛᴇᴍs"
 
   # Lore pour les items dans l'inventaire de vente (instructions de retrait)
@@ -607,11 +607,11 @@ item-lore:
   # Messages de statut dynamiques basés sur la relation du spectateur avec l'item
   status:
     # Affiché au vendeur voyant son propre item (clic pour retirer de la vente)
-    seller: "#8c8c8c• #2CCED2ᴄʟɪQᴜᴇᴢ #92ffffᴘᴏᴜʀ ʀᴇ́ᴄᴜᴘᴇ́ʀᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
+    seller: "#8c8c8c• #2CCED2ᴄʟɪqᴜᴇᴢ #92ffffᴘᴏᴜʀ ʀᴇᴄᴜᴘᴇʀᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
     # Affiché aux acheteurs potentiels (clic pour acheter)
-    buyer: "#8c8c8c• #2CCED2ᴄʟɪQᴜᴇᴢ #92ffffᴘᴏᴜʀ ᴀᴄʜᴇᴛᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
+    buyer: "#8c8c8c• #2CCED2ᴄʟɪqᴜᴇᴢ #92ffffᴘᴏᴜʀ ᴀᴄʜᴇᴛᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
     # Affiché au vendeur pour l'action clic droit
-    right-seller: "#8c8c8c• #2CCED2ᴄʟɪᴄ ᴅʀᴏɪᴛ #92ffffᴘᴏᴜʀ ʀᴇ́ᴄᴜᴘᴇ́ʀᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
+    right-seller: "#8c8c8c• #2CCED2ᴄʟɪᴄ ᴅʀᴏɪᴛ #92ffffᴘᴏᴜʀ ʀᴇᴄᴜᴘᴇʀᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
     # Affiché à l'acheteur pour l'action clic droit
     right-buyer: "#8c8c8c• #2CCED2ᴄʟɪᴄ ᴅʀᴏɪᴛ #92ffffᴘᴏᴜʀ ᴀᴄʜᴇᴛᴇʀ ᴄᴇᴛ ɪᴛᴇᴍ"
 
@@ -846,8 +846,8 @@ sort-items:
   translations:
     ASCENDING_PRICE: "ᴘʀɪx ᴄʀᴏɪssᴀɴᴛ"     # Moins cher d'abord
     ASCENDING_DATE: "ᴅᴀᴛᴇ ᴄʀᴏɪssᴀɴᴛᴇ"     # Plus ancien d'abord
-    DECREASING_DATE: "ᴅᴀᴛᴇ ᴅᴇ́ᴄʀᴏɪssᴀɴᴛᴇ"   # Plus récent d'abord
-    DECREASING_PRICE: "ᴘʀɪx ᴅᴇ́ᴄʀᴏɪssᴀɴᴛ"  # Plus cher d'abord
+    DECREASING_DATE: "ᴅᴀᴛᴇ ᴅᴇᴄʀᴏɪssᴀɴᴛᴇ"   # Plus récent d'abord
+    DECREASING_PRICE: "ᴘʀɪx ᴅᴇᴄʀᴏɪssᴀɴᴛ"  # Plus cher d'abord
 
 ################################################################################################################################
 # MIGRATION DEPUIS D'AUTRES PLUGINS
@@ -905,3 +905,105 @@ migration:
   # axauctions:
   #   source-type: SQLITE
   #   sqlite-path: "plugins/AxAuctions/data.db"
+
+################################################################################################################################
+# CONFIGURATION ADMIN GENERATE
+################################################################################################################################
+# Configuration pour la commande /ah admin generate.
+# Cette commande crée des objets fictifs pour les tests de performance.
+#
+# UTILISATION: /ah admin generate <quantité>
+#
+# ATTENTION: Les objets générés sont pour les TESTS UNIQUEMENT. Supprimez-les après les tests.
+
+admin-generate:
+
+  #============================================================
+  # Configuration du Temps d'Expiration
+  #============================================================
+  # Contrôle le temps d'expiration des objets générés.
+
+  expiration:
+    # Mode: FIXED ou RANDOM
+    # FIXED: Tous les objets utilisent la valeur 'fixed'
+    # RANDOM: Les objets obtiennent une valeur aléatoire entre 'min' et 'max'
+    mode: RANDOM
+
+    # Temps d'expiration fixe en secondes (utilisé quand mode est FIXED)
+    fixed: 172800  # 2 jours
+
+    # Temps d'expiration minimum en secondes (utilisé quand mode est RANDOM)
+    min: 3600      # 1 heure
+
+    # Temps d'expiration maximum en secondes (utilisé quand mode est RANDOM)
+    max: 604800    # 7 jours
+
+  #============================================================
+  # Configuration du Prix
+  #============================================================
+  # Contrôle le prix des objets générés.
+
+  price:
+    # Mode: FIXED ou RANDOM
+    mode: RANDOM
+
+    # Prix fixe (utilisé quand mode est FIXED)
+    fixed: 1000
+
+    # Prix minimum (utilisé quand mode est RANDOM)
+    min: 10
+
+    # Prix maximum (utilisé quand mode est RANDOM)
+    max: 1000000
+
+  #============================================================
+  # Configuration de la Quantité d'Objets
+  #============================================================
+  # Contrôle la taille du stack des objets générés.
+
+  item-amount:
+    # Mode: FIXED ou RANDOM
+    mode: RANDOM
+
+    # Quantité fixe (utilisé quand mode est FIXED)
+    # Sera plafonnée à la taille max du stack de l'objet
+    fixed: 1
+
+    # Quantité minimum (utilisé quand mode est RANDOM)
+    min: 1
+
+    # Quantité maximum (utilisé quand mode est RANDOM)
+    # Utilisez -1 pour utiliser la taille max du stack de l'objet comme maximum
+    max: -1
+
+  #============================================================
+  # Configuration des Objets en Lot
+  #============================================================
+  # Les objets en lot sont des annonces avec plusieurs objets (comme les boîtes shulker).
+  # Ils apparaissent avec une icône spéciale dans la maison d'enchères.
+
+  bulk-items:
+    # Pourcentage d'objets générés qui seront des objets en lot (0-100)
+    percentage: 15
+
+    # Nombre minimum d'objets dans un lot
+    min-items: 2
+
+    # Nombre maximum d'objets dans un lot
+    max-items: 27
+
+  #============================================================
+  # Configuration des Économies
+  #============================================================
+  # Quelles économies utiliser pour les objets générés.
+
+  economies:
+    # Liste des noms d'économies à utiliser (doit correspondre aux noms dans economies.yml)
+    # Les objets seront assignés aléatoirement à l'une de ces économies.
+    # Si vide, utilise l'économie par défaut.
+    list:
+      - vault
+
+    # Si true, distribue les objets uniformément entre les économies.
+    # Si false, choisit aléatoirement une économie pour chaque objet.
+    even-distribution: false

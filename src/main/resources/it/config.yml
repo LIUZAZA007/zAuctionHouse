@@ -906,3 +906,105 @@ migration:
   # axauctions:
   #   source-type: SQLITE
   #   sqlite-path: "plugins/AxAuctions/data.db"
+
+################################################################################################################################
+# CONFIGURAZIONE ADMIN GENERATE
+################################################################################################################################
+# Configurazione per il comando /ah admin generate.
+# Questo comando crea oggetti fittizi per i test di prestazioni.
+#
+# UTILIZZO: /ah admin generate <quantità>
+#
+# ATTENZIONE: Gli oggetti generati sono SOLO per i TEST. Eliminali dopo i test.
+
+admin-generate:
+
+  #============================================================
+  # Configurazione del Tempo di Scadenza
+  #============================================================
+  # Controlla il tempo di scadenza degli oggetti generati.
+
+  expiration:
+    # Modalità: FIXED o RANDOM
+    # FIXED: Tutti gli oggetti usano il valore 'fixed'
+    # RANDOM: Gli oggetti ottengono un valore casuale tra 'min' e 'max'
+    mode: RANDOM
+
+    # Tempo di scadenza fisso in secondi (usato quando mode è FIXED)
+    fixed: 172800  # 2 giorni
+
+    # Tempo di scadenza minimo in secondi (usato quando mode è RANDOM)
+    min: 3600      # 1 ora
+
+    # Tempo di scadenza massimo in secondi (usato quando mode è RANDOM)
+    max: 604800    # 7 giorni
+
+  #============================================================
+  # Configurazione del Prezzo
+  #============================================================
+  # Controlla il prezzo degli oggetti generati.
+
+  price:
+    # Modalità: FIXED o RANDOM
+    mode: RANDOM
+
+    # Prezzo fisso (usato quando mode è FIXED)
+    fixed: 1000
+
+    # Prezzo minimo (usato quando mode è RANDOM)
+    min: 10
+
+    # Prezzo massimo (usato quando mode è RANDOM)
+    max: 1000000
+
+  #============================================================
+  # Configurazione della Quantità di Oggetti
+  #============================================================
+  # Controlla la dimensione dello stack degli oggetti generati.
+
+  item-amount:
+    # Modalità: FIXED o RANDOM
+    mode: RANDOM
+
+    # Quantità fissa (usato quando mode è FIXED)
+    # Sarà limitata alla dimensione max dello stack dell'oggetto
+    fixed: 1
+
+    # Quantità minima (usato quando mode è RANDOM)
+    min: 1
+
+    # Quantità massima (usato quando mode è RANDOM)
+    # Usa -1 per usare la dimensione max dello stack dell'oggetto come massimo
+    max: -1
+
+  #============================================================
+  # Configurazione degli Oggetti in Lotto
+  #============================================================
+  # Gli oggetti in lotto sono annunci con più oggetti (come le scatole shulker).
+  # Appaiono con un'icona speciale nella casa d'aste.
+
+  bulk-items:
+    # Percentuale di oggetti generati che saranno oggetti in lotto (0-100)
+    percentage: 15
+
+    # Numero minimo di oggetti in un lotto
+    min-items: 2
+
+    # Numero massimo di oggetti in un lotto
+    max-items: 27
+
+  #============================================================
+  # Configurazione delle Economie
+  #============================================================
+  # Quali economie usare per gli oggetti generati.
+
+  economies:
+    # Lista dei nomi delle economie da usare (deve corrispondere ai nomi in economies.yml)
+    # Gli oggetti saranno assegnati casualmente a una di queste economie.
+    # Se vuota, usa l'economia predefinita.
+    list:
+      - vault
+
+    # Se true, distribuisce gli oggetti uniformemente tra le economie.
+    # Se false, sceglie casualmente un'economia per ogni oggetto.
+    even-distribution: false

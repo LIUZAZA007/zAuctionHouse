@@ -55,7 +55,7 @@ items:
 
       # Nom d'affichage avec formatage MiniMessage.
       # <bold> rend le texte en gras.
-      name: "#2CCED2<bold>ᴘᴀɢᴇ ᴘʀᴇ́ᴄᴇ́ᴅᴇɴᴛᴇ"
+      name: "#2CCED2<bold>ᴘᴀɢᴇ ᴘʀᴇᴄᴇᴅᴇɴᴛᴇ"
 
       # Lignes de lore - informations supplémentaires affichées sous le nom.
       lore:

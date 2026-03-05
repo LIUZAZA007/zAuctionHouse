@@ -901,3 +901,105 @@ migration:
   # axauctions:
   #   source-type: SQLITE
   #   sqlite-path: "plugins/AxAuctions/data.db"
+
+################################################################################################################################
+# ADMIN GENERATE CONFIGURATION
+################################################################################################################################
+# Configuration for the /ah admin generate command.
+# This command creates dummy auction items for performance testing.
+#
+# USAGE: /ah admin generate <amount>
+#
+# WARNING: Generated items are for TESTING ONLY. Delete them after testing.
+
+admin-generate:
+
+  #============================================================
+  # Expiration Time Configuration
+  #============================================================
+  # Controls the expiration time of generated items.
+
+  expiration:
+    # Mode: FIXED or RANDOM
+    # FIXED: All items use 'fixed' value
+    # RANDOM: Items get a random value between 'min' and 'max'
+    mode: RANDOM
+
+    # Fixed expiration time in seconds (used when mode is FIXED)
+    fixed: 172800  # 2 days
+
+    # Minimum expiration time in seconds (used when mode is RANDOM)
+    min: 3600      # 1 hour
+
+    # Maximum expiration time in seconds (used when mode is RANDOM)
+    max: 604800    # 7 days
+
+  #============================================================
+  # Price Configuration
+  #============================================================
+  # Controls the price of generated items.
+
+  price:
+    # Mode: FIXED or RANDOM
+    mode: RANDOM
+
+    # Fixed price (used when mode is FIXED)
+    fixed: 1000
+
+    # Minimum price (used when mode is RANDOM)
+    min: 10
+
+    # Maximum price (used when mode is RANDOM)
+    max: 1000000
+
+  #============================================================
+  # Item Amount Configuration
+  #============================================================
+  # Controls the stack size of generated items.
+
+  item-amount:
+    # Mode: FIXED or RANDOM
+    mode: RANDOM
+
+    # Fixed amount (used when mode is FIXED)
+    # Will be capped at the item's max stack size
+    fixed: 1
+
+    # Minimum amount (used when mode is RANDOM)
+    min: 1
+
+    # Maximum amount (used when mode is RANDOM)
+    # Use -1 to use the item's max stack size as maximum
+    max: -1
+
+  #============================================================
+  # Bulk Items Configuration
+  #============================================================
+  # Bulk items are listings with multiple items (like shulker boxes).
+  # They appear with a special icon in the auction house.
+
+  bulk-items:
+    # Percentage of generated items that will be bulk items (0-100)
+    percentage: 15
+
+    # Minimum number of items in a bulk listing
+    min-items: 2
+
+    # Maximum number of items in a bulk listing
+    max-items: 27
+
+  #============================================================
+  # Economy Configuration
+  #============================================================
+  # Which economies to use for generated items.
+
+  economies:
+    # List of economy names to use (must match names in economies.yml)
+    # Items will be randomly assigned to one of these economies.
+    # If empty, uses the default economy.
+    list:
+      - vault
+
+    # If true, distribute items evenly across economies.
+    # If false, randomly pick an economy for each item.
+    even-distribution: false

@@ -225,6 +225,11 @@ public class ListedItemsButton extends PaginateButton {
         // Get the IDs from cache (O(1) access)
         IntList itemIds = manager.getItemIdsListedForSale(player);
 
+        if (itemIds.size() <= 1) {
+            this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+            return;
+        }
+
         // Get the slots in the inventory
         var slots = new ArrayList<>(getSlots());
         if (slots.isEmpty() || slots.size() == 1) return;

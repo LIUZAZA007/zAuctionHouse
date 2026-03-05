@@ -108,7 +108,7 @@ items:
     # Apparence du bouton
     item:
       material: CHEST
-      name: "#2CCED2<bold>ᴄᴀᴛᴇ́ɢᴏʀɪᴇs"
+      name: "#2CCED2<bold>ᴄᴀᴛᴇɢᴏʀɪᴇs"
       lore:
         - ""
         - "#8c8c8c• #2CCED2Cliquez #92ffffpour ouvrir"
@@ -130,7 +130,7 @@ items:
     item:
       # Texture de tête personnalisée (icône sablier/horloge).
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
-      name: "#2CCED2<bold>ɪᴛᴇᴍs ᴇxᴘɪʀᴇ́s"
+      name: "#2CCED2<bold>ɪᴛᴇᴍs ᴇxᴘɪʀᴇs"
       lore:
         # %expired-items% = nombre d'items expirés
         # %s% = suffixe de pluralisation ("" pour 1, "s" pour 2+)
@@ -142,7 +142,7 @@ items:
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWRmZjlkZGM1NDZmZGNlYzZlZDU5MTljYzM5ZGZhOGQwYzA3ZmY0YmM2MTNhMTlmMmU2ZDdmMjU5MyJ9fX0="
-        name: "#2CCED2<bold>ɪᴛᴇᴍs ᴇxᴘɪʀᴇ́s"
+        name: "#2CCED2<bold>ɪᴛᴇᴍs ᴇxᴘɪʀᴇs"
         lore:
           - "#ff3535Vous n'avez pas d'items expirés."
 
@@ -162,7 +162,7 @@ items:
     item:
       # Texture icône coffre.
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
-      name: "#2CCED2<bold>ɪᴛᴇᴍs ᴀᴄʜᴇᴛᴇ́s"
+      name: "#2CCED2<bold>ɪᴛᴇᴍs ᴀᴄʜᴇᴛᴇs"
       lore:
         - "#92ffffVous avez #2CCED2%purchased-items% #92ffffitem%s% acheté%s%."
         - ""
@@ -172,7 +172,7 @@ items:
     else:
       item:
         url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjM3Y2FlNWM1MWViMTU1OGVhODI4ZjU4ZTBkZmY4ZTZiN2IwYjFhMTgzZDczN2VlY2Y3MTQ2NjE3NjEifX19"
-        name: "#2CCED2<bold>ɪᴛᴇᴍs ᴀᴄʜᴇᴛᴇ́s"
+        name: "#2CCED2<bold>ɪᴛᴇᴍs ᴀᴄʜᴇᴛᴇs"
         lore:
           - "#ff3535Vous n'avez pas d'items achetés."
 
@@ -224,7 +224,7 @@ items:
     item:
       # Texture flèche gauche.
       url: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjllYTFkODYyNDdmNGFmMzUxZWQxODY2YmNhNmEzMDQwYTA2YzY4MTc3Yzc4ZTQyMzE2YTEwOThlNjBmYjdkMyJ9fX0="
-      name: "#2CCED2<bold>ᴘᴀɢᴇ ᴘʀᴇ́ᴄᴇ́ᴅᴇɴᴛᴇ"
+      name: "#2CCED2<bold>ᴘᴀɢᴇ ᴘʀᴇᴄᴇᴅᴇɴᴛᴇ"
       lore:
         - "#92ffffAller à la page précédente."
         - ""

@@ -137,9 +137,9 @@ public class CommandAuctionAdminGenerate extends VCommand {
             }
 
             Material material = validMaterials.get(random.nextInt(validMaterials.size()));
-            int itemAmount = random.nextInt(64) + 1;
+            int itemAmount = material.getMaxStackSize() == 1 ? 1 : random.nextInt(material.getMaxStackSize()) + 1;
             BigDecimal price = BigDecimal.valueOf(random.nextInt(99990) + 10);
-            long expiredAt = System.currentTimeMillis() + (random.nextInt(7) + 1) * 24L * 60L * 60L * 1000L;
+            long expiredAt = System.currentTimeMillis() + (24L * 60L * 60L * 1000L);
 
             dataList.add(new GenerationData(sellerUUID, sellerName, material, itemAmount, price, expiredAt));
         }

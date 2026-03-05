@@ -538,7 +538,7 @@ item-lore:
     - "<white>☆ #92ffffPrecio#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffCaduca#8c8c8c: #969696%time-remaining%"
     - ""
-    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢǫᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ᴠᴇʀ ᴇʟ ᴄᴏɴᴛᴇɴɪᴅᴏ"
+    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢqᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ᴠᴇʀ ᴇʟ ᴄᴏɴᴛᴇɴɪᴅᴏ"
     - "%status%"
 
   # Lore para los objetos en el inventario de objetos caducados
@@ -586,7 +586,7 @@ item-lore:
     - "<white>☆ #92ffffPrecio#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffFecha#8c8c8c: #969696%date%"
     - ""
-    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢǫᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ʀᴇᴛɪʀᴀʀ ᴇʟ ᴏʙᴊᴇᴛᴏ"
+    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢqᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ʀᴇᴛɪʀᴀʀ ᴇʟ ᴏʙᴊᴇᴛᴏ"
 
   # Lore para los objetos en la vista de logs admin (objetos multiples)
   admin-log-multiple-item:
@@ -597,13 +597,13 @@ item-lore:
     - "<white>☆ #92ffffPrecio#8c8c8c: #2CCED2%price%"
     - "<white>⌚ #92ffffFecha#8c8c8c: #969696%date%"
     - ""
-    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢǫᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ʀᴇᴛɪʀᴀʀ ᴇʟ ᴏʙᴊᴇᴛᴏ"
+    - "#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢqᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ʀᴇᴛɪʀᴀʀ ᴇʟ ᴏʙᴊᴇᴛᴏ"
     - "#8c8c8c• #2CCED2ᴄʟɪᴄ ᴅᴇʀᴇᴄʜᴏ #92ffffᴘᴀʀᴀ ᴠᴇʀ ᴛᴏᴅᴏs ʟᴏs ᴏʙᴊᴇᴛᴏs"
 
   # Lore para los objetos en el inventario de venta (instrucciones de eliminacion)
   sell-inventory-remove-item:
     - ''
-    - '#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢǫᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ᴇʟɪᴍɪɴᴀʀ ᴇsᴛᴇ ᴏʙᴊᴇᴛᴏ'
+    - '#8c8c8c• #2CCED2ᴄʟɪᴄ ɪᴢqᴜɪᴇʀᴅᴏ #92ffffᴘᴀʀᴀ ᴇʟɪᴍɪɴᴀʀ ᴇsᴛᴇ ᴏʙᴊᴇᴛᴏ'
 
   # Mensajes de estado dinamicos basados en la relacion del espectador con el objeto
   status:
@@ -906,3 +906,105 @@ migration:
   # axauctions:
   #   source-type: SQLITE
   #   sqlite-path: "plugins/AxAuctions/data.db"
+
+################################################################################################################################
+# CONFIGURACION ADMIN GENERATE
+################################################################################################################################
+# Configuracion para el comando /ah admin generate.
+# Este comando crea objetos ficticios para pruebas de rendimiento.
+#
+# USO: /ah admin generate <cantidad>
+#
+# ATENCION: Los objetos generados son SOLO para PRUEBAS. Eliminalos despues de probar.
+
+admin-generate:
+
+  #============================================================
+  # Configuracion del Tiempo de Caducidad
+  #============================================================
+  # Controla el tiempo de caducidad de los objetos generados.
+
+  expiration:
+    # Modo: FIXED o RANDOM
+    # FIXED: Todos los objetos usan el valor 'fixed'
+    # RANDOM: Los objetos obtienen un valor aleatorio entre 'min' y 'max'
+    mode: RANDOM
+
+    # Tiempo de caducidad fijo en segundos (usado cuando mode es FIXED)
+    fixed: 172800  # 2 dias
+
+    # Tiempo de caducidad minimo en segundos (usado cuando mode es RANDOM)
+    min: 3600      # 1 hora
+
+    # Tiempo de caducidad maximo en segundos (usado cuando mode es RANDOM)
+    max: 604800    # 7 dias
+
+  #============================================================
+  # Configuracion del Precio
+  #============================================================
+  # Controla el precio de los objetos generados.
+
+  price:
+    # Modo: FIXED o RANDOM
+    mode: RANDOM
+
+    # Precio fijo (usado cuando mode es FIXED)
+    fixed: 1000
+
+    # Precio minimo (usado cuando mode es RANDOM)
+    min: 10
+
+    # Precio maximo (usado cuando mode es RANDOM)
+    max: 1000000
+
+  #============================================================
+  # Configuracion de la Cantidad de Objetos
+  #============================================================
+  # Controla el tamano del stack de los objetos generados.
+
+  item-amount:
+    # Modo: FIXED o RANDOM
+    mode: RANDOM
+
+    # Cantidad fija (usado cuando mode es FIXED)
+    # Sera limitada al tamano max del stack del objeto
+    fixed: 1
+
+    # Cantidad minima (usado cuando mode es RANDOM)
+    min: 1
+
+    # Cantidad maxima (usado cuando mode es RANDOM)
+    # Usa -1 para usar el tamano max del stack del objeto como maximo
+    max: -1
+
+  #============================================================
+  # Configuracion de Objetos en Lote
+  #============================================================
+  # Los objetos en lote son anuncios con multiples objetos (como cajas shulker).
+  # Aparecen con un icono especial en la casa de subastas.
+
+  bulk-items:
+    # Porcentaje de objetos generados que seran objetos en lote (0-100)
+    percentage: 15
+
+    # Numero minimo de objetos en un lote
+    min-items: 2
+
+    # Numero maximo de objetos en un lote
+    max-items: 27
+
+  #============================================================
+  # Configuracion de Economias
+  #============================================================
+  # Que economias usar para los objetos generados.
+
+  economies:
+    # Lista de nombres de economias a usar (debe coincidir con los nombres en economies.yml)
+    # Los objetos seran asignados aleatoriamente a una de estas economias.
+    # Si esta vacia, usa la economia predeterminada.
+    list:
+      - vault
+
+    # Si true, distribuye los objetos uniformemente entre las economias.
+    # Si false, elige aleatoriamente una economia para cada objeto.
+    even-distribution: false

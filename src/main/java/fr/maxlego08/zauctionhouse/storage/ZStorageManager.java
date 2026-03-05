@@ -55,7 +55,7 @@ public class ZStorageManager extends ItemLoaderUtils implements StorageManager {
             Bukkit.getPluginManager().disablePlugin(plugin);
             return false;
         } else {
-            this.plugin.getLogger().info("The database connection is valid ! " + (isSqlite ? "(SQLITE)" : "(" + this.databaseConnection.getDatabaseConfiguration().getHost() + ")"));
+            this.plugin.getLogger().info("The database connection is valid !");
         }
 
         MigrationManager.setMigrationTableName("zauctionhouse_migrations");
