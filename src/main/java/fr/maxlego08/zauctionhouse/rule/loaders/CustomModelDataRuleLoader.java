@@ -49,7 +49,7 @@ public class CustomModelDataRuleLoader implements RuleLoader {
 
         // If multiple rules, combine with AND logic
         if (rules.size() == 1) {
-            return rules.get(0);
+            return rules.getFirst();
         }
         return new AndRule(rules);
     }
