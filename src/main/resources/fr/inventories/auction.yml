@@ -47,7 +47,7 @@ patterns:
 # ITEMS
 #=============================================================================
 # Les items définissent les boutons et affichages dans cet inventaire.
-# Chaque item a une clé unique (ex: 'displayItems', 'categories').
+# Chaque item a une clé unique (ex: 'display-items', 'categories').
 
 items:
 
@@ -57,7 +57,7 @@ items:
   # C'est l'affichage principal montrant tous les items en vente.
   # Les items sont paginés et peuvent être filtrés par catégorie.
 
-  displayItems:
+  display-items:
     # Type de bouton - ZAUCTIONHOUSE_LISTED_ITEMS est un type spécifique au plugin.
     # Il gère automatiquement:
     # - Chargement et affichage des items

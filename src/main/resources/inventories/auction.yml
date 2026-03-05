@@ -47,7 +47,7 @@ patterns:
 # ITEMS
 #=============================================================================
 # Items define the buttons and displays in this inventory.
-# Each item has a unique key (e.g., 'displayItems', 'categories').
+# Each item has a unique key (e.g., 'display-items', 'categories').
 
 items:
 
@@ -57,7 +57,7 @@ items:
   # This is the core display showing all items for sale.
   # Items are paginated and can be filtered by category.
 
-  displayItems:
+  display-items:
     # Button type - ZAUCTIONHOUSE_LISTED_ITEMS is a plugin-specific type.
     # It automatically handles:
     # - Loading and displaying auction items
