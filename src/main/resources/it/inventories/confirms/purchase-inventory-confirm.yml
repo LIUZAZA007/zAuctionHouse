@@ -64,7 +64,7 @@ items:
 
   confirm:
     # Nota: Usa il tipo REMOVE_LISTED perché gestisce la logica di conferma.
-    type: ZAUCTIONHOUSE_CONFIRM_REMOVE_LISTED
+    type: ZAUCTIONHOUSE_CONFIRM_PURCHASE
 
     item:
       material: GREEN_STAINED_GLASS_PANE

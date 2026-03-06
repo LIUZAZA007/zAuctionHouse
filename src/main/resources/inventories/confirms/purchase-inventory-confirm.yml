@@ -63,8 +63,7 @@ items:
   # Completes the purchase of all items.
 
   confirm:
-    # Note: Uses REMOVE_LISTED type as it handles the confirmation logic.
-    type: ZAUCTIONHOUSE_CONFIRM_REMOVE_LISTED
+    type: ZAUCTIONHOUSE_CONFIRM_PURCHASE
 
     item:
       material: GREEN_STAINED_GLASS_PANE
