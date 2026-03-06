@@ -39,6 +39,7 @@ import fr.maxlego08.zauctionhouse.placeholder.placeholders.PlayerPlaceholders;
 import fr.maxlego08.zauctionhouse.rule.ZItemRuleManager;
 import fr.maxlego08.zauctionhouse.rule.ZRuleLoaderRegistry;
 import fr.maxlego08.zauctionhouse.storage.ZStorageManager;
+import fr.maxlego08.zauctionhouse.utils.LocaleHelper;
 import fr.maxlego08.zauctionhouse.utils.Metrics;
 import fr.maxlego08.zauctionhouse.utils.VersionChecker;
 import fr.maxlego08.zauctionhouse.utils.documentation.DocumentationGenerator;
@@ -54,7 +55,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +62,7 @@ import java.util.logging.Level;
 
 public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
-    private final Locale locale = Locale.getDefault();
+    private LocaleHelper localeHelper;
     private final StorageManager storageManager = new ZStorageManager(this);
     private final Configuration configuration = new MainConfiguration(this);
     private final ConfigurationFile messageLoader = new MessageLoader(this);
@@ -90,6 +90,14 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         var dataFolder = this.getDataFolder();
         if (!dataFolder.exists()) dataFolder.mkdirs();
 
+        // Load language.yml first (not localized, always from root resources)
+        this.saveLanguageFile();
+        String configuredLanguage = this.loadLanguageConfiguration();
+
+        // Initialize locale helper with configured language or automatic detection
+        this.localeHelper = new LocaleHelper(getLogger(), configuredLanguage);
+
+        // Now save config.yml with the correct language
         this.saveFile("config.yml", true);
 
         FoliaLib foliaLib = new FoliaLib(this);
@@ -97,14 +105,17 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
         // We must create the inventory class before loading the configuration, this allows using the zmenu interfaces everywhere.
         this.inventoriesLoader = new ZInventoriesLoader(this);
+
+        // Register rule loaders BEFORE loading files (categories need them)
+        this.ruleLoaderRegistry.registerDefaultLoaders();
+        this.registerCustomItemLoaders();
+
         this.loadFiles();
 
         this.auctionManager.setupSortedItemsCache();
 
         if (!this.storageManager.onEnable()) return;
 
-        this.ruleLoaderRegistry.registerDefaultLoaders();
-        this.registerCustomItemLoaders();
         this.registerDefaultMigrationProviders();
 
         this.discordWebhookService = new DiscordWebhookService(this);
@@ -174,6 +185,11 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         }
 
         this.reloadConfig();
+
+        // Re-initialize locale helper with configured language from language.yml
+        String configuredLanguage = this.loadLanguageConfiguration();
+        this.localeHelper = new LocaleHelper(getLogger(), configuredLanguage);
+
         this.loadFiles();
         this.inventoriesLoader.reload();
 
@@ -426,6 +442,41 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         this.yamlUpdater.update(resourcePath, toPath);
     }
 
+    /**
+     * Saves the language.yml file from resources.
+     * This file is NOT localized and is always loaded from the root resources.
+     */
+    private void saveLanguageFile() {
+        File languageFile = new File(getDataFolder(), "language.yml");
+        if (!languageFile.exists()) {
+            this.saveResource("language.yml", "language.yml", false);
+        } else {
+            // Update with new keys while preserving user settings
+            this.yamlUpdater.update("language.yml", "language.yml");
+        }
+    }
+
+    /**
+     * Loads the language configuration from language.yml.
+     *
+     * @return The configured language code, or null for auto-detection
+     */
+    private String loadLanguageConfiguration() {
+        File languageFile = new File(getDataFolder(), "language.yml");
+        if (!languageFile.exists()) {
+            return null;
+        }
+
+        var config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(languageFile);
+        String language = config.getString("language", "auto");
+
+        if (language == null || language.equalsIgnoreCase("auto")) {
+            return null; // Will trigger auto-detection in LocaleHelper
+        }
+
+        return language.toLowerCase();
+    }
+
     @Override
     public void saveFile(String resourcePath, boolean saveOrUpdate) {
         this.saveFile(resourcePath, resourcePath, saveOrUpdate);
@@ -433,7 +484,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
 
     @Override
     public void saveFile(String resourcePath, String toPath, boolean saveOrUpdate) {
-        var langResourcePath = locale.getLanguage() + "/" + resourcePath;
+        var langResourcePath = localeHelper.getLanguage() + "/" + resourcePath;
         var finalPath = resourcePath;
         if (this.resourceExist(langResourcePath)) {
             finalPath = langResourcePath;

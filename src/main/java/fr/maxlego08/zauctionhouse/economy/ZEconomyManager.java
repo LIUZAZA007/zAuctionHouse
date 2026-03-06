@@ -14,6 +14,7 @@ import fr.maxlego08.zauctionhouse.tax.ZItemTaxRule;
 import fr.maxlego08.zauctionhouse.tax.ZTaxConfiguration;
 import fr.traqueur.currencies.Currencies;
 import fr.traqueur.currencies.CurrencyProvider;
+import fr.traqueur.currencies.providers.ZMenuItemProvider;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -319,8 +320,7 @@ public class ZEconomyManager implements EconomyManager {
                     yield null;
                 }
                 var menuItemStack = this.plugin.getInventoriesLoader().getInventoryManager().loadItemStack(file, "economies", (Map<String, Object>) itemStackMap);
-                // ToDo, rework currencies engine for using an menuItemStack in the constructor
-                yield null;
+                yield new ZMenuItemProvider(plugin, menuItemStack);
             }
             case ZESSENTIALS, ECOBITS, COINSENGINE, REDISECONOMY -> {
                 String currencyName = accessor.getString("currency-name", null);
