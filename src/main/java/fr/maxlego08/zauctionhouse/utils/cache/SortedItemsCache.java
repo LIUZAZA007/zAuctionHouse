@@ -496,4 +496,20 @@ public class SortedItemsCache {
         }
         return result;
     }
+
+    /**
+     * Shuts down the ForkJoinPool used for parallel processing.
+     * Should be called when the plugin is disabled to prevent resource leaks.
+     */
+    public void shutdown() {
+        forkJoinPool.shutdown();
+        try {
+            if (!forkJoinPool.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS)) {
+                forkJoinPool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            forkJoinPool.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
 }

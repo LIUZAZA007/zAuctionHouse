@@ -350,4 +350,10 @@ public interface AuctionManager {
      * If an item's economy is no longer found, a warning will be logged to the console.
      */
     void updateItemEconomies();
+
+    /**
+     * Shuts down resources used by the auction manager.
+     * Should be called when the plugin is disabled to prevent resource leaks.
+     */
+    void shutdown();
 }

@@ -57,6 +57,7 @@ import java.nio.file.Files;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
@@ -77,6 +78,7 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     private final MigrationRegistry migrationRegistry = new ZMigrationRegistry(this);
     private InventoriesLoader inventoriesLoader;
     private DiscordWebhookService discordWebhookService;
+    private VersionChecker versionChecker;
     private boolean isEnabled = false;
     private PlatformScheduler platformScheduler;
     private AuctionClusterBridge auctionClusterBridge = new LocalAuctionClusterBridge();
@@ -121,8 +123,8 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         new Metrics(this, 5326);
 
         if (getConfig().getBoolean("enable-version-checker", true)) {
-            VersionChecker versionChecker = new VersionChecker(this, 1);
-            versionChecker.useLastVersion();
+            this.versionChecker = new VersionChecker(this, 1);
+            this.versionChecker.useLastVersion();
         }
 
         var documentation = new DocumentationGenerator(this);
@@ -138,6 +140,28 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
     public void onDisable() {
 
         if (!this.isEnabled) return;
+
+        // Unregister version checker listener
+        if (this.versionChecker != null) {
+            this.versionChecker.unregister();
+        }
+
+        // Shutdown the sorted items cache (closes ForkJoinPool)
+        this.auctionManager.shutdown();
+
+        // Shutdown the async executor service
+        this.asyncExecutor.shutdown();
+        try {
+            if (!this.asyncExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                this.asyncExecutor.shutdownNow();
+                if (!this.asyncExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
+                    getLogger().warning("ExecutorService did not terminate properly");
+                }
+            }
+        } catch (InterruptedException e) {
+            this.asyncExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
 
         this.storageManager.onDisable();
     }

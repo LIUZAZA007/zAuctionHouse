@@ -41,7 +41,10 @@ public class ExpireService implements AuctionExpireService {
 
         var offlineSeller = item.getSeller();
         if (offlineSeller.isOnline()) {
-            this.auctionManager.clearPlayerCache(offlineSeller.getPlayer(), PlayerCacheKey.ITEMS_SELLING, PlayerCacheKey.ITEMS_EXPIRED); // Suppression du cache du joueur
+            var sellerPlayer = offlineSeller.getPlayer();
+            if (sellerPlayer != null) {
+                this.auctionManager.clearPlayerCache(sellerPlayer, PlayerCacheKey.ITEMS_SELLING, PlayerCacheKey.ITEMS_EXPIRED);
+            }
         }
 
         if (storageType == StorageType.LISTED) {
@@ -56,8 +59,9 @@ public class ExpireService implements AuctionExpireService {
                 storageManager.updateItem(item, StorageType.EXPIRED);
             });
 
-            if (offlineSeller.isOnline()) {
-                var expiration = configuration.getExpireExpiration().getExpiration(offlineSeller.getPlayer());
+            var onlinePlayer = offlineSeller.isOnline() ? offlineSeller.getPlayer() : null;
+            if (onlinePlayer != null) {
+                var expiration = configuration.getExpireExpiration().getExpiration(onlinePlayer);
                 applyExpiration.accept(expiration);
             } else {
                 configuration.getExpireExpiration().getExpiration(this.plugin.getOfflinePermission(), offlineSeller)
@@ -76,7 +80,10 @@ public class ExpireService implements AuctionExpireService {
             storageManager.updateItem(item, StorageType.DELETED);
         }
 
-        // ToDo Logs
+        // Log expiration for debugging purposes
+        if (this.plugin.getConfiguration().isEnableDebug()) {
+            this.plugin.getLogger().info("Item " + item.getId() + " expired from " + storageType + " (seller: " + item.getSellerName() + ")");
+        }
     }
 
     @Override

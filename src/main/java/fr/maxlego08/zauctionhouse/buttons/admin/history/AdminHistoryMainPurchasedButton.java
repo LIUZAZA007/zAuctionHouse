@@ -22,12 +22,12 @@ public class AdminHistoryMainPurchasedButton extends TargetHelper {
     public @Nullable ItemStack getCustomItemStack(@NotNull Player player, boolean useCache, @NotNull Placeholders placeholders) {
         getTargetName(player).ifPresent(target -> placeholders.register("target", target));
 
-        getTargetUniqueId(player).ifPresentOrElse(uuid -> {
+        getTargetUniqueId(player).ifPresent(uuid -> {
             var list = this.plugin.getAuctionManager().getPurchasedItems(uuid);
 
             placeholders.register("purchased-items", String.valueOf(list.size()));
             placeholders.register("s", list.size() > 1 ? "s" : "");
-        }, () -> System.out.println("NON"));
+        });
 
         return super.getCustomItemStack(player, useCache, placeholders);
     }

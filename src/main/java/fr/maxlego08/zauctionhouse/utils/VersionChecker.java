@@ -5,6 +5,7 @@ import fr.maxlego08.zauctionhouse.api.messages.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -33,6 +34,13 @@ public class VersionChecker extends ZUtils implements Listener {
         this.plugin = plugin;
         this.pluginID = pluginID;
         this.lastVersion = plugin.getPluginMeta().getVersion();
+    }
+
+    /**
+     * Unregisters the event listener to prevent memory leaks on plugin reload.
+     */
+    public void unregister() {
+        HandlerList.unregisterAll(this);
     }
 
     /**

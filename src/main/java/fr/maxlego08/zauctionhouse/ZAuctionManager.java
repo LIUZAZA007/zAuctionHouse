@@ -463,9 +463,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
     @Override
     public void removeCache(Player player) {
-        System.out.println("avant : " + this.caches.size());
         this.caches.remove(player);
-        System.out.println("après : " + this.caches.size());
     }
 
     @Override
@@ -732,7 +730,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         });
 
         if (seller.isOnline()) {
-            message(this.plugin, seller.getPlayer(), Message.ITEM_BOUGHT_SELLER, "%items%", itemsDisplay, "%price%", economyManager.format(auctionEconomy, sellerReceives), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
+            var sellerPlayer = seller.getPlayer();
+            if (sellerPlayer != null) {
+                message(this.plugin, sellerPlayer, Message.ITEM_BOUGHT_SELLER, "%items%", itemsDisplay, "%price%", economyManager.format(auctionEconomy, sellerReceives), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
+            }
         }
 
         message(player, Message.ITEM_BOUGHT_BUYER, "%items%", itemsDisplay, "%price%", economyManager.format(auctionEconomy, buyerPays), "%seller%", auctionItem.getSellerName(), "%buyer%", player.getName());
@@ -743,7 +744,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
         this.updateListedItems(auctionItem, false, player);
         clearPlayerCache(player, PlayerCacheKey.ITEMS_PURCHASED);
         if (seller.isOnline()) {
-            clearPlayerCache(seller.getPlayer(), PlayerCacheKey.ITEMS_SELLING, PlayerCacheKey.HISTORY_DATA);
+            var sellerPlayer = seller.getPlayer();
+            if (sellerPlayer != null) {
+                clearPlayerCache(sellerPlayer, PlayerCacheKey.ITEMS_SELLING, PlayerCacheKey.HISTORY_DATA);
+            }
         }
 
         removeItem(StorageType.LISTED, auctionItem);
@@ -822,8 +826,15 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
                 if (onlinePlayer == ignoredPlayer) continue;
 
-                var openInventory = onlinePlayer.getOpenInventory().getTopInventory().getHolder();
-                if (openInventory instanceof InventoryEngine inventoryEngine) {
+                // Null-safe check for inventory operations
+                var inventoryView = onlinePlayer.getOpenInventory();
+                if (inventoryView == null) continue;
+
+                var topInventory = inventoryView.getTopInventory();
+                if (topInventory == null) continue;
+
+                var holder = topInventory.getHolder();
+                if (holder instanceof InventoryEngine inventoryEngine) {
                     var buttons = inventoryEngine.getMenuInventory().getButtons(ListedItemsButton.class);
                     if (buttons.isEmpty()) continue;
 
@@ -904,6 +915,13 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
         if (updatedCount > 0 || missingCount > 0) {
             this.plugin.getLogger().info("Economy update completed: " + updatedCount + " items updated, " + missingCount + " items with missing economy.");
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        if (this.sortedItemsCache != null) {
+            this.sortedItemsCache.shutdown();
         }
     }
 }
