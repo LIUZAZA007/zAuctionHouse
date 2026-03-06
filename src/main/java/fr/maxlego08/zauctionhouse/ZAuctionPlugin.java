@@ -93,16 +93,17 @@ public class ZAuctionPlugin extends JavaPlugin implements AuctionPlugin {
         FoliaLib foliaLib = new FoliaLib(this);
         this.platformScheduler = foliaLib.getScheduler();
 
+        // We must create the inventory class before loading the configuration, this allows using the zmenu interfaces everywhere.
+        this.inventoriesLoader = new ZInventoriesLoader(this);
+        this.loadFiles();
+
+        this.auctionManager.setupSortedItemsCache();
+
         if (!this.storageManager.onEnable()) return;
 
         this.ruleLoaderRegistry.registerDefaultLoaders();
         this.registerCustomItemLoaders();
         this.registerDefaultMigrationProviders();
-
-        // On doit créer la classe des inventaires avant de charger la configuration, cela permet d'utiliser les interfaces de zmenu partout.
-        this.inventoriesLoader = new ZInventoriesLoader(this);
-
-        this.loadFiles();
 
         this.discordWebhookService = new DiscordWebhookService(this);
 

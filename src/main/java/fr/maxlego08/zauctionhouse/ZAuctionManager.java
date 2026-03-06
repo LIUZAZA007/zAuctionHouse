@@ -57,7 +57,7 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
     private final Map<UUID, IntList> idsListedByOwner = new ConcurrentHashMap<>();
     private final Map<UUID, IntList> idsExpiredByOwner = new ConcurrentHashMap<>();
     private final Map<UUID, IntList> idsPurchasedByBuyer = new ConcurrentHashMap<>();
-    private final SortedItemsCache sortedItemsCache;
+    private SortedItemsCache sortedItemsCache;
 
     public ZAuctionManager(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -73,6 +73,10 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
             this.storageItemsById.put(value, new ConcurrentHashMap<>());
         }
 
+    }
+
+    @Override
+    public void setupSortedItemsCache() {
         // Initialize sorted items cache for LISTED items
         this.sortedItemsCache = new SortedItemsCache(plugin, () -> this.storageItemsById.get(StorageType.LISTED).values());
     }

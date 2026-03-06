@@ -27,6 +27,8 @@ import java.util.function.Predicate;
  */
 public interface AuctionManager {
 
+    void setupSortedItemsCache();
+
     /**
      * Opens the main auction house inventory for the provided player using the default first page
      * configuration.
