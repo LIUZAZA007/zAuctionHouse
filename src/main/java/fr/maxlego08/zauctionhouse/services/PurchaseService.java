@@ -57,11 +57,11 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
             auctionManager.openMainAuction(player);
             return CompletableFuture.completedFuture(PurchaseResult.failure("Item not in purchase state", PurchaseFailReason.ITEM_NOT_IN_PURCHASE_STATE));
         }
-        item.setStatus(ItemStatus.IS_BEING_PURCHASED);
 
         // Store the lock token for cleanup on exception
         final AtomicReference<LockToken> tokenHolder = new AtomicReference<>(null);
         final AtomicReference<PurchaseResult> resultHolder = new AtomicReference<>(null);
+        final AtomicReference<ItemStatus> previousStatusHolder = new AtomicReference<>(item.getStatus());
 
         // 2. Vérifier si l'item est lock
         return clusterBridge.checkAvailability(item).thenCompose(available -> {
@@ -87,7 +87,10 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
                 return failedFuture(new IllegalStateException("Item déjà en cours d'achat"));
             }
 
-            return auctionEconomy.has(player, item.getPrice()).thenApply(hasMoney -> hasMoney);
+            // Set status AFTER acquiring lock to ensure atomicity
+            item.setStatus(ItemStatus.IS_BEING_PURCHASED);
+            return clusterBridge.notifyItemStatusChange(item, previousStatusHolder.get(), ItemStatus.IS_BEING_PURCHASED)
+                    .thenCompose(v -> auctionEconomy.has(player, item.getPrice()));
 
         }).thenCompose(hasMoney -> {
 
@@ -122,9 +125,12 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
                         });
             }
 
-            // Restore item status
-            item.setStatus(ItemStatus.AVAILABLE);
-            clusterBridge.notifyItemStatusChange(item, ItemStatus.IS_BEING_PURCHASED, ItemStatus.AVAILABLE);
+            // Restore item status only if it was changed (lock was acquired)
+            if (item.getStatus() == ItemStatus.IS_BEING_PURCHASED) {
+                var previousStatus = previousStatusHolder.get();
+                item.setStatus(previousStatus);
+                clusterBridge.notifyItemStatusChange(item, ItemStatus.IS_BEING_PURCHASED, previousStatus);
+            }
 
             // Return the previously set result or a generic error
             var result = resultHolder.get();

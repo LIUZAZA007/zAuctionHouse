@@ -143,14 +143,16 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
         var clusterBridge = this.plugin.getAuctionClusterBridge();
         var logger = this.plugin.getLogger();
 
-        var oldStatus = item.getStatus();
-        item.setStatus(itemStatus);
+        // Store original status for rollback
+        final AtomicReference<ItemStatus> oldStatusHolder = new AtomicReference<>(item.getStatus());
+        final AtomicReference<Boolean> statusChangedHolder = new AtomicReference<>(false);
 
         // Store the lock token for cleanup on exception
         final AtomicReference<LockToken> tokenHolder = new AtomicReference<>(null);
         final AtomicReference<RemoveResult> resultHolder = new AtomicReference<>(null);
 
-        return clusterBridge.notifyItemStatusChange(item, oldStatus, itemStatus).thenCompose(v1 -> clusterBridge.checkAvailability(item).thenCompose(available -> {
+        // 1. Check availability BEFORE changing status
+        return clusterBridge.checkAvailability(item).thenCompose(available -> {
 
             if (!available) {
                 logger.info("Item is not available");
@@ -159,9 +161,10 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
                 return failedFuture(new IllegalStateException("Item introuvable"));
             }
 
+            // 2. Acquire lock BEFORE changing status
             return clusterBridge.lockItem(item, player.getUniqueId(), storageType);
 
-        })).thenCompose(token -> {
+        }).thenCompose(token -> {
             // Store token for exception cleanup
             tokenHolder.set(token);
 
@@ -173,7 +176,14 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
                 return failedFuture(new IllegalStateException("Item déjà en cours de traitement"));
             }
 
-            return onLocalRemoval.get()
+            // 3. Change status AFTER acquiring lock to ensure atomicity
+            var oldStatus = oldStatusHolder.get();
+            item.setStatus(itemStatus);
+            statusChangedHolder.set(true);
+
+            // 4. Notify cluster and proceed with removal
+            return clusterBridge.notifyItemStatusChange(item, oldStatus, itemStatus)
+                    .thenCompose(v -> onLocalRemoval.get())
                     .thenCompose(v -> clusterBridge.removeItem(item, storageType))
                     .thenCompose(vv -> clusterBridge.unlockItem(item, token, storageType))
                     .thenApply(vv -> {
@@ -195,9 +205,12 @@ public class RemoveService extends AuctionService implements AuctionRemoveServic
                         });
             }
 
-            // Restore item status
-            item.setStatus(oldStatus);
-            clusterBridge.notifyItemStatusChange(item, itemStatus, oldStatus);
+            // Restore item status only if it was changed (lock was acquired)
+            if (statusChangedHolder.get()) {
+                var oldStatus = oldStatusHolder.get();
+                item.setStatus(oldStatus);
+                clusterBridge.notifyItemStatusChange(item, itemStatus, oldStatus);
+            }
 
             // Return the previously set result or a generic error
             var result = resultHolder.get();

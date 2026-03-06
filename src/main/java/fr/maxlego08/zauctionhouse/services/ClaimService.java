@@ -1,6 +1,7 @@
 package fr.maxlego08.zauctionhouse.services;
 
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
+import fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy;
 import fr.maxlego08.zauctionhouse.api.messages.Message;
 import fr.maxlego08.zauctionhouse.api.services.AuctionClaimService;
 import fr.maxlego08.zauctionhouse.api.services.result.ClaimResult;
@@ -36,12 +37,17 @@ public class ClaimService extends AuctionService implements AuctionClaimService 
             // Group transactions by economy
             Map<String, List<TransactionDTO>> byEconomy = transactions.stream().collect(Collectors.groupingBy(TransactionDTO::economy_name));
 
+            if (byEconomy.isEmpty()) {
+                message(this.plugin, player, Message.CLAIM_NO_PENDING);
+                return ClaimResult.nothingToClaim("No pending transactions");
+            }
+
             var economyManager = this.plugin.getEconomyManager();
             var transactionIds = transactions.stream().map(TransactionDTO::id).toList();
             var depositReason = this.plugin.getConfiguration().getAutoClaimConfiguration().depositReason();
 
             BigDecimal totalClaimed = BigDecimal.ZERO;
-            var lastEconomy = new Object() { fr.maxlego08.zauctionhouse.api.economy.AuctionEconomy value = null; };
+            AuctionEconomy lastEconomy = null;
 
             for (var entry : byEconomy.entrySet()) {
                 String economyName = entry.getKey();
@@ -54,7 +60,7 @@ public class ClaimService extends AuctionService implements AuctionClaimService 
                 }
 
                 var economy = optionalEconomy.get();
-                lastEconomy.value = economy;
+                lastEconomy = economy;
 
                 // Calculate total for this economy (only positive values = money to receive)
                 BigDecimal economyTotal = economyTransactions.stream().map(TransactionDTO::value).filter(v -> v.compareTo(BigDecimal.ZERO) > 0).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -75,7 +81,7 @@ public class ClaimService extends AuctionService implements AuctionClaimService 
 
             if (totalClaimed.compareTo(BigDecimal.ZERO) > 0) {
                 message(this.plugin, player, Message.CLAIM_SUCCESS, "%amount%", totalClaimed.toString());
-                return ClaimResult.success("Money claimed successfully", totalClaimed.doubleValue(), lastEconomy.value);
+                return ClaimResult.success("Money claimed successfully", totalClaimed.doubleValue(), lastEconomy);
             }
 
             return ClaimResult.nothingToClaim("No positive amount to claim");

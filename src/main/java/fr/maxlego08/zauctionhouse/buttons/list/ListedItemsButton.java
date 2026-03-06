@@ -117,10 +117,12 @@ public class ListedItemsButton extends PaginateButton {
                     cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
 
                     item.setStatus(ItemStatus.IS_REMOVE_CONFIRM);
-                    this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_REMOVE_CONFIRM);
-                    manager.updateListedItems(item, false, null);
-
-                    this.plugin.getInventoriesLoader().openInventory(player, isMultipleAuctionItem ? Inventories.REMOVE_INVENTORY_CONFIRM : Inventories.REMOVE_CONFIRM);
+                    // Wait for cluster notification before updating UI to prevent race condition
+                    this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_REMOVE_CONFIRM)
+                            .thenRun(() -> {
+                                manager.updateListedItems(item, false, null);
+                                this.plugin.getInventoriesLoader().openInventory(player, isMultipleAuctionItem ? Inventories.REMOVE_INVENTORY_CONFIRM : Inventories.REMOVE_CONFIRM);
+                            });
                 } else {
 
                     manager.getRemoveService().removeListedItem(player, item);
@@ -199,10 +201,12 @@ public class ListedItemsButton extends PaginateButton {
             cache.set(PlayerCacheKey.PURCHASE_ITEM, false);
 
             item.setStatus(ItemStatus.IS_PURCHASE_CONFIRM);
-            this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_PURCHASE_CONFIRM);
-            manager.updateListedItems(item, false, player);
-
-            this.plugin.getInventoriesLoader().openInventory(player, inventories);
+            // Wait for cluster notification before updating UI to prevent race condition
+            this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_PURCHASE_CONFIRM)
+                    .thenRun(() -> {
+                        manager.updateListedItems(item, false, player);
+                        this.plugin.getInventoriesLoader().openInventory(player, inventories);
+                    });
         });
     }
 
