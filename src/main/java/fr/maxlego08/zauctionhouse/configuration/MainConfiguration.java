@@ -92,6 +92,27 @@ public class MainConfiguration extends YamlLoader implements Configuration {
         this.inventoryCommandConfigurations = InventoryCommandConfiguration.of(plugin, config);
         this.dateFormat = new SimpleDateFormat(config.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
         this.sellInventoryEnabled = config.getBoolean("commands.sell.enable-sell-inventory", false);
+
+        // Validate critical configurations
+        validateConfigurations();
+    }
+
+    private void validateConfigurations() {
+        if (this.sellExpiration == null) {
+            this.plugin.getLogger().severe("Failed to load sell expiration configuration, plugin may not work correctly");
+        }
+        if (this.expireExpiration == null) {
+            this.plugin.getLogger().severe("Failed to load expire expiration configuration, plugin may not work correctly");
+        }
+        if (this.actionConfiguration == null) {
+            this.plugin.getLogger().severe("Failed to load action configuration, plugin may not work correctly");
+        }
+        if (this.sortConfiguration == null) {
+            this.plugin.getLogger().severe("Failed to load sort configuration, plugin may not work correctly");
+        }
+        if (this.performanceConfiguration == null) {
+            this.plugin.getLogger().severe("Failed to load performance configuration, plugin may not work correctly");
+        }
     }
 
     @Override

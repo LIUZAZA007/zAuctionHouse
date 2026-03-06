@@ -116,10 +116,10 @@ public class ListedItemsButton extends PaginateButton {
                     cache.set(PlayerCacheKey.ITEM_SHOW, item);
                     cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
 
-                    item.setStatus(ItemStatus.IS_REMOVE_CONFIRM);
-                    // Wait for cluster notification before updating UI to prevent race condition
+                    // Notify cluster first, then update status to ensure atomicity
                     this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_REMOVE_CONFIRM)
                             .thenRun(() -> {
+                                item.setStatus(ItemStatus.IS_REMOVE_CONFIRM);
                                 manager.updateListedItems(item, false, null);
                                 this.plugin.getInventoriesLoader().openInventory(player, isMultipleAuctionItem ? Inventories.REMOVE_INVENTORY_CONFIRM : Inventories.REMOVE_CONFIRM);
                             });
@@ -200,10 +200,10 @@ public class ListedItemsButton extends PaginateButton {
             cache.set(PlayerCacheKey.CURRENT_PAGE, this.plugin.getInventoriesLoader().getInventoryManager().getPage(player));
             cache.set(PlayerCacheKey.PURCHASE_ITEM, false);
 
-            item.setStatus(ItemStatus.IS_PURCHASE_CONFIRM);
-            // Wait for cluster notification before updating UI to prevent race condition
+            // Notify cluster first, then update status to ensure atomicity
             this.plugin.getAuctionClusterBridge().notifyItemStatusChange(item, ItemStatus.AVAILABLE, ItemStatus.IS_PURCHASE_CONFIRM)
                     .thenRun(() -> {
+                        item.setStatus(ItemStatus.IS_PURCHASE_CONFIRM);
                         manager.updateListedItems(item, false, player);
                         this.plugin.getInventoriesLoader().openInventory(player, inventories);
                     });

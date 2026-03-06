@@ -107,7 +107,11 @@ public class ZEconomyManager implements EconomyManager {
                 continue;
             }
 
-            this.priceReductions.add(new NumberFormatReduction(format, new BigDecimal(maxAmount), display));
+            try {
+                this.priceReductions.add(new NumberFormatReduction(format, new BigDecimal(maxAmount), display));
+            } catch (NumberFormatException e) {
+                this.plugin.getLogger().warning("Invalid price reduction max-amount '" + maxAmount + "' for format '" + format + "', skipping...");
+            }
         }
     }
 

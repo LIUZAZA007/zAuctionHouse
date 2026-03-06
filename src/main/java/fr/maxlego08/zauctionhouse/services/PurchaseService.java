@@ -142,7 +142,11 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
             if (item.getStatus() == ItemStatus.IS_BEING_PURCHASED) {
                 var previousStatus = previousStatusHolder.get();
                 item.setStatus(previousStatus);
-                clusterBridge.notifyItemStatusChange(item, ItemStatus.IS_BEING_PURCHASED, previousStatus);
+                clusterBridge.notifyItemStatusChange(item, ItemStatus.IS_BEING_PURCHASED, previousStatus)
+                    .exceptionally(restoreError -> {
+                        logger.severe("Failed to restore item status for item " + item.getId() + ": " + restoreError.getMessage());
+                        return null;
+                    });
             }
 
             // Return the previously set result or a generic error

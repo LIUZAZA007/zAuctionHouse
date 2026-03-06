@@ -106,7 +106,10 @@ public class ExpireService implements AuctionExpireService {
             var offlineSeller = item.getSeller();
             if (offlineSeller.isOnline() && !offlinePlayers.contains(offlineSeller)) {
                 offlinePlayers.add(offlineSeller);
-                this.auctionManager.clearPlayerCache(offlineSeller.getPlayer(), PlayerCacheKey.ITEMS_SELLING, PlayerCacheKey.ITEMS_EXPIRED);
+                var sellerPlayer = offlineSeller.getPlayer();
+                if (sellerPlayer != null) {
+                    this.auctionManager.clearPlayerCache(sellerPlayer, PlayerCacheKey.ITEMS_SELLING, PlayerCacheKey.ITEMS_EXPIRED);
+                }
             }
         }
 
@@ -128,7 +131,11 @@ public class ExpireService implements AuctionExpireService {
             // Process online sellers synchronously and batch update
             if (!onlineSellerItems.isEmpty()) {
                 for (Item item : onlineSellerItems) {
-                    var expiration = configuration.getExpireExpiration().getExpiration(item.getSeller().getPlayer());
+                    var sellerPlayer = item.getSeller().getPlayer();
+                    // Player may have disconnected between isOnline() check and now
+                    long expiration = sellerPlayer != null
+                        ? configuration.getExpireExpiration().getExpiration(sellerPlayer)
+                        : configuration.getExpireExpiration().defaultExpiration();
                     long expiredAt = expiration > 0 ? System.currentTimeMillis() + (expiration * 1000) : 0;
                     item.setExpiredAt(new Date(expiredAt));
                     this.auctionManager.addItem(StorageType.EXPIRED, item);

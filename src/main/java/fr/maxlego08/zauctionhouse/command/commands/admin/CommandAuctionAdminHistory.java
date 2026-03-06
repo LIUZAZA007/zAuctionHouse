@@ -34,6 +34,11 @@ public class CommandAuctionAdminHistory extends VCommand {
 
         plugin.getStorageManager().findUniqueId(targetName).thenAccept(uuid -> {
 
+            // Check if player is still online after async operation
+            if (!this.player.isOnline()) {
+                return;
+            }
+
             if (uuid == null) {
                 this.auctionManager.message(this.player, Message.ADMIN_TARGET_NOT_FOUND, "%target%", targetName);
                 return;
@@ -43,7 +48,11 @@ public class CommandAuctionAdminHistory extends VCommand {
             cache.set(PlayerCacheKey.ADMIN_TARGET_UUID, uuid);
             cache.set(PlayerCacheKey.ADMIN_TARGET_NAME, targetName);
 
-            this.plugin.getScheduler().runNextTick(w -> this.plugin.getInventoriesLoader().openInventory(this.player, Inventories.ADMIN_HISTORY_MAIN));
+            this.plugin.getScheduler().runNextTick(w -> {
+                if (this.player.isOnline()) {
+                    this.plugin.getInventoriesLoader().openInventory(this.player, Inventories.ADMIN_HISTORY_MAIN);
+                }
+            });
             this.auctionManager.message(this.player, Message.ADMIN_OPEN_HISTORY, "%target%", targetName);
         });
         return CommandType.SUCCESS;

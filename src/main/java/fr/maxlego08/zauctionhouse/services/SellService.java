@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class SellService extends ZUtils implements AuctionSellService {
@@ -64,6 +65,12 @@ public class SellService extends ZUtils implements AuctionSellService {
         }
 
         CompletableFuture<SellResult> resultFuture = new CompletableFuture<>();
+
+        // Add timeout to prevent indefinite blocking (30 seconds)
+        resultFuture.completeOnTimeout(
+            SellResult.failure("Operation timed out", SellFailReason.DATABASE_ERROR),
+            30, TimeUnit.SECONDS
+        );
 
         // Calculate and apply sell tax asynchronously (considers all items for item-specific rules)
         applySellTaxAsync(player, price, itemsToSell, auctionEconomy).thenAccept(taxResult -> {
