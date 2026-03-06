@@ -832,6 +832,52 @@ sales-notification:
   delay-ticks: 60
 
 #=============================================================================
+# CONFIGURAZIONE DELLE PRESTAZIONI
+#=============================================================================
+
+# Impostazioni avanzate delle prestazioni per case d'aste di grandi dimensioni.
+# Queste impostazioni controllano la cache, l'elaborazione parallela e i timeout.
+# La maggior parte dei server non avrà bisogno di modificare questi valori predefiniti.
+
+performance:
+  # Configurazione della cache per le liste di oggetti ordinati.
+  # La cache pre-ordina gli oggetti per fornire accesso O(1) per la paginazione.
+  cache:
+    # Numero minimo di oggetti prima di usare l'ordinamento parallelo (Arrays.parallelSort).
+    # L'ordinamento parallelo migliora le prestazioni per grandi set di dati ma ha un overhead per quelli piccoli.
+    # Consigliato: 10000 per la maggior parte dei server. Abbassare se hai molti core CPU disponibili.
+    parallel-sort-threshold: 10000
+
+    # Numero minimo di oggetti prima di elaborare le categorie in parallelo.
+    # Le categorie vengono elaborate simultaneamente quando questa soglia viene superata.
+    # Consigliato: 5000 per la maggior parte dei server.
+    parallel-category-threshold: 5000
+
+    # Numero di thread da usare per l'elaborazione parallela.
+    # Impostare a -1 per il rilevamento automatico (usa processori disponibili - 1, minimo 2).
+    # Impostare un numero specifico per sovrascrivere il rilevamento automatico.
+    parallelism: -1
+
+  # Configurazione dei timeout per le operazioni cluster (configurazioni multi-server).
+  # Questi timeout impediscono alle operazioni di rimanere bloccate indefinitamente.
+  # Tutti i valori sono in millisecondi.
+  cluster-timeout:
+    # Timeout per verificare la disponibilità di un oggetto sui server.
+    check-availability-ms: 5000
+
+    # Timeout per acquisire un lock su un oggetto.
+    lock-item-ms: 5000
+
+    # Timeout per rilasciare un lock su un oggetto.
+    unlock-item-ms: 3000
+
+    # Timeout per notificare altri server dei cambiamenti di stato.
+    notify-status-change-ms: 3000
+
+    # Timeout per notificare altri server degli acquisti/rimozioni di oggetti.
+    notify-item-action-ms: 5000
+
+#=============================================================================
 # CONFIGURAZIONE DELL'ORDINAMENTO
 #=============================================================================
 

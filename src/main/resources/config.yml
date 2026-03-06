@@ -827,6 +827,52 @@ sales-notification:
   delay-ticks: 60
 
 #=============================================================================
+# PERFORMANCE CONFIGURATION
+#=============================================================================
+
+# Advanced performance settings for large auction houses.
+# These settings control caching, parallel processing, and timeouts.
+# Most servers won't need to change these defaults.
+
+performance:
+  # Cache configuration for sorted item lists.
+  # The cache pre-sorts items to provide O(1) access for pagination.
+  cache:
+    # Minimum number of items before using parallel sorting (Arrays.parallelSort).
+    # Parallel sorting improves performance for large datasets but has overhead for small ones.
+    # Recommended: 10000 for most servers. Lower if you have many CPU cores available.
+    parallel-sort-threshold: 10000
+
+    # Minimum number of items before processing categories in parallel.
+    # Categories are processed concurrently when this threshold is exceeded.
+    # Recommended: 5000 for most servers.
+    parallel-category-threshold: 5000
+
+    # Number of threads to use for parallel processing.
+    # Set to -1 to auto-detect (uses available processors - 1, minimum 2).
+    # Set to a specific number to override auto-detection.
+    parallelism: -1
+
+  # Timeout configuration for cluster operations (multi-server setups).
+  # These timeouts prevent operations from hanging indefinitely.
+  # All values are in milliseconds.
+  cluster-timeout:
+    # Timeout for checking item availability across servers.
+    check-availability-ms: 5000
+
+    # Timeout for acquiring a lock on an item.
+    lock-item-ms: 5000
+
+    # Timeout for releasing a lock on an item.
+    unlock-item-ms: 3000
+
+    # Timeout for notifying other servers about status changes.
+    notify-status-change-ms: 3000
+
+    # Timeout for notifying other servers about item purchases/removals.
+    notify-item-action-ms: 5000
+
+#=============================================================================
 # SORTING CONFIGURATION
 #=============================================================================
 

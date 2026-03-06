@@ -459,7 +459,9 @@ public class ZAuctionManager extends ZUtils implements AuctionManager {
 
     @Override
     public void removeCache(Player player) {
+        System.out.println("avant : " + this.caches.size());
         this.caches.remove(player);
+        System.out.println("après : " + this.caches.size());
     }
 
     @Override

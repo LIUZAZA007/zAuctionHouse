@@ -14,6 +14,8 @@ import fr.maxlego08.zauctionhouse.api.services.result.PurchaseResult;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PurchaseService extends AuctionService implements AuctionPurchaseService {
@@ -46,14 +48,12 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
 
         // 1. Vérifier si l'item est expiré
         if (item.isExpired()) {
-            logger.info("Item expired");
             auctionManager.getCache(player).remove(PlayerCacheKey.ITEMS_LISTED);
             auctionManager.openMainAuction(player);
             return CompletableFuture.completedFuture(PurchaseResult.failure("Item expired", PurchaseFailReason.ITEM_EXPIRED));
         }
 
         if (item.getStatus() != ItemStatus.IS_PURCHASE_CONFIRM) {
-            logger.info("Item not available");
             auctionManager.openMainAuction(player);
             return CompletableFuture.completedFuture(PurchaseResult.failure("Item not in purchase state", PurchaseFailReason.ITEM_NOT_IN_PURCHASE_STATE));
         }
@@ -63,17 +63,22 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
         final AtomicReference<PurchaseResult> resultHolder = new AtomicReference<>(null);
         final AtomicReference<ItemStatus> previousStatusHolder = new AtomicReference<>(item.getStatus());
 
-        // 2. Vérifier si l'item est lock
-        return clusterBridge.checkAvailability(item).thenCompose(available -> {
+        // Load timeout configuration
+        var performanceConfig = this.plugin.getConfiguration().getPerformance();
+
+        // 2. Vérifier si l'item est lock (with timeout)
+        return clusterBridge.checkAvailability(item)
+                .orTimeout(performanceConfig.checkAvailabilityTimeoutMs(), TimeUnit.MILLISECONDS)
+                .thenCompose(available -> {
 
             if (!available) {
-                logger.info("Item is not available");
                 inventoryManager.updateInventory(player);
                 resultHolder.set(PurchaseResult.failure("Item not available", PurchaseFailReason.ITEM_NOT_AVAILABLE));
                 return failedFuture(new IllegalStateException("Item introuvable"));
             }
 
-            return clusterBridge.lockItem(item, player.getUniqueId(), StorageType.LISTED);
+            return clusterBridge.lockItem(item, player.getUniqueId(), StorageType.LISTED)
+                    .orTimeout(performanceConfig.lockItemTimeoutMs(), TimeUnit.MILLISECONDS);
 
         }).thenCompose(token -> {
             // Store token for exception cleanup
@@ -81,7 +86,6 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
 
             // Check if lock was acquired (noop token means lock failed)
             if (LockToken.noop().value().equals(token.value())) {
-                logger.info("Failed to acquire lock on item");
                 inventoryManager.updateInventory(player);
                 resultHolder.set(PurchaseResult.failure("Lock failed", PurchaseFailReason.LOCK_FAILED));
                 return failedFuture(new IllegalStateException("Item déjà en cours d'achat"));
@@ -90,6 +94,7 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
             // Set status AFTER acquiring lock to ensure atomicity
             item.setStatus(ItemStatus.IS_BEING_PURCHASED);
             return clusterBridge.notifyItemStatusChange(item, previousStatusHolder.get(), ItemStatus.IS_BEING_PURCHASED)
+                    .orTimeout(performanceConfig.notifyStatusChangeTimeoutMs(), TimeUnit.MILLISECONDS)
                     .thenCompose(v -> auctionEconomy.has(player, item.getPrice()));
 
         }).thenCompose(hasMoney -> {
@@ -98,8 +103,10 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
 
             if (hasMoney) {
                 return auctionManager.purchaseItem(player, item)
-                        .thenCompose(v -> clusterBridge.notifyItemBought(player, item))
-                        .thenCompose(v -> clusterBridge.unlockItem(item, token, StorageType.LISTED))
+                        .thenCompose(v -> clusterBridge.notifyItemBought(player, item)
+                                .orTimeout(performanceConfig.notifyItemActionTimeoutMs(), TimeUnit.MILLISECONDS))
+                        .thenCompose(v -> clusterBridge.unlockItem(item, token, StorageType.LISTED)
+                                .orTimeout(performanceConfig.unlockItemTimeoutMs(), TimeUnit.MILLISECONDS))
                         .thenApply(v -> {
                             resultHolder.set(PurchaseResult.success("Purchase successful", true));
                             return resultHolder.get();
@@ -109,20 +116,26 @@ public class PurchaseService extends AuctionService implements AuctionPurchaseSe
             // Insufficient funds - unlock and notify
             message(this.plugin, player, Message.NOT_ENOUGH_MONEY);
             resultHolder.set(PurchaseResult.failure("Insufficient funds", PurchaseFailReason.INSUFFICIENT_FUNDS));
-            return clusterBridge.unlockItem(item, token, StorageType.LISTED).thenApply(v -> resultHolder.get());
+            return clusterBridge.unlockItem(item, token, StorageType.LISTED)
+                    .orTimeout(performanceConfig.unlockItemTimeoutMs(), TimeUnit.MILLISECONDS)
+                    .thenApply(v -> resultHolder.get());
 
         }).exceptionally(e -> {
-            logger.severe("Error during purchase: " + e.getMessage());
-            e.printStackTrace();
+            // Handle timeout exceptions specifically
+            if (e.getCause() instanceof TimeoutException) {
+                logger.warning("Purchase operation timed out for item " + item.getId());
+            } else {
+                logger.severe("Error during purchase: " + e.getMessage());
+                e.printStackTrace();
+            }
 
             // Ensure lock is released on any exception
             var token = tokenHolder.get();
             if (token != null && !LockToken.noop().value().equals(token.value())) {
-                clusterBridge.unlockItem(item, token, StorageType.LISTED)
-                        .exceptionally(unlockError -> {
-                            logger.severe("Failed to unlock item after error: " + unlockError.getMessage());
-                            return null;
-                        });
+                clusterBridge.unlockItem(item, token, StorageType.LISTED).exceptionally(unlockError -> {
+                    logger.severe("Failed to unlock item after error: " + unlockError.getMessage());
+                    return null;
+                });
             }
 
             // Restore item status only if it was changed (lock was acquired)

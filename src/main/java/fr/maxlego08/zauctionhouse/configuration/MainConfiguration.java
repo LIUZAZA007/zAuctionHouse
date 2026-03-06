@@ -15,6 +15,7 @@ import fr.maxlego08.zauctionhouse.api.configuration.records.SalesNotificationCon
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemDisplayConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.PerformanceConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.PerformanceDebugConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.PermissionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.SortConfiguration;
@@ -57,6 +58,7 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     private PerformanceDebugConfiguration performanceDebugConfiguration;
     private AutoClaimConfiguration autoClaimConfiguration;
     private SalesNotificationConfiguration salesNotificationConfiguration;
+    private PerformanceConfiguration performanceConfiguration;
     private List<InventoryCommandConfiguration> inventoryCommandConfigurations;
     private boolean sellInventoryEnabled;
 
@@ -86,6 +88,7 @@ public class MainConfiguration extends YamlLoader implements Configuration {
         this.performanceDebugConfiguration = PerformanceDebugConfiguration.of(plugin, config);
         this.autoClaimConfiguration = AutoClaimConfiguration.of(plugin, config);
         this.salesNotificationConfiguration = SalesNotificationConfiguration.of(plugin, config);
+        this.performanceConfiguration = PerformanceConfiguration.of(plugin, config);
         this.inventoryCommandConfigurations = InventoryCommandConfiguration.of(plugin, config);
         this.dateFormat = new SimpleDateFormat(config.getString("date-format", "dd/MM/yyyy HH:mm:ss"));
         this.sellInventoryEnabled = config.getBoolean("commands.sell.enable-sell-inventory", false);
@@ -199,6 +202,11 @@ public class MainConfiguration extends YamlLoader implements Configuration {
     @Override
     public SalesNotificationConfiguration getSalesNotificationConfiguration() {
         return this.salesNotificationConfiguration;
+    }
+
+    @Override
+    public PerformanceConfiguration getPerformance() {
+        return this.performanceConfiguration;
     }
 
     @Override

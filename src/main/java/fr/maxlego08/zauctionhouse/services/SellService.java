@@ -106,8 +106,7 @@ public class SellService extends ZUtils implements AuctionSellService {
                 });
             });
         }).exceptionally(throwable -> {
-            this.plugin.getLogger().severe("Unable to check tax for sell");
-            throwable.printStackTrace();
+            this.plugin.getLogger().severe("Unable to check tax for sell: " + throwable.getMessage());
             resultFuture.complete(SellResult.failure("Tax calculation error", SellFailReason.TAX_ERROR));
             return null;
         });
@@ -362,8 +361,7 @@ public class SellService extends ZUtils implements AuctionSellService {
         this.plugin.getAuctionClusterBridge().notifyItemListed(auctionItem).thenAccept(v -> {
             this.plugin.getLogger().info("Cluster notify item sold");
         }).exceptionally(throwable -> {
-            this.plugin.getLogger().severe("Unable to notify item sold");
-            throwable.printStackTrace();
+            this.plugin.getLogger().severe("Unable to notify item sold: " + throwable.getMessage());
             return null;
         });
 

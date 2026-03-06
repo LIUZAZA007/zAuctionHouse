@@ -56,11 +56,9 @@ public class SortedItemsCache {
     // Timestamp of last rebuild for debugging
     private volatile long lastRebuildTime = 0;
 
-    // Threshold for using parallel sort (Arrays.parallelSort)
-    private static final int PARALLEL_SORT_THRESHOLD = 10000;
-
-    // Threshold for using parallel category processing
-    private static final int PARALLEL_CATEGORY_THRESHOLD = 5000;
+    // Configurable thresholds (loaded from config)
+    private final int parallelSortThreshold;
+    private final int parallelCategoryThreshold;
 
     // Custom ForkJoinPool for parallel operations (avoids blocking common pool)
     private final ForkJoinPool forkJoinPool;
@@ -69,8 +67,14 @@ public class SortedItemsCache {
         this.plugin = plugin;
         this.performanceDebug = new PerformanceDebug(plugin);
         this.itemsSupplier = itemsSupplier;
-        // Use a dedicated pool with parallelism based on available processors
-        this.forkJoinPool = new ForkJoinPool(Math.max(2, Runtime.getRuntime().availableProcessors() - 1));
+
+        // Load configurable thresholds
+        var performanceConfig = plugin.getConfiguration().getPerformance();
+        this.parallelSortThreshold = performanceConfig.parallelSortThreshold();
+        this.parallelCategoryThreshold = performanceConfig.parallelCategoryThreshold();
+
+        // Use a dedicated pool with configurable parallelism
+        this.forkJoinPool = new ForkJoinPool(performanceConfig.getEffectiveParallelism());
     }
 
     /**
@@ -334,7 +338,7 @@ public class SortedItemsCache {
             Item[] itemArray = availableItems.toArray(new Item[0]);
 
             // Sort by date and extract IDs
-            if (itemCount >= PARALLEL_SORT_THRESHOLD) {
+            if (itemCount >= parallelSortThreshold) {
                 Arrays.parallelSort(itemArray, SortItem.ASCENDING_DATE.getComparator());
             } else {
                 Arrays.sort(itemArray, SortItem.ASCENDING_DATE.getComparator());
@@ -346,7 +350,7 @@ public class SortedItemsCache {
             newSortedAllItems.put(SortItem.DECREASING_DATE, wrapArray(descDateIds));
 
             // Sort by price and extract IDs
-            if (itemCount >= PARALLEL_SORT_THRESHOLD) {
+            if (itemCount >= parallelSortThreshold) {
                 Arrays.parallelSort(itemArray, SortItem.ASCENDING_PRICE.getComparator());
             } else {
                 Arrays.sort(itemArray, SortItem.ASCENDING_PRICE.getComparator());
@@ -358,7 +362,7 @@ public class SortedItemsCache {
             newSortedAllItems.put(SortItem.DECREASING_PRICE, wrapArray(descPriceIds));
 
             // OPTIMIZATION 3: Process categories in parallel using dedicated ForkJoinPool
-            if (categoryCount > 2 && itemCount >= PARALLEL_CATEGORY_THRESHOLD) {
+            if (categoryCount > 2 && itemCount >= parallelCategoryThreshold) {
                 try {
                     forkJoinPool.submit(() ->
                         itemsByCategory.entrySet().parallelStream().forEach(entry ->
@@ -409,7 +413,7 @@ public class SortedItemsCache {
         Item[] itemArray = categoryItems.toArray(new Item[0]);
 
         // Sort by date ascending
-        if (size >= PARALLEL_SORT_THRESHOLD) {
+        if (size >= parallelSortThreshold) {
             Arrays.parallelSort(itemArray, SortItem.ASCENDING_DATE.getComparator());
         } else {
             Arrays.sort(itemArray, SortItem.ASCENDING_DATE.getComparator());
@@ -421,7 +425,7 @@ public class SortedItemsCache {
         targetMap.put(buildCacheKey(categoryId, SortItem.DECREASING_DATE), wrapArray(descDateIds));
 
         // Sort by price ascending
-        if (size >= PARALLEL_SORT_THRESHOLD) {
+        if (size >= parallelSortThreshold) {
             Arrays.parallelSort(itemArray, SortItem.ASCENDING_PRICE.getComparator());
         } else {
             Arrays.sort(itemArray, SortItem.ASCENDING_PRICE.getComparator());

@@ -10,6 +10,7 @@ import fr.maxlego08.zauctionhouse.api.configuration.records.SalesNotificationCon
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemDisplayConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.ItemLoreConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.NumberMultiplicationConfiguration;
+import fr.maxlego08.zauctionhouse.api.configuration.records.PerformanceConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.PerformanceDebugConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.PermissionConfiguration;
 import fr.maxlego08.zauctionhouse.api.configuration.records.SortConfiguration;
@@ -186,6 +187,13 @@ public interface Configuration extends ConfigurationFile {
      * @return the sales notification configuration
      */
     SalesNotificationConfiguration getSalesNotificationConfiguration();
+
+    /**
+     * Gets the performance configuration including cache thresholds and cluster timeouts.
+     *
+     * @return the performance configuration
+     */
+    PerformanceConfiguration getPerformance();
 
     /**
      * Checks if the sell inventory is enabled.

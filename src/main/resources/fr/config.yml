@@ -831,6 +831,52 @@ sales-notification:
   delay-ticks: 60
 
 #=============================================================================
+# CONFIGURATION DES PERFORMANCES
+#=============================================================================
+
+# Paramètres de performance avancés pour les hôtels des ventes volumineux.
+# Ces paramètres contrôlent le cache, le traitement parallèle et les timeouts.
+# La plupart des serveurs n'auront pas besoin de modifier ces valeurs par défaut.
+
+performance:
+  # Configuration du cache pour les listes d'items triés.
+  # Le cache pré-trie les items pour fournir un accès O(1) pour la pagination.
+  cache:
+    # Nombre minimum d'items avant d'utiliser le tri parallèle (Arrays.parallelSort).
+    # Le tri parallèle améliore les performances pour les grands ensembles de données mais a un surcoût pour les petits.
+    # Recommandé: 10000 pour la plupart des serveurs. Réduire si vous avez beaucoup de cœurs CPU disponibles.
+    parallel-sort-threshold: 10000
+
+    # Nombre minimum d'items avant de traiter les catégories en parallèle.
+    # Les catégories sont traitées simultanément quand ce seuil est dépassé.
+    # Recommandé: 5000 pour la plupart des serveurs.
+    parallel-category-threshold: 5000
+
+    # Nombre de threads à utiliser pour le traitement parallèle.
+    # Définir à -1 pour la détection automatique (utilise les processeurs disponibles - 1, minimum 2).
+    # Définir un nombre spécifique pour remplacer la détection automatique.
+    parallelism: -1
+
+  # Configuration des timeouts pour les opérations cluster (configurations multi-serveurs).
+  # Ces timeouts empêchent les opérations de rester bloquées indéfiniment.
+  # Toutes les valeurs sont en millisecondes.
+  cluster-timeout:
+    # Timeout pour vérifier la disponibilité d'un item sur les serveurs.
+    check-availability-ms: 5000
+
+    # Timeout pour acquérir un verrou sur un item.
+    lock-item-ms: 5000
+
+    # Timeout pour libérer un verrou sur un item.
+    unlock-item-ms: 3000
+
+    # Timeout pour notifier les autres serveurs des changements de statut.
+    notify-status-change-ms: 3000
+
+    # Timeout pour notifier les autres serveurs des achats/suppressions d'items.
+    notify-item-action-ms: 5000
+
+#=============================================================================
 # CONFIGURATION DU TRI
 #=============================================================================
 
