@@ -73,11 +73,9 @@ public class ClaimService extends AuctionService implements AuctionClaimService 
                 }
             }
 
-            // Mark all transactions as retrieved
-            this.plugin.getScheduler().runAsync(task -> {
-                var repository = this.plugin.getStorageManager().with(TransactionRepository.class);
-                repository.updateStatus(transactionIds, TransactionStatus.RETRIEVED);
-            });
+            // Mark all transactions as retrieved synchronously to prevent double claims
+            var repository = this.plugin.getStorageManager().with(TransactionRepository.class);
+            repository.updateStatus(transactionIds, TransactionStatus.RETRIEVED);
 
             if (totalClaimed.compareTo(BigDecimal.ZERO) > 0) {
                 message(this.plugin, player, Message.CLAIM_SUCCESS, "%amount%", totalClaimed.toString());

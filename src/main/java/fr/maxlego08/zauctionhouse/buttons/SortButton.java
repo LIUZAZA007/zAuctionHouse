@@ -21,14 +21,14 @@ public class SortButton extends Button {
     private final String enableText;
     private final String disableText;
     private final MenuItemStack loadingItemStack;
-    private final List<SortItem> sortItems;
+    private final List<SortItem> sortItems; // Immutable copy to prevent concurrent modification
 
     public SortButton(AuctionPlugin plugin, String enableText, String disableText, MenuItemStack loadingItemStack, List<SortItem> sortItems) {
         this.plugin = plugin;
         this.enableText = enableText;
         this.disableText = disableText;
         this.loadingItemStack = loadingItemStack;
-        this.sortItems = sortItems;
+        this.sortItems = List.copyOf(sortItems); // Create immutable copy to prevent concurrent modification
     }
 
     @Override

@@ -58,7 +58,13 @@ public class SellConfirmButton extends Button {
         }
 
         BigDecimal price = cache.get(PlayerCacheKey.SELL_PRICE, BigDecimal.ZERO);
-        AuctionEconomy economy = cache.get(PlayerCacheKey.SELL_ECONOMY, this.plugin.getEconomyManager().getDefaultEconomy(ItemType.AUCTION));
+        AuctionEconomy defaultEconomy = this.plugin.getEconomyManager().getDefaultEconomy(ItemType.AUCTION);
+        if (defaultEconomy == null) {
+            this.plugin.getLogger().severe("No default economy configured for AUCTION items");
+            this.plugin.getAuctionManager().message(player, Message.SELL_INVENTORY_EMPTY);
+            return;
+        }
+        AuctionEconomy economy = cache.get(PlayerCacheKey.SELL_ECONOMY, defaultEconomy);
         long expiredAt = cache.get(PlayerCacheKey.SELL_EXPIRED_AT, 0L);
 
         cache.set(PlayerCacheKey.CURRENT_PAGE, 1);
@@ -83,7 +89,8 @@ public class SellConfirmButton extends Button {
         var economyManager = this.plugin.getEconomyManager();
 
         BigDecimal price = cache.get(PlayerCacheKey.SELL_PRICE, BigDecimal.ZERO);
-        AuctionEconomy economy = cache.get(PlayerCacheKey.SELL_ECONOMY, economyManager.getDefaultEconomy(ItemType.AUCTION));
+        AuctionEconomy defaultEconomy = economyManager.getDefaultEconomy(ItemType.AUCTION);
+        AuctionEconomy economy = defaultEconomy != null ? cache.get(PlayerCacheKey.SELL_ECONOMY, defaultEconomy) : null;
 
         Map<Integer, ItemStack> sellItems = cache.get(PlayerCacheKey.SELL_ITEMS);
         int itemCount = 0;
@@ -97,9 +104,15 @@ public class SellConfirmButton extends Button {
                     .sum();
         }
 
-        placeholders.register("price", economyManager.format(economy, price));
-        placeholders.register("economy", economy.getDisplayName());
-        placeholders.register("economy_name", economy.getName());
+        if (economy != null) {
+            placeholders.register("price", economyManager.format(economy, price));
+            placeholders.register("economy", economy.getDisplayName());
+            placeholders.register("economy_name", economy.getName());
+        } else {
+            placeholders.register("price", price.toPlainString());
+            placeholders.register("economy", "N/A");
+            placeholders.register("economy_name", "N/A");
+        }
         placeholders.register("item_count", String.valueOf(itemCount));
         placeholders.register("total_amount", String.valueOf(totalAmount));
     }

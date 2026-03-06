@@ -40,7 +40,7 @@ public class ItemContentButton extends Button {
 
         // Check for AuctionItem first
         var item = cache.get(PlayerCacheKey.ITEM_SHOW);
-        if (item instanceof AuctionItem auctionItem) {
+        if (item instanceof AuctionItem auctionItem && auctionItem.getItemStacks() != null) {
             return auctionItem.getItemStacks().stream().map(ItemStack::clone).toList();
         }
 

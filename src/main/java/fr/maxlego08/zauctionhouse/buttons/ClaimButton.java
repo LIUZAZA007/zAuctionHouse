@@ -78,6 +78,9 @@ public class ClaimButton extends Button {
                     this.plugin.getAuctionManager().updateInventory(player);
                 }
             });
+        }).exceptionally(throwable -> {
+            this.plugin.getLogger().warning("Failed to claim money for " + player.getName() + ": " + throwable.getMessage());
+            return null;
         });
     }
 }

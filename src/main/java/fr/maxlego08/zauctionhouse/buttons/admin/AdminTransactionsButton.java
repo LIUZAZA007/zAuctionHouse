@@ -94,7 +94,9 @@ public class AdminTransactionsButton extends LoadingButton {
             cache.set(PlayerCacheKey.ADMIN_TRANSACTIONS_LOADING, false);
 
             this.plugin.getScheduler().runNextTick(w -> {
-                this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+                if (player.isOnline()) {
+                    this.plugin.getInventoriesLoader().getInventoryManager().updateInventory(player);
+                }
             });
         }).exceptionally(throwable -> {
             cache.set(PlayerCacheKey.ADMIN_TRANSACTIONS_LOADING, false);
@@ -125,15 +127,16 @@ public class AdminTransactionsButton extends LoadingButton {
         var meta = this.plugin.getInventoriesLoader().getInventoryManager().getMeta();
 
         String statusColor = transaction.status() == TransactionStatus.PENDING ? "#FFD700" : "#00FF00";
-        String sign = transaction.value().signum() >= 0 ? "+" : "";
-        meta.updateDisplayName(itemMeta, statusColor + "<bold>" + transaction.status().name() + " #92ffff- #2CCED2" + sign + transaction.value() + " " + transaction.economy_name(), null);
+        String sign = transaction.value() != null && transaction.value().signum() >= 0 ? "+" : "";
+        String valueStr = transaction.value() != null ? transaction.value().toPlainString() : "0";
+        meta.updateDisplayName(itemMeta, statusColor + "<bold>" + transaction.status().name() + " #92ffff- #2CCED2" + sign + valueStr + " " + transaction.economy_name(), null);
 
         List<String> lore = new ArrayList<>();
         lore.add("#8c8c8c• #92ffffStatus: #2CCED2" + transaction.status().name());
         lore.add("#8c8c8c• #92ffffEconomy: #2CCED2" + transaction.economy_name());
         lore.add("#8c8c8c• #92ffffBefore: #2CCED2" + transaction.before());
         lore.add("#8c8c8c• #92ffffAfter: #2CCED2" + transaction.after());
-        lore.add("#8c8c8c• #92ffffValue: #2CCED2" + sign + transaction.value());
+        lore.add("#8c8c8c• #92ffffValue: #2CCED2" + sign + valueStr);
         lore.add("#8c8c8c• #92ffffDate: #2CCED2" + dateFormat.format(transaction.created_at()));
 
         meta.updateLore(itemMeta, lore, LoreType.REPLACE);
